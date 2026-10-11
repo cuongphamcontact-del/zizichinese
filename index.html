@@ -167,6 +167,32 @@
   .socials a{width:38px;height:38px;border:1px solid rgba(255,255,255,.2);border-radius:11px;display:grid;place-items:center;opacity:.85}
   .socials a:hover{background:var(--jade);border-color:var(--jade);opacity:1}
 
+  /* ---------- AUTH (đăng nhập / tạo tài khoản) ---------- */
+  body.in-auth{background:var(--backdrop)}
+  body.in-auth header,body.in-auth footer,body.in-auth .popup,body.in-auth .mcta{display:none!important}
+  #view-auth{display:none;min-height:100vh}
+  .auth-top{display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto;padding:20px 28px}
+  .auth-top .brand{font-size:1.18rem}
+  .auth-home{color:var(--ink-60);font-weight:600;font-size:.92rem}
+  .auth-home:hover{color:var(--jade-dark)}
+  .auth-wrap{display:grid;place-items:center;padding:18px 20px 60px}
+  .auth-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:38px 34px;width:100%;max-width:440px}
+  .auth-card h2{text-align:center;font-size:1.95rem;margin-bottom:6px}
+  .auth-card>p{text-align:center;color:var(--ink-60);font-size:.92rem;margin-bottom:24px}
+  .auth-google{width:100%;gap:.6em;font-weight:700}
+  .auth-google>span:first-child{font-weight:900;color:#4285F4;font-size:1.05rem}
+  .auth-div{display:flex;align-items:center;gap:12px;color:var(--ink-60);font-size:.7rem;font-weight:700;letter-spacing:.08em;margin:20px 0}
+  .auth-div::before,.auth-div::after{content:"";flex:1;height:1px;background:var(--line-2)}
+  .afield{margin-bottom:16px}
+  .afield label{display:flex;justify-content:space-between;align-items:center;font-size:.86rem;font-weight:700;margin-bottom:7px}
+  .afield .afw{font-weight:600;color:var(--jade-dark);font-size:.82rem}
+  .afield input{width:100%;padding:12px 14px;border:1.5px solid var(--line-2);border-radius:11px;font-family:inherit;font-size:.95rem;background:#fff}
+  .afield input:focus{border-color:var(--jade);outline:none}
+  .auth-submit{width:100%;margin-top:6px}
+  .auth-switch{text-align:center;color:var(--ink-60);font-size:.9rem;margin-top:20px}
+  .auth-switch a{color:var(--jade-dark);font-weight:700;cursor:pointer}
+  .auth-foot{text-align:center;color:var(--ink-60);font-size:.8rem;margin-top:22px}
+
   /* ---------- LANDING VIEW ---------- */
   #view-product,#view-checkout{display:none}
   .flashbar{background:var(--cinnabar);color:#fff;text-align:center;padding:10px;font-size:.9rem;font-weight:600;
@@ -592,7 +618,7 @@
     </nav>
     <div class="nav-cta">
       <a class="nav-login" href="#" onclick="login();return false">Đăng nhập</a>
-      <button class="btn btn-primary btn-sm" onclick="document.getElementById('khoahoc').scrollIntoView()">Bắt đầu</button>
+      <button class="btn btn-primary btn-sm nav-register" onclick="register()">Tạo tài khoản</button>
       <button class="burger" aria-label="Menu" onclick="toggleNav()">☰</button>
     </div>
   </div>
@@ -602,6 +628,7 @@
     <a href="#danhgia" onclick="toggleNav();go('home')">Đánh giá</a>
     <a class="nav-learn" style="display:none" href="#" onclick="toggleNav();go('learn');return false">Khu vực học viên</a>
     <a class="nav-login-m" href="#" onclick="toggleNav();login();return false">Đăng nhập</a>
+    <a class="nav-register-m" href="#" onclick="toggleNav();register();return false">Tạo tài khoản</a>
   </div>
 </header>
 
@@ -900,6 +927,31 @@
   </div>
 </div>
 
+<!-- ================= AUTH · ĐĂNG NHẬP / TẠO TÀI KHOẢN ================= -->
+<div id="view-auth">
+  <div class="auth-top">
+    <a class="brand" href="#" onclick="go('home');return false"><span class="logo hz">字</span><span>ZiZi Chinese</span></a>
+    <a class="auth-home" href="#" onclick="go('home');return false">← Trang chủ</a>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2 id="authTitle">Đăng nhập</h2>
+      <p id="authSub">Tiếp tục học trên ZiZi Chinese</p>
+      <button class="btn btn-ghost auth-google" onclick="doAuth(event)"><span>G</span> <span id="authGoogle">Đăng nhập bằng Google</span></button>
+      <div class="auth-div"><span id="authDiv">HOẶC</span></div>
+      <form onsubmit="doAuth(event)">
+        <div class="afield" id="af_name" style="display:none"><label>Họ tên</label><input type="text" placeholder="Nguyễn Văn A"></div>
+        <div class="afield"><label id="lab_email">Email hoặc tên đăng nhập</label><input type="text" placeholder="you@example.com"></div>
+        <div class="afield"><label>Mật khẩu <a id="forgot" class="afw" href="#" onclick="toast('Gửi link đặt lại mật khẩu (demo)');return false">Quên mật khẩu?</a></label><input type="password" id="authPass" placeholder="Nhập mật khẩu"></div>
+        <div class="afield" id="af_confirm" style="display:none"><label>Xác nhận mật khẩu</label><input type="password" placeholder="Nhập lại mật khẩu"></div>
+        <button class="btn btn-primary auth-submit" id="authSubmit">Đăng nhập</button>
+      </form>
+      <p class="auth-switch" id="authSwitch">Chưa có tài khoản? <a onclick="openAuth('register')">Tạo tài khoản</a></p>
+    </div>
+    <p class="auth-foot">© 2026 ZiZi Chinese.</p>
+  </div>
+</div>
+
 <!-- ================= ADMIN VIEW ================= -->
 <!-- @MAP-ADMIN =================================================== -->
 <div id="view-admin">
@@ -1184,7 +1236,7 @@
   const fmtVND = n => n.toLocaleString('vi-VN')+'₫';
 
   function go(view){
-    ['home','product','checkout','admin','learn'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    ['home','product','checkout','admin','learn','auth'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+view).style.display='block';
     if(view==='checkout'){buildCheckout();}
     if(view==='admin'){
@@ -1193,6 +1245,7 @@
     }
     document.body.classList.toggle('in-admin', view==='admin');
     document.body.classList.toggle('in-learn', view==='learn');
+    document.body.classList.toggle('in-auth', view==='auth');
     window.scrollTo({top:0,behavior:'auto'});
   }
 
@@ -1228,9 +1281,36 @@
   let loggedIn=false;
   function updateAuthUI(){
     document.querySelectorAll('.nav-learn').forEach(e=>e.style.display=loggedIn?'':'none');
-    document.querySelectorAll('.nav-login,.nav-login-m').forEach(e=>e.style.display=loggedIn?'none':'');
+    document.querySelectorAll('.nav-login,.nav-login-m,.nav-register,.nav-register-m').forEach(e=>e.style.display=loggedIn?'none':'');
   }
-  function login(){ loggedIn=true; updateAuthUI(); go('learn'); }
+  /* trang Đăng nhập / Tạo tài khoản */
+  let authMode='login';
+  function openAuth(mode){
+    authMode = mode==='register'?'register':'login';
+    const reg = authMode==='register';
+    document.getElementById('authTitle').textContent = reg?'Tạo tài khoản':'Đăng nhập';
+    document.getElementById('authSub').textContent = reg?'Lưu khóa học, theo dõi tiến độ và quản lý đơn hàng của bạn.':'Tiếp tục học trên ZiZi Chinese';
+    document.getElementById('authGoogle').textContent = reg?'Đăng ký bằng Google':'Đăng nhập bằng Google';
+    document.getElementById('authDiv').textContent = reg?'HOẶC DÙNG EMAIL':'HOẶC';
+    document.getElementById('af_name').style.display = reg?'block':'none';
+    document.getElementById('af_confirm').style.display = reg?'block':'none';
+    document.getElementById('lab_email').textContent = reg?'Email':'Email hoặc tên đăng nhập';
+    document.getElementById('authPass').placeholder = reg?'Tối thiểu 8 ký tự':'Nhập mật khẩu';
+    document.getElementById('forgot').style.display = reg?'none':'';
+    document.getElementById('authSubmit').textContent = reg?'Đăng ký':'Đăng nhập';
+    document.getElementById('authSwitch').innerHTML = reg
+      ? 'Đã có tài khoản? <a onclick="openAuth(\'login\')">Đăng nhập</a>'
+      : 'Chưa có tài khoản? <a onclick="openAuth(\'register\')">Tạo tài khoản</a>';
+    go('auth');
+  }
+  function doAuth(e){
+    if(e&&e.preventDefault)e.preventDefault();
+    loggedIn=true; updateAuthUI();
+    toast(authMode==='register'?'Tạo tài khoản thành công (demo)':'Đăng nhập thành công (demo)');
+    go('learn');
+  }
+  function login(){ openAuth('login'); }
+  function register(){ openAuth('register'); }
   function logout(){ loggedIn=false; updateAuthUI(); go('home'); }
   function renderPublic(){
     const pub=products.filter(p=>p.published!==false);
