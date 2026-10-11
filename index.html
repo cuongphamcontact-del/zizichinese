@@ -442,6 +442,27 @@
   .lesson.now{background:var(--jade-tint)}.lesson.now .ls{background:var(--cinnabar);color:#fff}
   .lesson.lock{opacity:.5}
   .lesson b{font-size:.88rem;display:block}.lesson span{font-size:.77rem;color:var(--ink-60)}
+  /* ---------- dashboard khóa đã sở hữu ---------- */
+  .learn-dash{max-width:1180px;margin:0 auto;padding:30px 24px 60px}
+  .dash-h{font-size:1.7rem;margin-bottom:4px}
+  .dash-sub{color:var(--ink-60);margin-bottom:24px}
+  .owned-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .owned-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .oc-thumb{position:relative;aspect-ratio:16/9;background:linear-gradient(145deg,var(--jade),#10423a);display:grid;place-items:center;overflow:hidden}
+  .oc-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .oc-thumb .hanbig{font-family:"Noto Serif SC";font-weight:900;font-size:56px;color:rgba(255,255,255,.95)}
+  .oc-badge{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.95);color:var(--jade-dark);font-size:.62rem;font-weight:800;padding:.3em .7em;border-radius:999px;text-transform:uppercase}
+  .oc-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .oc-body h3{font-size:1.02rem;font-weight:700;line-height:1.35}
+  .oc-prog .oc-bar{height:8px;background:var(--paper-3);border-radius:20px;overflow:hidden;margin-bottom:6px}
+  .oc-prog .oc-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),var(--gold))}
+  .oc-prog small{font-size:.78rem;color:var(--ink-60)}
+  .oc-doc{font-size:.84rem;color:var(--ink-60)}
+  .oc-body .btn{align-self:flex-start;margin-top:auto}
+  .dash-empty{grid-column:1/-1;background:#fff;border:1.5px dashed var(--line-2);border-radius:16px;padding:48px 24px;text-align:center;color:var(--ink-60)}
+  .dash-empty a{color:var(--jade-dark);font-weight:700;cursor:pointer}
+  @media(max-width:980px){.owned-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.owned-grid{grid-template-columns:1fr}.learn-dash{padding:20px 18px 60px}}
 
   /* ---------- admin CRUD: tab head, modal, form, toast, pixel ---------- */
   .tab-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -886,45 +907,35 @@
     <a class="brand" href="#" onclick="go('home');return false"><span class="tianzige mark"><span class="han hz">字</span></span><span>ZiZi<small>Khu vực học viên</small></span></a>
     <div class="who"><span id="learnName">Xin chào, học viên 👋</span><span class="av" id="learnAv">H</span><a class="lg" href="#" onclick="logout();return false">Đăng xuất</a></div>
   </div>
-  <div class="learn-wrap">
-    <div class="learn-main">
-      <div class="player">
-        <button class="play" aria-label="Phát video">▶</button>
-        <span class="now-lesson">Đang học · Buổi 5 — Bài 1</span>
+  <!-- Dashboard: khóa & tài liệu đã sở hữu -->
+  <div class="learn-dash" id="learnDash">
+    <h2 class="dash-h">Khóa học của tôi</h2>
+    <p class="dash-sub">Các khóa học và tài liệu bạn đang sở hữu — tiếp tục từ chỗ đang học.</p>
+    <div class="owned-grid" id="ownedGrid"></div>
+  </div>
+  <!-- Player: học 1 khóa -->
+  <div class="learn-player" id="learnPlayer" style="display:none">
+    <div class="learn-wrap">
+      <div class="learn-main">
+        <a class="back" href="#" onclick="backToDash();return false">← Khóa học của tôi</a>
+        <div class="player">
+          <button class="play" aria-label="Phát video">▶</button>
+          <span class="now-lesson" id="nowLesson">Đang học</span>
+        </div>
+        <h2 id="learnTitle2">Khóa học</h2>
+        <div class="prog"><div class="prog-bar"><i id="learnProgBar" style="width:0%"></i></div><small id="learnProgText">0/0 buổi</small></div>
+        <div class="dl">
+          <b>Tài nguyên buổi học</b>
+          <a onclick="toast('Tải tài liệu (demo)')">📄 Tài liệu bài học (PDF)</a>
+          <a onclick="toast('Tải flashcard (demo)')">🃏 Flashcard từ vựng</a>
+          <a onclick="toast('Nghe audio (demo)')">🎧 Audio luyện nghe &amp; phát âm</a>
+        </div>
       </div>
-      <h2 id="learnTitle2">Khóa HSK1</h2>
-      <div class="prog"><div class="prog-bar"><i style="width:15%"></i></div><small>Hoàn thành 4/30 buổi · 15%</small></div>
-      <p style="color:var(--ink-60);font-size:.92rem;margin-top:12px"><b>Bài 1 · 你好 Nǐ hǎo (Xin chào).</b> Xem video, luyện phát âm theo audio và làm bài tập cuối buổi để mở buổi tiếp theo.</p>
-      <div class="dl">
-        <b>Tài nguyên buổi học</b>
-        <a>📄 Tài liệu Bài 1 · 你好 (PDF)</a>
-        <a>🃏 Flashcard từ vựng Bài 1</a>
-        <a>🎧 Audio luyện nghe &amp; phát âm</a>
-      </div>
+      <aside class="learn-side">
+        <h4>Nội dung khóa học <span id="lessonCount" style="font-weight:400;font-size:.76rem;color:var(--ink-60)"></span></h4>
+        <div id="lessonListLearn"></div>
+      </aside>
     </div>
-    <aside class="learn-side">
-      <h4>Nội dung khóa HSK1 <span style="font-weight:400;font-size:.76rem;color:var(--ink-60)">· 30 buổi</span></h4>
-      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 1</b><span>Nhập môn tiếng Trung</span></div></div>
-      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 2</b><span>Thanh mẫu, vận mẫu, thanh điệu · P1</span></div></div>
-      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 3</b><span>Thanh mẫu, vận mẫu, thanh điệu · P2</span></div></div>
-      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 4</b><span>Thanh mẫu, vận mẫu, thanh điệu · P3</span></div></div>
-      <div class="lesson now"><span class="ls">▶</span><div><b>Buổi 5 · Bài 1</b><span>你好 — Xin chào</span></div></div>
-      <div class="lesson"><span class="ls">6</span><div><b>Buổi 6 · Bài 2</b><span>汉语不太难 — Tiếng Hán không khó lắm</span></div></div>
-      <div class="lesson"><span class="ls">7</span><div><b>Buổi 7 · Bài 3</b><span>明天见 — Ngày mai gặp lại</span></div></div>
-      <div class="lesson"><span class="ls">8</span><div><b>Buổi 8–9 · Bài 4</b><span>你去哪儿 — Bạn đi đâu đấy</span></div></div>
-      <div class="lesson"><span class="ls">10</span><div><b>Buổi 10 · Bài 5</b><span>这是王老师 — Đây là thầy Vương</span></div></div>
-      <div class="lesson"><span class="ls">11</span><div><b>Buổi 11 · Bài 6</b><span>我学习汉语 — Tôi học tiếng Hán</span></div></div>
-      <div class="lesson"><span class="ls">12</span><div><b>Buổi 12–13 · Bài 7</b><span>你吃什么 — Bạn ăn gì</span></div></div>
-      <div class="lesson"><span class="ls">14</span><div><b>Buổi 14–15 · Bài 8</b><span>苹果一斤多少钱 — Một cân táo bao nhiêu tiền</span></div></div>
-      <div class="lesson"><span class="ls">16</span><div><b>Buổi 16 · Bài 9</b><span>我换人民币 — Tôi đổi tiền Nhân dân tệ</span></div></div>
-      <div class="lesson"><span class="ls">17</span><div><b>Buổi 17–18 · Bài 10</b><span>他住哪儿 — Ông ấy sống ở đâu</span></div></div>
-      <div class="lesson"><span class="ls">19</span><div><b>Buổi 18–19 · Bài 11</b><span>我们都是留学生 — Chúng tôi đều là lưu học sinh</span></div></div>
-      <div class="lesson"><span class="ls">20</span><div><b>Buổi 20</b><span>Luyện tập</span></div></div>
-      <div class="lesson"><span class="ls">21</span><div><b>Buổi 21–22 · Bài 12</b><span>你在哪儿学习 — Bạn học ở đâu</span></div></div>
-      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 23–25 · Bài 13</b><span>这是不是中药 — Đây có phải thuốc Đông y không</span></div></div>
-      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 26–28 · Bài 14</b><span>你的车是新的还是旧的 — Xe của bạn mới hay cũ</span></div></div>
-      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 29–30 · Bài 15</b><span>你们公司有多少职员 — Công ty có bao nhiêu nhân viên · Ôn tập</span></div></div>
-    </aside>
   </div>
 </div>
 
@@ -1245,6 +1256,7 @@
       document.getElementById('admLogin').style.display = admAuthed?'none':'grid';
       document.getElementById('admApp').style.display  = admAuthed?'grid':'none';
     }
+    if(view==='learn'){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); }
     document.body.classList.toggle('in-admin', view==='admin');
     document.body.classList.toggle('in-learn', view==='learn');
     document.body.classList.toggle('in-auth', view==='auth');
@@ -1355,6 +1367,63 @@
   function login(){ openAuth('login'); }
   function register(){ openAuth('register'); }
   function logout(){ loggedIn=false; clearSession(); updateAuthUI(); go('home'); }
+
+  /* ==== Khu vực học: khóa/tài liệu đã sở hữu + tiến độ ==== */
+  function getOwned(){
+    try{ const o=JSON.parse(localStorage.getItem('zizi_owned')||'null'); if(o) return o; }catch(_){}
+    const def=[{id:1,done:12},{id:4,done:18},{id:9,done:0}]; // demo: HSK1, Bộ thủ, tài liệu
+    saveOwned(def); return def;
+  }
+  function saveOwned(o){ try{localStorage.setItem('zizi_owned',JSON.stringify(o));}catch(_){} }
+  function addOwned(id){ const o=getOwned(); if(!o.some(x=>x.id===id)){ o.push({id,done:0}); saveOwned(o);} }
+  function renderLearn(){
+    const grid=document.getElementById('ownedGrid'); if(!grid)return;
+    const owned=getOwned();
+    if(!owned.length){ grid.innerHTML='<div class="dash-empty">Bạn chưa sở hữu khóa học nào.<br><a onclick="go(\'home\')">Khám phá khóa học →</a></div>'; return; }
+    grid.innerHTML=owned.map(o=>{
+      const p=products.find(x=>x.id===o.id); if(!p)return '';
+      const isDoc=p.type==='doc';
+      const thumb=p.cover?`<img src="${p.cover}">`:`<span class="hanbig hz">${p.char}</span>`;
+      const badge=isDoc?'Tài liệu':(p.type==='live'?'Trực tiếp':'Khóa học');
+      if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
+        <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">Tài liệu đã sở hữu · tải về không giới hạn.</p>
+        <button class="btn btn-jade btn-sm" onclick="toast('Đang tải tài liệu (demo)…')">⬇ Tải tài liệu</button></div></div>`;
+      const total=getLessons(p.id).length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
+      return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
+        <div class="oc-body"><h3>${p.name}</h3>
+        <div class="oc-prog"><div class="oc-bar"><i style="width:${pct}%"></i></div><small>${done}/${total} buổi · ${pct}%</small></div>
+        <button class="btn btn-primary btn-sm" onclick="openCourse(${p.id})">${done?'Tiếp tục học →':'Bắt đầu học →'}</button></div></div>`;
+    }).join('');
+  }
+  function openCourse(id){
+    const p=products.find(x=>x.id===id); if(!p)return;
+    const o=getOwned().find(x=>x.id===id)||{done:0};
+    const lessons=getLessons(id), total=lessons.length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
+    document.getElementById('learnTitle2').textContent=p.name;
+    document.getElementById('learnProgBar').style.width=pct+'%';
+    document.getElementById('learnProgText').textContent=`Hoàn thành ${done}/${total} buổi · ${pct}%`;
+    document.getElementById('lessonCount').textContent='· '+total+' buổi';
+    const cur=lessons[Math.min(done,total-1)];
+    document.getElementById('nowLesson').textContent='Đang học · '+((cur&&cur.title.split('—')[0].trim())||'Buổi 1');
+    document.getElementById('lessonListLearn').innerHTML=lessons.map((l,i)=>{
+      const locked=i>done+3, cls=i<done?'done':i===done?'now':(locked?'lock':''), ls=i<done?'✓':i===done?'▶':(locked?'🔒':(i+1));
+      const parts=l.title.split('—'), head=parts[0].trim(), sub=(parts[1]||'').trim();
+      return `<div class="lesson ${cls}" onclick="pickLesson(${id},${i})"><span class="ls">${ls}</span><div><b>${esc(head)}</b><span>${esc(sub)}</span></div></div>`;
+    }).join('');
+    document.getElementById('learnDash').style.display='none';
+    document.getElementById('learnPlayer').style.display='block';
+    window.scrollTo(0,0);
+  }
+  function pickLesson(id,i){
+    const lessons=getLessons(id), total=lessons.length, owned=getOwned();
+    let e=owned.find(x=>x.id===id); if(!e){e={id,done:0};owned.push(e);}
+    if(i>(e.done||0)+3){ toast('Buổi này chưa mở khóa — học các buổi trước đã nhé.'); return; }
+    e.done=Math.min(Math.max(e.done||0, i+1), total);
+    saveOwned(owned);
+    openCourse(id);
+    toast('Đã học: '+lessons[i].title.split('—')[0].trim());
+  }
+  function backToDash(){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); window.scrollTo(0,0); }
   function renderPublic(){
     const pub=products.filter(p=>p.published!==false);
     const sale=pub.filter(p=>p.status==='sale'), pre=pub.filter(p=>p.status==='preorder');
@@ -1452,7 +1521,7 @@
     /* mua xong = có tài khoản → đăng nhập + hiện Khu vực học */
     const coName=(document.getElementById('co_name')?.value||'').trim();
     const coEmail=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
-    loggedIn=true; setSession(coEmail||'guest'); setLearnerName(coName||'học viên'); updateAuthUI();
+    loggedIn=true; setSession(coEmail||'guest'); setLearnerName(coName||'học viên'); updateAuthUI(); addOwned(p.id);
     document.getElementById('checkoutForm').style.display='none';
     document.getElementById('successBox').style.display='block';
     document.getElementById('learnCourse').textContent=p.name;
