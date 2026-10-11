@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZiZi Chinese — Tự học tiếng Trung từ 0 đến HSK6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+  /* @THEME — sửa màu ở đây, toàn bộ web đổi theo */
+  :root{
+    --paper:#F6F9EE; --paper-2:#EDF3DE; --paper-3:#DFEBC9;
+    --ink:#2E4A2A; --ink-soft:#2E4A2A; --ink-60:#5f7657;
+    --jade:#8CB86E; --jade-dark:#5C8C3F; --jade-tint:#E4EFD2; --jade-line:#A9CF89;
+    --cinnabar:#E37765; --cinnabar-dark:#C85B48;
+    --gold:#E8B44E; --gold-soft:#F4D58C;
+    --line:rgba(46,74,42,.13); --line-2:rgba(46,74,42,.24);
+    --shadow:0 2px 0 rgba(46,74,42,.04), 0 22px 46px -24px rgba(92,140,63,.42);
+    --grid: rgba(46,74,42,.16);
+    --backdrop:#DBE7C4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--backdrop)}
+  body{
+    font-family:"Be Vietnam Pro",system-ui,sans-serif;
+    background:var(--backdrop); color:var(--ink);
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* Trang ngoài (home/product/checkout): khóa cột mobile, căn giữa */
+  header,#view-home,#view-product,#view-checkout,footer{
+    max-width:460px;margin-left:auto;margin-right:auto;
+  }
+  #view-home,#view-product,#view-checkout{background:var(--paper)}
+  .hz{font-family:"Noto Serif SC",serif}
+  h1,h2,h3,.display{font-family:"Fraunces",Georgia,serif; font-weight:600; line-height:1.05; letter-spacing:-.01em}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+  .eyebrow{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--jade-dark);background:var(--jade-tint);padding:.42em .9em;border-radius:999px}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  :focus-visible{outline:2.5px solid var(--cinnabar);outline-offset:3px;border-radius:3px}
+
+  /* ---------- practice-grid motif ---------- */
+  .tianzige{position:relative;background:var(--paper);border:2px solid var(--ink);
+    display:grid;place-items:center;overflow:hidden}
+  .tianzige::before,.tianzige::after{content:"";position:absolute;background-image:
+    linear-gradient(var(--cinnabar) 50%, transparent 0);
+  }
+  .tianzige::before{left:0;right:0;top:50%;height:2px;
+    background:repeating-linear-gradient(90deg,var(--cinnabar) 0 8px,transparent 8px 16px);opacity:.5}
+  .tianzige::after{top:0;bottom:0;left:50%;width:2px;
+    background:repeating-linear-gradient(0deg,var(--cinnabar) 0 8px,transparent 8px 16px);opacity:.5}
+  .tianzige .han{position:relative;z-index:2;line-height:1;color:var(--ink)}
+
+  /* ---------- buttons ---------- */
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:600;font-size:.98rem;
+    padding:.85em 1.6em;border-radius:999px;transition:transform .15s ease, box-shadow .15s ease, background .15s;
+    border:1.5px solid transparent;white-space:nowrap}
+  .btn-primary{background:var(--cinnabar);color:#fff;box-shadow:0 6px 0 -1px var(--cinnabar-dark)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 0 -1px var(--cinnabar-dark)}
+  .btn-primary:active{transform:translateY(2px);box-shadow:0 3px 0 -1px var(--cinnabar-dark)}
+  .btn-jade{background:var(--jade);color:#fff}
+  .btn-jade:hover{background:var(--jade-dark)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-2)}
+  .btn-ghost:hover{border-color:var(--ink);background:rgba(27,36,31,.04)}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:50;background:rgba(246,249,238,.86);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:1.4rem;height:66px}
+  .brand{display:flex;align-items:center;gap:.6rem;font-family:"Fraunces",serif;font-weight:600;font-size:1.12rem}
+  .brand .mark{width:34px;height:34px;font-size:20px;border-width:1.5px;flex:none}
+  .brand small{display:block;font-family:"Be Vietnam Pro";font-weight:600;font-size:.58rem;letter-spacing:.24em;color:var(--jade);text-transform:uppercase;margin-top:-2px}
+  .nav-links{display:flex;gap:1.5rem;margin-left:auto;font-size:.9rem;font-weight:500}
+  .nav-links a{padding:.3rem 0;border-bottom:2px solid transparent}
+  .nav-links a:hover{border-color:var(--cinnabar)}
+  .nav-cta{display:flex;gap:.6rem;align-items:center}
+  .zalo{font-weight:600;font-size:.86rem;color:var(--jade);display:inline-flex;align-items:center;gap:.35rem}
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 40px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.3rem,4.6vw,4rem);margin:.5rem 0 1rem}
+  .hero h1 .em{font-style:italic;color:var(--jade)}
+  .hero p.lead{font-size:1.12rem;color:var(--ink-60);max-width:34ch;margin-bottom:1.8rem}
+  .hero-cta{display:flex;gap:.8rem;flex-wrap:wrap}
+  .hero-stats{display:flex;gap:1.8rem;margin-top:2rem;flex-wrap:wrap}
+  .hero-stats div{border-left:2px solid var(--cinnabar);padding-left:.7rem}
+  .hero-stats b{font-family:"Fraunces",serif;font-size:1.35rem;display:block;line-height:1}
+  .hero-stats span{font-size:.76rem;color:var(--ink-60)}
+
+  .hero-art{position:relative;display:grid;place-items:center}
+  .big-cell{width:min(340px,80%);aspect-ratio:1;background:
+     linear-gradient(#fff,#eef5e0);border:2.5px solid var(--ink);position:relative;
+     box-shadow:var(--shadow);border-radius:2px}
+  .big-cell .diag{position:absolute;inset:0;pointer-events:none}
+  .big-cell .han{position:absolute;inset:0;display:grid;place-items:center;
+     font-family:"Noto Serif SC",serif;font-weight:900;font-size:clamp(120px,20vw,190px);color:var(--ink);
+     -webkit-mask:linear-gradient(#000,#000);mask:linear-gradient(#000,#000)}
+  .ink-reveal{animation:reveal 1.6s cubic-bezier(.4,0,.1,1) .2s both}
+  @keyframes reveal{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+  .seal{position:absolute;bottom:-14px;right:-14px;width:64px;height:64px;background:var(--cinnabar);
+     color:#fff;display:grid;place-items:center;font-family:"Noto Serif SC";font-weight:600;font-size:26px;
+     border-radius:3px;transform:rotate(-6deg);box-shadow:0 8px 20px -6px rgba(166,44,27,.6);line-height:1.05;text-align:center}
+  .float-radical{position:absolute;font-family:"Noto Serif SC";color:var(--jade);opacity:.16;font-weight:900;user-select:none}
+
+  /* ---------- ZiZi mascot ---------- */
+  .hero-art{min-height:290px}
+  .mascot-blob{position:absolute;width:86%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 50% 46%,var(--jade-tint),rgba(228,239,210,0) 68%)}
+  .mascot{width:min(300px,88%);position:relative;z-index:2;filter:drop-shadow(0 16px 20px rgba(46,74,42,.18))}
+  .mascot .seg{fill:var(--jade);stroke:var(--ink);stroke-width:5}
+  .mascot .foot{fill:var(--jade-dark);stroke:var(--ink);stroke-width:4}
+  .mascot .eye-w{fill:#fff;stroke:var(--ink);stroke-width:4}
+  .mascot .pupil{fill:var(--ink)}
+  .mascot .cheek{fill:var(--cinnabar);opacity:.6}
+  .mascot .ant{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round}
+  .mascot .smile{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+  .mascot .glint{fill:#fff}
+  .mascot{animation:sway 4s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+  .bubble{position:absolute;width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--ink);
+    display:grid;place-items:center;font-size:20px;font-weight:900;color:var(--jade-dark);z-index:3;
+    box-shadow:0 6px 14px -6px rgba(46,74,42,.45);animation:bob 3s ease-in-out infinite}
+  .bubble.b1{top:2px;left:0}
+  .bubble.b2{top:44px;right:-2px;background:var(--gold-soft);animation-delay:.7s}
+  .bubble.b3{bottom:16px;left:8%;background:var(--cinnabar);color:#fff;border-color:var(--cinnabar-dark);animation-delay:1.3s}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+  /* ---------- trust strip ---------- */
+  .trust{background:var(--jade-dark);color:#f2f8ea}
+  .trust .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--jade-line)}
+  .trust .cell{background:var(--jade-dark);padding:22px;display:flex;gap:.8rem;align-items:center}
+  .trust .ic{width:38px;height:38px;flex:none;border:1.5px solid var(--gold-soft);border-radius:50%;
+     display:grid;place-items:center;color:var(--gold-soft);font-size:19px}
+  .trust b{display:block;font-size:.95rem}
+  .trust span{font-size:.78rem;opacity:.82}
+
+  /* ---------- sections ---------- */
+  section.pad{padding:76px 0}
+  .sec-head{margin-bottom:36px;max-width:56ch}
+  .sec-head h2{font-size:clamp(1.8rem,3.4vw,2.7rem);margin:.5rem 0}
+  .sec-head p{color:var(--ink-60)}
+
+  /* ---------- products ---------- */
+  .products{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .card{background:#ffffff;border:1.5px solid var(--line-2);border-radius:22px;padding:26px;
+     display:flex;flex-direction:column;position:relative;transition:transform .18s,box-shadow .18s;overflow:hidden}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .card .level{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;
+     letter-spacing:.14em;text-transform:uppercase;color:var(--jade)}
+  .card .cell{width:66px;height:66px;font-size:40px;flex:none;border-width:1.5px;border-radius:3px;margin-bottom:16px}
+  .card h3{font-size:1.4rem;margin:.1rem 0 .4rem}
+  .card .desc{font-size:.92rem;color:var(--ink-60);margin-bottom:16px;flex:1}
+  .card ul{list-style:none;font-size:.86rem;margin-bottom:18px;display:grid;gap:.4rem}
+  .card ul li{display:flex;gap:.5rem;align-items:flex-start}
+  .card ul li::before{content:"一";font-family:"Noto Serif SC";color:var(--cinnabar);font-weight:900;line-height:1.3}
+  .price{display:flex;align-items:baseline;gap:.6rem;margin-bottom:16px}
+  .price .now{font-family:"Fraunces",serif;font-size:1.7rem;font-weight:600;color:var(--cinnabar)}
+  .price .was{text-decoration:line-through;color:var(--ink-60);font-size:.95rem}
+  .price .off{font-size:.7rem;font-weight:700;background:var(--jade-tint);color:var(--jade-dark);padding:.2em .5em;border-radius:2px}
+  .card.featured{grid-column:1 / -1;background:linear-gradient(120deg,var(--jade-dark),var(--jade));
+     color:#eafaf3;border-color:var(--jade-dark);display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
+  .card.featured .desc,.card.featured .level{color:#cfe9de}
+  .card.featured .level{color:var(--gold-soft)}
+  .card.featured h3{color:#fff;font-size:1.9rem}
+  .card.featured .price .now{color:#fff}
+  .card.featured .price .was{color:#bcd9cd}
+  .card.featured ul li::before{color:var(--gold-soft)}
+  .card.featured .cell{background:rgba(255,255,255,.08);border-color:var(--gold-soft);color:#fff}
+  .card.featured .cell .han{color:#fff}
+  .ribbon{position:absolute;top:14px;right:-34px;transform:rotate(45deg);background:var(--cinnabar);color:#fff;
+     font-size:.68rem;font-weight:700;letter-spacing:.1em;padding:5px 40px;text-transform:uppercase}
+  .combo-body{max-width:60%}
+  .preorder{position:absolute;top:14px;right:14px;background:var(--gold);color:#4a3608;font-size:.66rem;font-weight:700;letter-spacing:.05em;padding:.32em .65em;border-radius:20px;text-transform:uppercase;z-index:3}
+
+  /* ---------- path / lộ trình ---------- */
+  .path{background:var(--paper-2)}
+  .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;margin-top:20px}
+  .roadmap::before{content:"";position:absolute;top:33px;left:8%;right:8%;height:2px;
+     background:repeating-linear-gradient(90deg,var(--ink) 0 10px,transparent 10px 20px);opacity:.4}
+  .stop{text-align:center;position:relative;padding:0 12px}
+  .stop .dot{width:66px;height:66px;margin:0 auto 16px;background:var(--paper);border:2px solid var(--ink);
+     border-radius:50%;display:grid;place-items:center;font-family:"Noto Serif SC";font-weight:900;font-size:30px;position:relative;z-index:2}
+  .stop.active .dot{background:var(--cinnabar);color:#fff;border-color:var(--cinnabar)}
+  .stop h4{font-family:"Fraunces";font-size:1.15rem;margin-bottom:.3rem}
+  .stop p{font-size:.84rem;color:var(--ink-60)}
+
+  /* ---------- reviews ---------- */
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px}
+  .rev{background:#ffffff;border:1px solid var(--line);border-radius:4px;padding:22px}
+  .stars{color:var(--gold);letter-spacing:2px;font-size:.9rem;margin-bottom:.6rem}
+  .rev p{font-size:.92rem;margin-bottom:14px}
+  .rev .who{display:flex;align-items:center;gap:.6rem}
+  .rev .av{width:38px;height:38px;border-radius:50%;background:var(--jade);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem;flex:none}
+  .rev .who b{font-size:.86rem;display:block}
+  .rev .who span{font-size:.74rem;color:var(--ink-60)}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink);color:#c9d3cc;padding:60px 0 30px;font-size:.86rem}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.4fr;gap:32px;margin-bottom:36px}
+  footer h5{font-family:"Fraunces";color:#fff;font-size:1rem;margin-bottom:14px}
+  footer a{display:block;padding:.2rem 0;opacity:.82}
+  footer a:hover{opacity:1;color:#fff}
+  .foot-legal{border-top:1px solid rgba(255,255,255,.14);padding-top:22px;font-size:.76rem;opacity:.72;line-height:1.7}
+  .foot-brand .brand{color:#fff}
+  .foot-brand p{opacity:.75;margin:12px 0 16px;max-width:34ch}
+  .socials{display:flex;gap:.6rem}
+  .socials a{width:36px;height:36px;border:1px solid rgba(255,255,255,.2);border-radius:50%;display:grid;place-items:center;opacity:.85}
+  .socials a:hover{background:var(--cinnabar);border-color:var(--cinnabar)}
+
+  /* ---------- LANDING VIEW ---------- */
+  #view-product,#view-checkout{display:none}
+  .flashbar{background:var(--cinnabar);color:#fff;text-align:center;padding:10px;font-size:.9rem;font-weight:600;
+     display:flex;justify-content:center;gap:1rem;align-items:center;flex-wrap:wrap}
+  .timer{display:inline-flex;gap:4px;font-family:"Fraunces"}
+  .timer b{background:rgba(0,0,0,.22);padding:2px 7px;border-radius:3px;font-variant-numeric:tabular-nums}
+  .back{display:inline-flex;align-items:center;gap:.4rem;font-weight:600;color:var(--jade);margin:22px 0 10px}
+  .lp{display:grid;grid-template-columns:1fr 1fr;gap:46px;padding:20px 0 60px;align-items:start}
+  .lp-art .big-cell{width:100%;max-width:380px}
+  .badge-row{display:flex;gap:.5rem;flex-wrap:wrap;margin:14px 0}
+  .badge{font-size:.74rem;font-weight:600;background:var(--jade-tint);color:var(--jade-dark);padding:.35em .7em;border-radius:2px}
+  .lp h1{font-size:clamp(1.9rem,3.6vw,2.8rem);margin:.4rem 0}
+  .sold{margin:14px 0}
+  .sold .bar{height:8px;background:var(--paper-3);border-radius:20px;overflow:hidden;margin-top:6px}
+  .sold .fill{height:100%;width:87%;background:linear-gradient(90deg,var(--cinnabar),var(--gold))}
+  .sold small{font-size:.78rem;color:var(--ink-60)}
+  .lp .price{margin:20px 0}
+  .lp .price .now{font-size:2.3rem}
+  .fmt{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+  .fmt label{border:1.5px solid var(--line-2);border-radius:4px;padding:14px;cursor:pointer;transition:.15s;display:block}
+  .fmt input{position:absolute;opacity:0}
+  .fmt label:has(input:checked){border-color:var(--cinnabar);background:#fff;box-shadow:inset 0 0 0 1px var(--cinnabar)}
+  .fmt b{font-size:.96rem;display:flex;align-items:center;gap:.4rem}
+  .fmt span{font-size:.78rem;color:var(--ink-60)}
+  .whatsin{background:var(--paper-2);border-radius:6px;padding:26px;margin:28px 0}
+  .whatsin h3{font-size:1.3rem;margin-bottom:14px}
+  .whatsin ul{list-style:none;display:grid;gap:.6rem;font-size:.92rem}
+  .whatsin li{display:flex;gap:.6rem}
+  .whatsin li .n{width:26px;height:26px;flex:none;background:var(--jade);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700}
+  .guarantee{border:1.5px dashed var(--gold);border-radius:6px;padding:20px;display:flex;gap:.9rem;align-items:center;margin:24px 0}
+  .guarantee .g-ic{font-size:32px;flex:none}
+  .guarantee b{display:block;color:var(--gold)}
+  .guarantee p{font-size:.86rem;color:var(--ink-60)}
+  .sticky-buy{position:sticky;top:80px}
+
+  /* ---------- CHECKOUT ---------- */
+  .steps{display:flex;gap:0;margin:30px 0 34px;max-width:560px}
+  .steps .st{flex:1;text-align:center;font-size:.78rem;font-weight:600;color:var(--ink-60);position:relative;padding-bottom:22px}
+  .steps .st::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--line)}
+  .steps .st.on{color:var(--cinnabar)}
+  .steps .st.on::after{background:var(--cinnabar)}
+  .co-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:start;padding-bottom:70px}
+  .field{margin-bottom:16px}
+  .field label{font-size:.82rem;font-weight:600;display:block;margin-bottom:6px}
+  .field input{width:100%;padding:12px 14px;border:1.5px solid var(--line-2);border-radius:4px;font-family:inherit;font-size:.95rem;background:#fff}
+  .field input:focus{border-color:var(--jade);outline:none}
+  #addrField{display:none}
+  .summary{background:var(--paper-2);border-radius:6px;padding:24px;position:sticky;top:90px}
+  .summary h4{font-family:"Fraunces";margin-bottom:14px}
+  .sum-line{display:flex;justify-content:space-between;font-size:.9rem;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .sum-total{display:flex;justify-content:space-between;font-weight:700;font-size:1.2rem;padding-top:12px;font-family:"Fraunces"}
+  .sum-total b{color:var(--cinnabar)}
+  .qr{background:#fff;border:1.5px solid var(--line-2);border-radius:6px;padding:20px;text-align:center;margin-top:16px;display:none}
+  .qr .code{width:150px;height:150px;margin:0 auto 12px;background:
+    repeating-conic-gradient(var(--ink) 0 25%, #fff 0 50%) 0 0/16px 16px;border:6px solid #fff;box-shadow:0 0 0 1.5px var(--ink)}
+  .qr .bank{font-size:.84rem;text-align:left;background:var(--paper);border-radius:4px;padding:10px 12px;margin-top:10px}
+  .qr .bank div{display:flex;justify-content:space-between;padding:2px 0}
+  .success{display:none;text-align:center;padding:70px 20px}
+  .success .seal-big{width:96px;height:96px;background:var(--cinnabar);color:#fff;border-radius:50%;display:grid;place-items:center;margin:0 auto 22px;font-family:"Noto Serif SC";font-size:44px;animation:pop .5s cubic-bezier(.3,1.4,.5,1) both}
+  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+  .success h2{font-size:2rem;margin-bottom:.6rem}
+  .success p{color:var(--ink-60);max-width:40ch;margin:0 auto 24px}
+
+  /* ---------- live-sale popup ---------- */
+  .popup{position:fixed;left:20px;bottom:20px;z-index:60;background:#fff;border:1px solid var(--line-2);
+     border-radius:8px;padding:12px 16px;display:flex;gap:.7rem;align-items:center;box-shadow:var(--shadow);
+     max-width:300px;transform:translateY(140%);transition:transform .5s cubic-bezier(.3,1.2,.4,1)}
+  .popup.show{transform:translateY(0)}
+  .popup .av{width:38px;height:38px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none}
+  .popup b{font-size:.84rem}.popup span{font-size:.76rem;color:var(--ink-60);display:block}
+
+  @media all{
+    .hero-grid,.lp,.co-grid{grid-template-columns:1fr;gap:30px}
+    .hero-art{order:-1}
+    .nav-links{display:none}
+    .products,.trust .wrap,.roadmap,.reviews,.foot-grid,.fmt{grid-template-columns:1fr}
+    .trust .wrap{gap:1px}
+    .card.featured{grid-template-columns:1fr}
+    .combo-body{max-width:100%}
+    .roadmap::before{display:none}
+    .foot-grid{gap:22px}
+    .sticky-buy,.summary{position:static}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;transition:none!important;scroll-behavior:auto}
+    .ink-reveal{clip-path:none}
+  }
+
+  /* ---------- online note + mobile sticky cta ---------- */
+  .online-note{background:var(--jade-tint);border-radius:4px;padding:12px 14px;font-size:.9rem;margin:18px 0;color:var(--jade-dark)}
+  .mcta{display:none}
+
+  /* ---------- ADMIN ---------- */
+  body.in-admin{background:var(--paper-2)}
+  body.in-admin header,body.in-admin footer,body.in-admin .popup{display:none!important}
+  #view-admin{display:none}
+  .adm{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+  .adm-side{background:var(--jade-dark);color:#dcefe7;padding:20px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .adm-side .brand{color:#fff;margin-bottom:24px;font-size:1.1rem}
+  .adm-side .brand .mark{border-color:#fff}.adm-side .brand .han{color:#fff}
+  .adm-side .brand small{color:var(--gold-soft)}
+  .adm-nav{display:flex;flex-direction:column;gap:3px;flex:1}
+  .adm-nav button{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;color:#bcd9cd;padding:11px 12px;border-radius:8px;font-size:.9rem;font-weight:500;font-family:inherit}
+  .adm-nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+  .adm-nav button.on{background:var(--cinnabar);color:#fff}
+  .adm-nav .ic{font-size:15px;width:18px;text-align:center;flex:none}
+  .side-foot{border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+  .side-foot a{display:block;color:#a9cabe;font-size:.82rem;padding:6px 12px}
+  .side-foot a:hover{color:#fff}
+  .adm-main{min-width:0}
+  .adm-top{background:var(--paper);border-bottom:1px solid var(--line);padding:16px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+  .adm-top h1{font-size:1.35rem}
+  .adm-top .who{display:flex;align-items:center;gap:.6rem;font-size:.85rem}
+  .adm-top .who .av{width:34px;height:34px;border-radius:50%;background:var(--jade);color:#fff;display:grid;place-items:center;font-weight:700}
+  .adm-body{padding:24px 26px 60px}
+  .adm-tab[hidden]{display:none}
+  .adm-tab{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .kpi .lbl{font-size:.78rem;color:var(--ink-60);display:flex;align-items:center;gap:.4rem}
+  .kpi .val{font-family:"Fraunces";font-size:1.65rem;font-weight:600;margin:6px 0 2px}
+  .kpi .chg{font-size:.76rem;font-weight:600}
+  .kpi .up{color:var(--jade)}.kpi .down{color:var(--cinnabar)}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px}
+  .panel h3{font-family:"Fraunces";font-size:1.1rem;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+  .panel h3 .mini{font-size:.76rem;font-weight:500;font-family:"Be Vietnam Pro";color:var(--ink-60)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+  .chart{display:flex;align-items:flex-end;gap:10px;height:190px;padding-top:10px}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+  .chart .amt{font-size:.68rem;color:var(--ink-60);font-weight:600}
+  .chart .bar{width:100%;max-width:42px;background:linear-gradient(var(--jade-line),var(--jade-dark));border-radius:5px 5px 0 0;transition:.3s}
+  .chart .col:hover .bar{background:linear-gradient(var(--cinnabar),#e0715f)}
+  .chart .day{font-size:.72rem;color:var(--ink-60)}
+
+  table.adm-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+  .adm-tbl th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-60);padding:8px 10px;border-bottom:2px solid var(--line)}
+  .adm-tbl td{padding:11px 10px;border-bottom:1px solid var(--line)}
+  .adm-tbl tr:hover td{background:var(--paper)}
+  .han-mini{font-family:"Noto Serif SC";font-weight:900;color:var(--jade)}
+  .tag{font-size:.72rem;font-weight:600;padding:.25em .6em;border-radius:20px;white-space:nowrap}
+  .tag.paid,.tag.active{background:var(--jade-tint);color:var(--jade-dark)}
+  .tag.pending{background:#fbeecb;color:#8a6512}
+  .tag.refund{background:#f6dcd6;color:var(--cinnabar-dark)}
+  .chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .chips button{font-size:.8rem;padding:.4em .9em;border-radius:20px;border:1px solid var(--line-2);color:var(--ink-60);font-family:inherit}
+  .chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tbl-scroll{overflow-x:auto}
+
+  .rank{display:flex;flex-direction:column;gap:15px}
+  .rank .row{display:flex;align-items:center;gap:12px}
+  .rank .row .han-mini{font-size:22px;width:26px;text-align:center}
+  .rank .row .info{flex:1;min-width:0}
+  .rank .row .info b{font-size:.88rem}
+  .rank .bar-bg{height:7px;background:var(--paper-3);border-radius:20px;margin-top:5px;overflow:hidden}
+  .rank .bar-bg i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),var(--gold))}
+  .rank .row .num{font-weight:700;font-size:.86rem;font-family:"Fraunces"}
+
+  .course-row{display:flex;align-items:center;gap:16px;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;background:#fff}
+  .course-row .cch{width:52px;height:52px;flex:none;font-size:28px;border-width:1.5px;border-radius:8px}
+  .course-row .meta{flex:1;min-width:120px}
+  .course-row .meta b{font-size:1rem}
+  .course-row .meta .sub{font-size:.78rem;color:var(--ink-60)}
+  .course-row .stat{text-align:center;min-width:64px}
+  .course-row .stat b{display:block;font-family:"Fraunces";font-size:1.05rem}
+  .course-row .stat span{font-size:.68rem;color:var(--ink-60)}
+
+  .funnel{display:flex;flex-direction:column;gap:10px}
+  .funnel .step{display:flex;align-items:center;gap:12px}
+  .funnel .lbl{width:180px;font-size:.84rem;font-weight:500;flex:none}
+  .funnel .lbl b{font-family:"Fraunces"}
+  .funnel .track{flex:1;background:var(--paper-3);border-radius:6px;height:34px;overflow:hidden}
+  .funnel .track i{display:block;height:100%;background:linear-gradient(90deg,var(--jade-dark),var(--jade))}
+  .funnel .drop{width:56px;text-align:right;font-size:.8rem;color:var(--jade);font-weight:700}
+  .src{display:flex;flex-direction:column;gap:16px}
+  .src .row .info{display:flex;justify-content:space-between;font-size:.86rem;margin-bottom:5px}
+  .src .row .info b{font-weight:600}
+  .src .bar-bg{height:9px;background:var(--paper-3);border-radius:20px;overflow:hidden}
+  .src .bar-bg i{display:block;height:100%}
+
+  /* ---------- payment status + learn ---------- */
+  .pay-amount{font-family:"Fraunces";font-size:1.5rem;font-weight:600;color:var(--cinnabar);margin:6px 0 4px}
+  .pay-status{display:flex;gap:12px;align-items:center;border-radius:10px;padding:14px 16px;margin:16px 0 10px}
+  .pay-status.waiting{background:#fef3d6;border:1px solid #f0d38a}
+  .pay-status.done{background:var(--jade-tint);border:1px solid var(--jade-line)}
+  .pay-status b{display:block;font-size:.9rem}
+  .pay-status span{font-size:.8rem;color:var(--ink-60)}
+  .spinner{width:22px;height:22px;flex:none;border:3px solid rgba(21,54,48,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .demo-btn{width:100%;justify-content:center;font-size:.85rem;opacity:.75}
+  .cred{display:flex;gap:14px;justify-content:center;margin:6px 0 22px;flex-wrap:wrap}
+  .cred div{background:var(--paper-2);border-radius:8px;padding:10px 18px;text-align:left}
+  .cred span{font-size:.72rem;color:var(--ink-60);display:block}
+  .cred b{font-size:.95rem}
+
+  body.in-learn{background:var(--paper-2)}
+  body.in-learn header,body.in-learn footer,body.in-learn .popup{display:none!important}
+  #view-learn{display:none;min-height:100vh}
+  .learn-top{background:var(--ink);color:#eafaf3;padding:12px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .learn-top .brand{color:#fff}.learn-top .brand .mark{border-color:#fff}.learn-top .brand .han{color:#fff}.learn-top .brand small{color:var(--gold-soft)}
+  .learn-top .who{display:flex;align-items:center;gap:.8rem;font-size:.85rem}
+  .learn-top .who .av{width:34px;height:34px;border-radius:50%;background:var(--jade);display:grid;place-items:center;font-weight:700;color:#fff}
+  .learn-top .lg{color:#bcd9cd;font-size:.82rem}.learn-top .lg:hover{color:#fff}
+  .learn-wrap{max-width:1140px;margin:0 auto;padding:26px 22px 60px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+  .player{aspect-ratio:16/9;background:linear-gradient(135deg,var(--jade-dark),var(--ink));border-radius:14px;display:grid;place-items:center;position:relative;overflow:hidden}
+  .player::after{content:"字";position:absolute;font-family:"Noto Serif SC";font-weight:900;font-size:210px;color:rgba(255,255,255,.06);line-height:1}
+  .player .play{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--jade-dark);font-size:24px;display:grid;place-items:center;z-index:2;padding-left:5px;transition:transform .15s}
+  .player .play:hover{transform:scale(1.07)}
+  .player .now-lesson{position:absolute;left:16px;bottom:14px;color:#fff;font-size:.8rem;background:rgba(0,0,0,.4);padding:.3em .7em;border-radius:20px}
+  .learn-main h2{margin:18px 0 10px;font-size:1.6rem}
+  .prog .prog-bar{height:8px;background:var(--paper-3);border-radius:20px;overflow:hidden}
+  .prog .prog-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),var(--gold))}
+  .prog small{font-size:.8rem;color:var(--ink-60);display:block;margin-top:6px}
+  .dl{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .dl b{display:block;margin-bottom:8px;font-size:.9rem}
+  .dl a{display:block;padding:9px 0;font-size:.9rem;color:var(--jade-dark);border-bottom:1px solid var(--line);cursor:pointer}
+  .dl a:last-child{border:none}.dl a:hover{color:var(--cinnabar)}
+  .learn-side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;position:sticky;top:80px}
+  .learn-side h4{font-family:"Fraunces";margin-bottom:12px}
+  .lesson{display:flex;gap:12px;align-items:center;padding:10px 8px;border-radius:8px;cursor:pointer}
+  .lesson:hover{background:var(--paper)}
+  .lesson .ls{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700;background:var(--paper-3);color:var(--ink-60)}
+  .lesson.done .ls{background:var(--jade);color:#fff}
+  .lesson.now{background:var(--jade-tint)}.lesson.now .ls{background:var(--cinnabar);color:#fff}
+  .lesson.lock{opacity:.5}
+  .lesson b{font-size:.88rem;display:block}.lesson span{font-size:.77rem;color:var(--ink-60)}
+
+  /* ---------- admin CRUD: tab head, modal, form, toast, pixel ---------- */
+  .tab-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .addbtn{padding:.55em 1.15em;font-size:.86rem}
+  .note-line{font-size:.82rem;color:var(--ink-60);margin-top:14px;line-height:1.55}
+  .note-line code,.ev-row code{background:var(--paper-2);padding:.12em .5em;border-radius:6px;font-size:.82rem;color:var(--jade-dark)}
+  .lnk{color:var(--jade-dark);font-weight:600;font-family:inherit;font-size:.84rem;background:none}
+  .lnk:hover{color:var(--cinnabar)}
+  .modal-bg{position:fixed;inset:0;background:rgba(46,74,42,.5);display:none;place-items:center;z-index:200;padding:20px}
+  .modal-bg.show{display:grid}
+  .modal{background:#fff;border-radius:20px;padding:26px;width:100%;max-width:440px;max-height:90vh;overflow:auto;position:relative;box-shadow:0 34px 80px -22px rgba(0,0,0,.45)}
+  .modal h3{font-family:"Fraunces";font-size:1.3rem;margin-bottom:16px}
+  .modal-x{position:absolute;top:12px;right:16px;font-size:24px;color:var(--ink-60);line-height:1;background:none}
+  .mform label{display:block;font-size:.82rem;font-weight:600;margin-bottom:13px}
+  .mform input,.mform select{width:100%;padding:10px 12px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.92rem;margin-top:5px;font-weight:400;background:#fff}
+  .mform input:focus,.mform select:focus{border-color:var(--jade);outline:none}
+  .mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+  .mact .del{color:var(--cinnabar);border-color:var(--cinnabar);margin-right:auto}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:999px;font-size:.9rem;font-weight:600;z-index:210;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.4)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .px-grid{display:grid;gap:14px}
+  .px-grid label{font-size:.82rem;font-weight:600}
+  .px-grid input{width:100%;padding:10px 12px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.9rem;margin-top:5px}
+  .px-grid input:focus{border-color:var(--jade);outline:none}
+  .ev-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:.86rem;gap:10px}
+  .ev-row:last-child{border:none}
+  .switch{position:relative;width:40px;height:22px;flex:none;display:inline-block}
+  .switch input{opacity:0;width:0;height:0}
+  .switch span{position:absolute;inset:0;background:var(--paper-3);border-radius:20px;transition:.2s;cursor:pointer}
+  .switch span::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked+span{background:var(--jade)}
+  .switch input:checked+span::before{transform:translateX(18px)}
+  .lmgr{display:flex;flex-direction:column;gap:12px;max-height:58vh;overflow:auto;margin:0 -2px;padding:2px}
+  .lrow{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff}
+  .ltitle{font-weight:600;font-size:.86rem;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+  .ltitle .ok{font-size:.64rem;font-weight:700;color:var(--jade-dark);background:var(--jade-tint);padding:.2em .55em;border-radius:20px}
+  .lvid{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .lvid .lic{flex:none}
+  .lvid input{flex:1;min-width:0;padding:8px 11px;border:1.5px solid var(--line-2);border-radius:8px;font-family:inherit;font-size:.82rem}
+  .lvid input:focus{border-color:var(--jade);outline:none}
+  .lfiles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chipf{font-size:.75rem;background:var(--paper-2);border-radius:20px;padding:.32em .7em;display:inline-flex;align-items:center;gap:7px}
+  .chipf button{color:var(--cinnabar);font-weight:700;background:none;font-size:.9rem;line-height:1}
+  .upl{font-size:.77rem;font-weight:600;color:var(--jade-dark);border:1.5px dashed var(--jade-line);border-radius:20px;padding:.34em .85em;cursor:pointer}
+  .upl:hover{background:var(--jade-tint)}
+  .muted{font-size:.76rem;color:var(--ink-60)}
+  .reorder{display:flex;flex-direction:column;gap:2px;flex:none}
+  .reorder button{width:24px;height:20px;border:1px solid var(--line-2);border-radius:5px;background:#fff;color:var(--ink-60);font-size:.6rem;line-height:1;cursor:pointer}
+  .reorder button:hover:not(:disabled){background:var(--jade-tint);color:var(--jade-dark);border-color:var(--jade-line)}
+  .reorder button:disabled{opacity:.3;cursor:default}
+  .minitag{font-size:.62rem;font-weight:700;background:var(--cinnabar);color:#fff;padding:.15em .5em;border-radius:20px;vertical-align:middle}
+  .preorder.tag-doc{background:var(--cinnabar);color:#fff}
+  .chkline{display:flex!important;align-items:center;gap:8px;font-weight:500!important;margin-bottom:12px}
+  .chkline input{width:auto!important;margin:0!important}
+  .ltitle-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .ltitle-in{flex:1;min-width:0;padding:7px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-family:inherit;font-size:.85rem;font-weight:600}
+  .ltitle-in:focus{border-color:var(--jade);outline:none}
+  .ldel{width:26px;height:26px;flex:none;border-radius:7px;border:1px solid var(--line-2);background:#fff;color:var(--cinnabar);font-size:1rem;line-height:1;cursor:pointer}
+  .ldel:hover{background:var(--cinnabar);color:#fff}
+  .upl.vid{border-style:solid;background:var(--jade-tint);white-space:nowrap}
+
+  /* ---------- editor sản phẩm mở rộng ---------- */
+  .modal.wide{max-width:680px}
+  .bigform textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.9rem;margin-top:5px;resize:vertical;background:#fff;line-height:1.5}
+  .bigform textarea:focus{border-color:var(--jade);outline:none}
+  .bigform textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem}
+  .mgroup{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--paper)}
+  .mgroup h4{font-family:"Fraunces";font-size:.98rem;margin-bottom:12px;color:var(--jade-dark)}
+  .cover-prev{border:2px dashed var(--line-2);border-radius:12px;min-height:150px;display:grid;place-items:center;background:#fff;overflow:hidden;margin-bottom:10px}
+  .cover-prev img{max-height:220px;width:auto;border-radius:6px}
+  .cover-act{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+  .hint-box{font-size:.76rem;color:var(--ink-60);background:#fdf6e3;border:1px solid var(--gold-soft);border-radius:8px;padding:9px 11px;margin:6px 0 10px;line-height:1.5}
+  .gallery{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .tag-pick{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+  .tag-pick button{font-size:.8rem;padding:.38em .8em;border:1px solid var(--line-2);border-radius:20px;background:#fff;color:var(--ink);cursor:pointer}
+  .tag-pick button:hover{border-color:var(--jade);background:var(--jade-tint)}
+  .tag-pick code,.tagchip code{font-size:.72rem;color:var(--ink-60)}
+  .tag-sel{margin-top:8px;font-size:.82rem;line-height:2}
+  .tag-sel b{font-size:.7rem;letter-spacing:.05em;color:var(--ink-60)}
+  .tagchip{display:inline-flex;align-items:center;gap:5px;background:#fdf6e3;border:1px solid var(--gold-soft);color:#8a6512;border-radius:20px;padding:.25em .7em;margin:2px}
+  .tagchip button{background:none;color:#c99a2e;font-weight:700;cursor:pointer}
+  .bigform select[multiple]{width:100%;padding:6px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.88rem;margin-top:5px;background:#fff}
+  .flag-row{display:flex;gap:24px;flex-wrap:wrap}
+  .flag-row .chkline{margin:0}
+  .p-cover{width:min(300px,86%);border-radius:14px;box-shadow:var(--shadow);display:block}
+
+  /* ---------- login gate ---------- */
+  .adm-login{display:none;min-height:100vh;place-items:center;padding:20px;
+    background:linear-gradient(140deg,var(--jade-dark),var(--jade))}
+  .login-card{background:#fff;border-radius:16px;padding:34px 30px;width:100%;max-width:360px;text-align:center;
+    box-shadow:0 34px 70px -24px rgba(0,0,0,.45)}
+  .login-card .brand{margin-bottom:18px;font-size:1.15rem}
+  .login-card h2{font-size:1.4rem;margin-bottom:4px}
+  .login-card .sub{color:var(--ink-60);font-size:.85rem;margin-bottom:20px}
+  .login-card input{width:100%;padding:12px 14px;border:1.5px solid var(--line-2);border-radius:8px;margin-bottom:12px;font-family:inherit;font-size:.95rem}
+  .login-card input:focus{border-color:var(--jade);outline:none}
+  .login-card .btn{width:100%;justify-content:center;margin-top:2px}
+  .login-card .hint{font-size:.76rem;color:var(--ink-60);margin-top:16px}
+  .login-card .hint b{color:var(--cinnabar)}
+  .login-card .back{display:inline-block;margin-top:10px;color:var(--jade);font-size:.84rem;cursor:pointer;font-weight:600}
+  #admErr{color:var(--cinnabar);font-size:.82rem;margin-top:8px;min-height:1.1em}
+
+  /* ---------- MOBILE TUNING ---------- */
+  /* PUBLIC — luôn mobile */
+  @media all{
+    .card[style*="flex-direction:row"]{flex-direction:column!important;align-items:flex-start!important}
+    .card.featured .cell{display:none}
+    .mcta{display:flex;position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:460px;bottom:0;z-index:55;background:rgba(246,249,238,.97);
+      backdrop-filter:blur(8px);border-top:1px solid var(--line-2);padding:10px 16px;align-items:center;justify-content:space-between;gap:12px}
+    .mcta small{display:block;font-size:.68rem;color:var(--ink-60)}
+    .mcta b{font-family:"Fraunces";font-size:1.35rem;color:var(--cinnabar);line-height:1}
+    .mcta .btn{flex:1;justify-content:center;max-width:58%}
+    #view-product{padding-bottom:78px}
+    .popup{bottom:78px;left:max(12px,calc(50% - 218px));right:auto;width:calc(100% - 24px);max-width:436px}
+    .wrap{padding:0 18px}
+    .hero{padding:30px 0 24px}
+    .hero h1{font-size:2.05rem}
+    .hero-stats{gap:1.1rem}
+    .nav-cta .btn{display:none}
+    .sec-head h2{font-size:1.7rem}
+    section.pad{padding:48px 0}
+    .float-radical{display:none}
+    .lp .price .now{font-size:2rem}
+    .big-cell{width:min(280px,86%)}
+    .seal{width:54px;height:54px;font-size:22px}
+  }
+  /* ADMIN + KHU VỰC HỌC — responsive thật, chỉ stack ở màn nhỏ */
+  @media (max-width:900px){
+    .adm{grid-template-columns:1fr}
+    .adm-side{position:sticky;top:0;height:auto;flex-direction:row;overflow-x:auto;padding:8px 10px;align-items:center;gap:6px;z-index:20}
+    .adm-side .brand{margin:0 8px 0 4px;flex:none}.adm-side .brand small{display:none}
+    .adm-nav{flex-direction:row;flex:none;gap:4px}
+    .adm-nav button{white-space:nowrap;padding:9px 12px}
+    .side-foot{display:none}
+    .kpis,.two-col{grid-template-columns:1fr 1fr}
+    .adm-body{padding:16px}
+    .adm-top{padding:14px 16px}
+    .course-row{flex-wrap:wrap}
+    .funnel .lbl{width:140px}
+    .learn-wrap{grid-template-columns:1fr}
+    .learn-side{position:static}
+    .learn-top{padding:12px 16px}
+  }
+  @media (max-width:560px){
+    .kpis,.two-col{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  ZIZI CHINESE — BẢN ĐỒ FILE (tìm nhanh bằng Ctrl+F từ khóa @…)   ║
+╠══════════════════════════════════════════════════════════════════╣
+║  A. GIAO DIỆN (HTML)                                             ║
+║    @MAP-HEADER      Thanh menu trên cùng                         ║
+║    @MAP-HOME        Trang chủ  (hero → cam kết → SP → đánh giá)  ║
+║    @MAP-PRODUCT     Trang bán 1 sản phẩm (landing)               ║
+║    @MAP-CHECKOUT    Thanh toán (thông tin → QR → thành công)     ║
+║    @MAP-LEARN       Khu vực học viên (video + danh sách buổi)    ║
+║    @MAP-ADMIN       Trang quản trị (5 tab)                       ║
+║    @MAP-FOOTER      Chân trang + pháp lý                         ║
+║                                                                  ║
+║  B. NƠI SỬA NỘI DUNG HAY DÙNG NHẤT (JS)                          ║
+║    @DATA-PRODUCTS   ★ Danh sách sản phẩm (tên/giá/mô tả/thứ tự)  ║
+║    @DATA-LESSONS    ★ Giáo trình HSK1 (30 buổi)                  ║
+║    @DATA-USERS      Học viên demo                                ║
+║    @DATA-ORDERS     Đơn hàng demo                                ║
+║    @DATA-TAGS       Danh mục & topic tags                        ║
+║    @DATA-BANK       Số tài khoản ngân hàng (trong @MAP-CHECKOUT) ║
+║                                                                  ║
+║  C. MÀU SẮC / THƯƠNG HIỆU                                        ║
+║    @THEME           Bảng màu (sửa 1 chỗ, cả web đổi theo)        ║
+║    @MASCOT          Bé sâu ZiZi (SVG trong @MAP-HOME)            ║
+║                                                                  ║
+║  D. VÀO ADMIN: thêm #quantri vào URL (mật khẩu giữ riêng)        ║
+╠══════════════════════════════════════════════════════════════════╣
+║  ⚠ BẢO MẬT — ĐỌC TRƯỚC KHI ĐƯA LÊN DOMAIN                        ║
+║  Mọi code chạy trên trình duyệt đều CÓ THỂ XEM ĐƯỢC.             ║
+║  → KHÔNG đặt vào file này: mật khẩu thật, khóa API, token,       ║
+║    thông tin khách hàng thật, link file khóa học.                ║
+║  → Đăng nhập admin ở đây chỉ là lớp che cho bản demo.            ║
+║    Bản chạy thật BẮT BUỘC xác thực phía máy chủ (server-side).   ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
+
+<!-- ================= HEADER ================= -->
+<!-- @MAP-HEADER ================================================= -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#" onclick="go('home');return false">
+      <span class="tianzige mark"><span class="han hz">字</span></span>
+      <span>ZiZi<small>Chinese</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#khoahoc" onclick="go('home')">Khóa học</a>
+      <a href="#danhgia" onclick="go('home')">Đánh giá</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="btn btn-primary" onclick="document.getElementById('khoahoc').scrollIntoView()">Chọn khóa học</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HOME VIEW ================= -->
+<!-- @MAP-HOME ==================================================== -->
+<main id="view-home">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Tự học · từ con số 0 → HSK6</span>
+        <h1>Từ <span class="em">nét đầu tiên</span><br>đến tấm bằng HSK6.</h1>
+        <p class="lead">Học tiếng Trung cùng bé sâu <b>ZiZi</b> — mỗi ngày bò thêm một đoạn, từ mất gốc đến HSK6. Học theo nét, nhớ chữ bằng bộ thủ, không học vẹt.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="document.getElementById('khoahoc').scrollIntoView()">Bắt đầu học ngay</button>
+          <a class="btn btn-ghost" href="#danhgia">Xem đánh giá →</a>
+        </div>
+        <div class="hero-stats">
+          <div><b>9.300+</b><span>học viên</span></div>
+          <div><b>4.9/5</b><span>đánh giá</span></div>
+          <div><b>24/7</b><span>kích hoạt tự động</span></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <span class="bubble b1 hz">你</span>
+        <span class="bubble b2 hz">好</span>
+        <span class="bubble b3 hz">字</span>
+        <div class="mascot-blob"></div>
+        <!-- @MASCOT -->
+        <svg class="mascot" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bé sâu ZiZi">
+          <ellipse cx="158" cy="262" rx="118" ry="13" fill="rgba(46,74,42,.10)"/>
+          <ellipse class="foot" cx="98" cy="236" rx="12" ry="9"/>
+          <ellipse class="foot" cx="140" cy="240" rx="12" ry="9"/>
+          <ellipse class="foot" cx="184" cy="238" rx="12" ry="9"/>
+          <ellipse class="foot" cx="226" cy="232" rx="12" ry="9"/>
+          <circle class="seg" cx="72" cy="205" r="27"/>
+          <circle class="seg" cx="110" cy="198" r="31"/>
+          <circle class="seg" cx="152" cy="188" r="34"/>
+          <circle class="seg" cx="196" cy="172" r="37"/>
+          <path class="ant" d="M224 98 q-10 -24 -18 -32"/>
+          <path class="ant" d="M258 98 q10 -24 18 -32"/>
+          <circle class="seg" cx="204" cy="62" r="9"/>
+          <circle class="seg" cx="276" cy="62" r="9"/>
+          <circle class="pupil" cx="204" cy="62" r="3"/>
+          <circle class="pupil" cx="276" cy="62" r="3"/>
+          <circle class="seg" cx="240" cy="138" r="47"/>
+          <circle class="eye-w" cx="223" cy="132" r="14"/>
+          <circle class="eye-w" cx="258" cy="132" r="14"/>
+          <circle class="pupil" cx="226" cy="134" r="6"/>
+          <circle class="pupil" cx="261" cy="134" r="6"/>
+          <circle class="glint" cx="228" cy="130" r="2.4"/>
+          <circle class="glint" cx="263" cy="130" r="2.4"/>
+          <ellipse class="cheek" cx="210" cy="151" rx="9" ry="6"/>
+          <ellipse class="cheek" cx="272" cy="151" rx="9" ry="6"/>
+          <path class="smile" d="M231 150 q9 9 18 0"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust">
+    <div class="wrap">
+      <div class="cell"><span class="ic">⚡</span><div><b>Kích hoạt tức thì</b><span>Vào học ngay sau khi thanh toán</span></div></div>
+      <div class="cell"><span class="ic">↺</span><div><b>Hoàn tiền 100%</b><span>Trong 24h nếu không hài lòng</span></div></div>
+      <div class="cell"><span class="ic">✎</span><div><b>Kèm học trọn đời</b><span>Hỗ trợ qua Zalo & nhóm kín</span></div></div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="pad" id="khoahoc">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Khóa học</span>
+        <h2>Chọn điểm bắt đầu của bạn</h2>
+        <p>Mỗi khóa là một tài khoản học online, xem lại không giới hạn. Bắt đầu ở đâu cũng được — hoặc đi trọn lộ trình với Combo.</p>
+      </div>
+
+      <div class="products" id="saleGrid"></div>
+    </div>
+  </section>
+
+  <!-- KHÓA NÂNG CAO / PRE-ORDER -->
+  <section class="pad" id="nangcao" style="background:var(--paper-2)">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Khóa nâng cao · Đặt trước</span>
+        <h2>Đi tiếp lên HSK3 → HSK6</h2>
+        <p>Bộ khóa video các cấp cao đang mở <b>đặt trước (pre-order)</b> với giá ưu đãi. Chốt sớm để giữ mức tốt nhất — giá gốc cao hơn 45%.</p>
+      </div>
+      <div class="products" id="preGrid"></div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="pad" id="danhgia">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Đánh giá</span>
+        <h2>Người mất gốc đã đi được đến đâu</h2>
+      </div>
+      <div class="reviews">
+        <div class="rev"><div class="stars">★★★★★</div><p>"Mình sợ nhất là viết chữ, học bộ thủ xong tự nhiên nhìn chữ nào cũng thấy quen. Đáng tiền thật sự."</p><div class="who"><span class="av">L</span><div><b>Lan Anh</b><span>Đã học Combo HSK1+2</span></div></div></div>
+        <div class="rev"><div class="stars">★★★★★</div><p>"Thanh toán xong là vào học được luôn, không phải chờ ai duyệt. Video ngắn gọn dễ theo cho người đi làm bận."</p><div class="who"><span class="av">T</span><div><b>Minh Tuấn</b><span>Đã học HSK1</span></div></div></div>
+        <div class="rev"><div class="stars">★★★★★</div><p>"Từ chỗ không đọc nổi pinyin giờ đã thi thử HSK2 được 210/240. Cảm ơn cô nhiều lắm ạ."</p><div class="who"><span class="av">H</span><div><b>Thu Hà</b><span>Đã học HSK2</span></div></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= PRODUCT / LANDING VIEW ================= -->
+<!-- @MAP-PRODUCT ================================================= -->
+<div id="view-product">
+  <div class="flashbar">
+    <span>🔥 Ưu đãi mở khóa học đang diễn ra</span>
+    <span class="timer">Kết thúc sau <b id="h">02</b>:<b id="m">00</b>:<b id="s">00</b></span>
+  </div>
+  <div class="wrap">
+    <a class="back" href="#" onclick="go('home');return false">← Về trang chủ</a>
+    <div class="lp">
+      <div class="lp-art">
+        <img id="pCover" class="p-cover" alt="" style="display:none">
+        <div class="big-cell" id="pCharCell">
+          <div class="tianzige diag"></div>
+          <div class="han hz" id="pChar" style="-webkit-mask:none;mask:none">学</div>
+        </div>
+        <div class="badge-row" style="margin-top:20px">
+          <span class="badge">✔ Xem lại trọn đời</span>
+          <span class="badge">✔ Cập nhật miễn phí</span>
+          <span class="badge">✔ Học trên mọi thiết bị</span>
+        </div>
+      </div>
+      <div>
+        <span class="eyebrow" id="pLevel">HSK 1</span>
+        <h1 id="pTitle">Khóa HSK1</h1>
+        <div class="stars">★★★★★ <span style="color:var(--ink-60);font-size:.82rem">4.9 · 1.204 đánh giá</span></div>
+        <p id="pDesc" style="color:var(--ink-60);margin:12px 0">Đặt nền phát âm và 150 từ vựng đầu tiên để nghe – nói được câu cơ bản.</p>
+        <div class="sold"><div class="bar"><div class="fill"></div></div><small>Đã bán 87% suất ưu đãi đợt này</small></div>
+        <div class="price"><span class="now" id="pNow">199k</span><span class="was" id="pWas">399k</span><span class="off">Ưu đãi</span></div>
+
+        <div class="online-note" id="pNote"><b>⚡ Khóa học online</b> — kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.</div>
+
+        <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="go('checkout')">Đăng ký học ngay →</button>
+
+        <div class="guarantee">
+          <span class="g-ic">🛡️</span>
+          <div><b>Cam kết hoàn tiền 100% trong 24h</b><p>Học thử, nếu không phù hợp nhắn Zalo là được hoàn tiền — không hỏi lý do.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="whatsin">
+      <h3>Bên trong khóa học có gì?</h3>
+      <ul>
+        <li><span class="n">1</span><div>Video bài giảng chia nhỏ theo chủ đề, xem trên điện thoại hay máy tính đều được.</div></li>
+        <li><span class="n">2</span><div>File luyện tập &amp; flashcard tải về, kèm audio phát âm chuẩn người bản xứ.</div></li>
+        <li><span class="n">3</span><div>Bộ đề thi thử bám sát cấu trúc HSK, có video chữa chi tiết.</div></li>
+        <li><span class="n">4</span><div>Nhóm kín hỏi đáp cùng giảng viên và cộng đồng học viên.</div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="mcta">
+    <div><small>Ưu đãi hôm nay</small><b id="mCtaPrice">199k</b></div>
+    <button class="btn btn-primary" id="mCtaBtn" onclick="go('checkout')">Đăng ký học ngay →</button>
+  </div>
+</div>
+
+<!-- ================= CHECKOUT VIEW ================= -->
+<!-- @MAP-CHECKOUT ================================================ -->
+<div id="view-checkout">
+  <div class="wrap">
+    <a class="back" href="#" onclick="go('product');return false">← Quay lại khóa học</a>
+
+    <div id="checkoutForm">
+      <div class="steps">
+        <div class="st on">① Thông tin</div>
+        <div class="st">② Thanh toán</div>
+        <div class="st">③ Kích hoạt</div>
+      </div>
+
+      <div class="co-grid">
+        <div>
+          <!-- PANEL 1: thông tin -->
+          <div id="infoPanel">
+            <h2 id="coHeading" style="font-size:1.5rem;margin-bottom:6px">Thông tin nhận khóa học</h2>
+            <p id="coSub" style="color:var(--ink-60);font-size:.88rem;margin-bottom:18px">Tài khoản đăng nhập sẽ được gửi về email này.</p>
+            <div class="fmt" id="fmtChooser" style="display:none;margin-bottom:16px">
+              <label><input type="radio" name="fmt" value="soft" checked onchange="recalcCheckout()"><b>💾 Bản mềm</b><span id="fmtSoftP">Tải về ngay sau thanh toán</span></label>
+              <label><input type="radio" name="fmt" value="hard" onchange="recalcCheckout()"><b>📦 Bản cứng</b><span id="fmtHardP">In màu, giao 2–4 ngày (+ship)</span></label>
+            </div>
+            <div class="field"><label>Họ và tên</label><input type="text" placeholder="Nguyễn Văn A"></div>
+            <div class="field"><label>Email <em style="color:var(--cinnabar)">*</em></label><input type="email" placeholder="ban@email.com"></div>
+            <div class="field"><label>Số điện thoại / Zalo</label><input type="tel" placeholder="09xx xxx xxx"></div>
+            <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px;font-size:1.05rem" onclick="createOrder()">Tạo đơn &amp; lấy mã thanh toán →</button>
+          </div>
+
+          <!-- PANEL 2: thanh toán -->
+          <div id="payPanel" style="display:none">
+            <div class="pay-head">
+              <h2 style="font-size:1.4rem">Quét mã VietQR để thanh toán</h2>
+              <p style="color:var(--ink-60);font-size:.86rem">Số tiền và nội dung đã được nhúng sẵn trong mã — chỉ cần mở app ngân hàng và quét.</p>
+            </div>
+            <div class="qr" style="display:block;margin-top:14px">
+              <div class="code"></div>
+              <div class="pay-amount" id="payAmount">199.000₫</div>
+              <div class="bank">
+                <!-- @DATA-BANK --><div><span>Ngân hàng</span><b>Techcombank</b></div>
+                <div><span>Số tài khoản</span><b>1903 xxxx xxxx</b></div>
+                <div><span>Chủ tài khoản</span><b>ZIZI CHINESE</b></div>
+                <div><span>Nội dung <em>(bắt buộc)</em></span><b id="payCode">ZIZI A1B2</b></div>
+              </div>
+            </div>
+
+            <div class="pay-status waiting" id="payStatus">
+              <div class="spinner"></div>
+              <div>
+                <b id="payStatusText">Đang chờ thanh toán — hệ thống tự động đối soát giao dịch…</b>
+                <span>Bạn không cần bấm gì thêm. Tài khoản kích hoạt tự động khi tiền về (thường 5–30 giây).</span>
+              </div>
+            </div>
+            <button class="btn btn-ghost demo-btn" onclick="markPaid()">▶ (Demo) Mô phỏng nhận được tiền</button>
+          </div>
+        </div>
+
+        <div class="summary">
+          <h4>Đơn hàng của bạn</h4>
+          <div class="sum-line"><span id="sumName">Khóa HSK1</span><b id="sumPrice">199.000₫</b></div>
+          <div class="sum-line" id="sumShipLine" style="display:none"><span>Phí ship bản cứng</span><b id="sumShip">30.000₫</b></div>
+          <div class="sum-line"><span>Ưu đãi hôm nay</span><b style="color:var(--jade)">Đã áp dụng</b></div>
+          <div class="sum-total"><span>Tổng</span><b id="sumTotal">199.000₫</b></div>
+          <p style="font-size:.78rem;color:var(--ink-60);margin-top:14px">🛡️ Bảo đảm hoàn tiền 24h · Thanh toán mã hóa an toàn</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="success" id="successBox">
+      <div class="seal-big hz">成</div>
+      <h2>Thanh toán thành công!</h2>
+      <p id="successMsg">Tài khoản học đã được <b>kích hoạt tự động</b>. Thông tin đăng nhập vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam.</p>
+      <div class="cred">
+        <div><span id="credLabel">Khóa đã mở</span><b id="learnCourse">Khóa HSK1</b></div>
+        <div><span id="credLabel2">Trang học</span><b id="credVal2">hoc.zizichinese.com</b></div>
+      </div>
+      <button class="btn btn-primary" id="successBtn" onclick="go('learn')">Vào học ngay →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= LEARN · KHU VỰC HỌC ================= -->
+<!-- @MAP-LEARN =================================================== -->
+<div id="view-learn">
+  <div class="learn-top">
+    <a class="brand" href="#" onclick="go('home');return false"><span class="tianzige mark"><span class="han hz">字</span></span><span>ZiZi<small>Khu vực học viên</small></span></a>
+    <div class="who"><span>Xin chào, học viên 👋</span><span class="av">H</span><a class="lg" href="#" onclick="go('home');return false">Đăng xuất</a></div>
+  </div>
+  <div class="learn-wrap">
+    <div class="learn-main">
+      <div class="player">
+        <button class="play" aria-label="Phát video">▶</button>
+        <span class="now-lesson">Đang học · Buổi 5 — Bài 1</span>
+      </div>
+      <h2 id="learnTitle2">Khóa HSK1</h2>
+      <div class="prog"><div class="prog-bar"><i style="width:15%"></i></div><small>Hoàn thành 4/30 buổi · 15%</small></div>
+      <p style="color:var(--ink-60);font-size:.92rem;margin-top:12px"><b>Bài 1 · 你好 Nǐ hǎo (Xin chào).</b> Xem video, luyện phát âm theo audio và làm bài tập cuối buổi để mở buổi tiếp theo.</p>
+      <div class="dl">
+        <b>Tài nguyên buổi học</b>
+        <a>📄 Tài liệu Bài 1 · 你好 (PDF)</a>
+        <a>🃏 Flashcard từ vựng Bài 1</a>
+        <a>🎧 Audio luyện nghe &amp; phát âm</a>
+      </div>
+    </div>
+    <aside class="learn-side">
+      <h4>Nội dung khóa HSK1 <span style="font-weight:400;font-size:.76rem;color:var(--ink-60)">· 30 buổi</span></h4>
+      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 1</b><span>Nhập môn tiếng Trung</span></div></div>
+      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 2</b><span>Thanh mẫu, vận mẫu, thanh điệu · P1</span></div></div>
+      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 3</b><span>Thanh mẫu, vận mẫu, thanh điệu · P2</span></div></div>
+      <div class="lesson done"><span class="ls">✓</span><div><b>Buổi 4</b><span>Thanh mẫu, vận mẫu, thanh điệu · P3</span></div></div>
+      <div class="lesson now"><span class="ls">▶</span><div><b>Buổi 5 · Bài 1</b><span>你好 — Xin chào</span></div></div>
+      <div class="lesson"><span class="ls">6</span><div><b>Buổi 6 · Bài 2</b><span>汉语不太难 — Tiếng Hán không khó lắm</span></div></div>
+      <div class="lesson"><span class="ls">7</span><div><b>Buổi 7 · Bài 3</b><span>明天见 — Ngày mai gặp lại</span></div></div>
+      <div class="lesson"><span class="ls">8</span><div><b>Buổi 8–9 · Bài 4</b><span>你去哪儿 — Bạn đi đâu đấy</span></div></div>
+      <div class="lesson"><span class="ls">10</span><div><b>Buổi 10 · Bài 5</b><span>这是王老师 — Đây là thầy Vương</span></div></div>
+      <div class="lesson"><span class="ls">11</span><div><b>Buổi 11 · Bài 6</b><span>我学习汉语 — Tôi học tiếng Hán</span></div></div>
+      <div class="lesson"><span class="ls">12</span><div><b>Buổi 12–13 · Bài 7</b><span>你吃什么 — Bạn ăn gì</span></div></div>
+      <div class="lesson"><span class="ls">14</span><div><b>Buổi 14–15 · Bài 8</b><span>苹果一斤多少钱 — Một cân táo bao nhiêu tiền</span></div></div>
+      <div class="lesson"><span class="ls">16</span><div><b>Buổi 16 · Bài 9</b><span>我换人民币 — Tôi đổi tiền Nhân dân tệ</span></div></div>
+      <div class="lesson"><span class="ls">17</span><div><b>Buổi 17–18 · Bài 10</b><span>他住哪儿 — Ông ấy sống ở đâu</span></div></div>
+      <div class="lesson"><span class="ls">19</span><div><b>Buổi 18–19 · Bài 11</b><span>我们都是留学生 — Chúng tôi đều là lưu học sinh</span></div></div>
+      <div class="lesson"><span class="ls">20</span><div><b>Buổi 20</b><span>Luyện tập</span></div></div>
+      <div class="lesson"><span class="ls">21</span><div><b>Buổi 21–22 · Bài 12</b><span>你在哪儿学习 — Bạn học ở đâu</span></div></div>
+      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 23–25 · Bài 13</b><span>这是不是中药 — Đây có phải thuốc Đông y không</span></div></div>
+      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 26–28 · Bài 14</b><span>你的车是新的还是旧的 — Xe của bạn mới hay cũ</span></div></div>
+      <div class="lesson lock"><span class="ls">🔒</span><div><b>Buổi 29–30 · Bài 15</b><span>你们公司有多少职员 — Công ty có bao nhiêu nhân viên · Ôn tập</span></div></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ================= ADMIN VIEW ================= -->
+<!-- @MAP-ADMIN =================================================== -->
+<div id="view-admin">
+  <div class="adm-login" id="admLogin">
+    <div class="login-card">
+      <a class="brand" style="justify-content:center"><span class="tianzige mark"><span class="han hz">字</span></span><span>ZiZi</span></a>
+      <h2>Đăng nhập quản trị</h2>
+      <p class="sub">Khu vực dành riêng cho quản trị viên</p>
+      <input id="admUser" type="text" placeholder="Tài khoản" autocomplete="off">
+      <input id="admPass" type="password" placeholder="Mật khẩu" onkeydown="if(event.key==='Enter')admLogin()">
+      <button class="btn btn-primary" onclick="admLogin()">Đăng nhập</button>
+      <div id="admErr"></div>
+      <p class="hint">Khu vực hạn chế · chỉ dành cho quản trị viên</p>
+      <span class="back" onclick="go('home')">← Về website</span>
+    </div>
+  </div>
+  <div class="adm" id="admApp" style="display:none">
+    <aside class="adm-side">
+      <a class="brand" href="#" onclick="go('home');return false">
+        <span class="tianzige mark"><span class="han hz">字</span></span>
+        <span>ZiZi<small>Bảng quản trị</small></span>
+      </a>
+      <nav class="adm-nav">
+        <button class="on" data-title="Tổng quan" onclick="admTab('overview',this)"><span class="ic">▦</span><span>Tổng quan</span></button>
+        <button data-title="Đơn hàng &amp; doanh thu" onclick="admTab('orders',this)"><span class="ic">🧾</span><span>Đơn hàng</span></button>
+        <button data-title="Sản phẩm &amp; tài nguyên" onclick="admTab('courses',this)"><span class="ic">📚</span><span>Sản phẩm</span></button>
+        <button data-title="Học viên" onclick="admTab('users',this)"><span class="ic">👥</span><span>Học viên</span></button>
+        <button data-title="Phân tích &amp; tracking" onclick="admTab('tracking',this)"><span class="ic">📈</span><span>Tracking</span></button>
+      </nav>
+      <div class="side-foot">
+        <a href="#" onclick="go('home');return false">← Về website</a>
+        <a href="#">Đăng xuất</a>
+      </div>
+    </aside>
+
+    <div class="adm-main">
+      <div class="adm-top">
+        <h1 id="admTitle">Tổng quan</h1>
+        <div class="who"><span>Xin chào, Admin</span><span class="av">Q</span></div>
+      </div>
+      <div class="adm-body">
+
+        <!-- OVERVIEW -->
+        <section class="adm-tab" id="tab-overview">
+          <div class="kpis">
+            <div class="kpi"><div class="lbl">💰 Doanh thu tháng</div><div class="val">42.850.000₫</div><div class="chg up">▲ 18% so với tháng trước</div></div>
+            <div class="kpi"><div class="lbl">🧾 Đơn hàng</div><div class="val">214</div><div class="chg up">▲ 9%</div></div>
+            <div class="kpi"><div class="lbl">👥 Học viên mới</div><div class="val">187</div><div class="chg up">▲ 12%</div></div>
+            <div class="kpi"><div class="lbl">🎯 Tỉ lệ chuyển đổi</div><div class="val">4.3%</div><div class="chg up">▲ 0.6đ</div></div>
+          </div>
+
+          <div class="panel">
+            <h3>Doanh thu 7 ngày gần nhất <span class="mini">Đơn vị: triệu ₫</span></h3>
+            <div class="chart">
+              <div class="col"><span class="amt">4.2</span><div class="bar" style="height:47%"></div><span class="day">T2</span></div>
+              <div class="col"><span class="amt">5.8</span><div class="bar" style="height:65%"></div><span class="day">T3</span></div>
+              <div class="col"><span class="amt">3.9</span><div class="bar" style="height:44%"></div><span class="day">T4</span></div>
+              <div class="col"><span class="amt">6.4</span><div class="bar" style="height:72%"></div><span class="day">T5</span></div>
+              <div class="col"><span class="amt">7.1</span><div class="bar" style="height:80%"></div><span class="day">T6</span></div>
+              <div class="col"><span class="amt">8.9</span><div class="bar" style="height:100%"></div><span class="day">T7</span></div>
+              <div class="col"><span class="amt">6.5</span><div class="bar" style="height:73%"></div><span class="day">CN</span></div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="panel">
+              <h3>Đơn hàng gần đây <span class="mini">Cập nhật realtime</span></h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <tr><th>Mã đơn</th><th>Khách</th><th>Khóa</th><th>Số tiền</th><th>Trạng thái</th></tr>
+                <tr><td>#ZIZI-8A2F</td><td>Lan Anh</td><td>Combo HSK1+2</td><td>399.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+                <tr><td>#ZIZI-7C1D</td><td>Minh Tuấn</td><td>Khóa HSK1</td><td>199.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+                <tr><td>#ZIZI-7B9A</td><td>Thu Hà</td><td>Bộ thủ</td><td>149.000₫</td><td><span class="tag pending">Chờ CK</span></td></tr>
+                <tr><td>#ZIZI-7A03</td><td>Đức Anh</td><td>Khóa HSK2</td><td>249.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+              </table></div>
+            </div>
+            <div class="panel">
+              <h3>Khóa bán chạy <span class="mini">Tháng này</span></h3>
+              <div class="rank">
+                <div class="row"><span class="han-mini hz">中</span><div class="info"><b>Combo HSK1+2</b><div class="bar-bg"><i style="width:100%"></i></div></div><span class="num">92</span></div>
+                <div class="row"><span class="han-mini hz">一</span><div class="info"><b>Khóa HSK1</b><div class="bar-bg"><i style="width:74%"></i></div></div><span class="num">68</span></div>
+                <div class="row"><span class="han-mini hz">部</span><div class="info"><b>Bộ thủ &amp; Công thức</b><div class="bar-bg"><i style="width:37%"></i></div></div><span class="num">34</span></div>
+                <div class="row"><span class="han-mini hz">二</span><div class="info"><b>Khóa HSK2</b><div class="bar-bg"><i style="width:22%"></i></div></div><span class="num">20</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ORDERS -->
+        <section class="adm-tab" id="tab-orders" hidden>
+          <div class="tab-head">
+            <div class="chips">
+              <button class="on" onclick="filterOrders('all',this)">Tất cả</button>
+              <button onclick="filterOrders('paid',this)">Đã thanh toán</button>
+              <button onclick="filterOrders('pending',this)">Chờ chuyển khoản</button>
+              <button onclick="filterOrders('refund',this)">Đã hoàn tiền</button>
+            </div>
+            <button class="btn btn-jade addbtn" onclick="editOrder(null)">+ Thêm đơn thủ công</button>
+          </div>
+          <div class="panel">
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Khóa học</th><th>Số tiền</th><th>Kênh</th><th>Trạng thái</th><th>Thời gian</th><th></th></tr></thead>
+              <tbody id="orderList"></tbody>
+            </table></div>
+          </div>
+          <p class="note-line">💡 Đơn từ website được tạo <b>tự động</b>. Khi trạng thái chuyển sang <b>Đã thanh toán</b>, hệ thống tự bắn sự kiện <code>Purchase</code> (kèm giá trị đơn) về Facebook/TikTok Pixel. Bạn cũng có thể thêm/sửa đơn <b>thủ công</b> tại đây.</p>
+        </section>
+
+        <!-- COURSES / RESOURCES -->
+        <section class="adm-tab" id="tab-courses" hidden>
+          <div class="panel">
+            <h3>Tài nguyên đã tải lên <span class="mini">Tổng kho học liệu</span></h3>
+            <div class="kpis" style="margin:0">
+              <div class="kpi"><div class="lbl">🎬 Video bài giảng</div><div class="val">214</div></div>
+              <div class="kpi"><div class="lbl">📄 File PDF / tài liệu</div><div class="val">96</div></div>
+              <div class="kpi"><div class="lbl">🃏 Bộ flashcard</div><div class="val">12</div></div>
+              <div class="kpi"><div class="lbl">🎧 File audio</div><div class="val">148</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="tab-head">
+              <h3 style="margin:0">Danh sách sản phẩm <span class="mini" id="courseCount">8 sản phẩm</span></h3>
+              <button class="btn btn-jade addbtn" onclick="editCourse(null)">+ Thêm sản phẩm</button>
+            </div>
+            <div id="courseList" style="margin-top:16px"></div>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section class="adm-tab" id="tab-users" hidden>
+          <div class="tab-head">
+            <div class="chips"><button class="on" onclick="chip(this)">Tất cả học viên</button><button onclick="chip(this)">Đang hoạt động</button><button onclick="chip(this)">Mới trong tuần</button></div>
+            <button class="btn btn-jade addbtn" onclick="editUser(null)">+ Thêm học viên</button>
+          </div>
+          <div class="panel">
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Học viên</th><th>Liên hệ</th><th>Khóa đã mua</th><th>Ngày</th><th>Trạng thái</th><th>Nguồn</th><th></th></tr></thead>
+              <tbody id="userList"></tbody>
+            </table></div>
+          </div>
+          <p class="note-line">💡 Học viên mua qua website được tạo <b>tự động</b>. Bạn có thể thêm/sửa <b>thủ công</b> (học viên đóng tiền mặt, tặng khóa, chuyển từ nơi khác) — cả hai chạy song song.</p>
+        </section>
+
+        <!-- TRACKING -->
+        <section class="adm-tab" id="tab-tracking" hidden>
+          <div class="two-col">
+            <div class="panel">
+              <h3>Mã Pixel &amp; đo lường</h3>
+              <div class="px-grid">
+                <label>Facebook Pixel ID<input id="px_fb" placeholder="Vd: 1029384756102938"></label>
+                <label>TikTok Pixel ID<input id="px_tt" placeholder="Vd: C9ABCDEFGHIJKLMNOP"></label>
+                <label>Google Analytics 4 — Measurement ID<input id="px_ga" placeholder="Vd: G-ABCDE12345"></label>
+                <label>Facebook Conversions API — Token (tùy chọn)<input id="px_capi" placeholder="Dán access token nếu dùng CAPI server-side"></label>
+                <button class="btn btn-jade" onclick="saveTracking()">Lưu cấu hình</button>
+              </div>
+              <p class="note-line">Mã này sẽ được nhúng vào <code>&lt;head&gt;</code> của trang ngoài. CAPI giúp đo chính xác hơn khi khách chặn cookie.</p>
+            </div>
+            <div class="panel">
+              <h3>Sự kiện chuyển đổi <span class="mini">Bắn về FB &amp; TikTok</span></h3>
+              <div class="ev-list">
+                <div class="ev-row"><div>Xem trang · <code>PageView</code></div><label class="switch"><input type="checkbox" checked><span></span></label></div>
+                <div class="ev-row"><div>Xem khóa học · <code>ViewContent</code></div><label class="switch"><input type="checkbox" checked><span></span></label></div>
+                <div class="ev-row"><div>Tạo đơn · <code>InitiateCheckout</code></div><label class="switch"><input type="checkbox" checked><span></span></label></div>
+                <div class="ev-row"><div>Đăng ký form · <code>Lead</code></div><label class="switch"><input type="checkbox"><span></span></label></div>
+                <div class="ev-row"><div>Mua thành công · <code>Purchase</code></div><label class="switch"><input type="checkbox" checked><span></span></label></div>
+              </div>
+              <p class="note-line">Sự kiện <code>Purchase</code> bắn kèm giá trị đơn (value + currency) để tối ưu quảng cáo theo doanh thu.</p>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="panel">
+              <h3>Nguồn truy cập <span class="mini">30 ngày</span></h3>
+              <div class="src">
+                <div class="row"><div class="info"><b>TikTok</b><span>46%</span></div><div class="bar-bg"><i style="width:46%;background:var(--cinnabar)"></i></div></div>
+                <div class="row"><div class="info"><b>Facebook</b><span>31%</span></div><div class="bar-bg"><i style="width:31%;background:var(--jade)"></i></div></div>
+                <div class="row"><div class="info"><b>Zalo</b><span>14%</span></div><div class="bar-bg"><i style="width:14%;background:var(--gold)"></i></div></div>
+                <div class="row"><div class="info"><b>Truy cập trực tiếp</b><span>9%</span></div><div class="bar-bg"><i style="width:9%;background:var(--ink-60)"></i></div></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Landing page hiệu quả nhất <span class="mini">Theo tỉ lệ chuyển đổi</span></h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <tr><th>Trang</th><th>Lượt xem</th><th>CR</th></tr>
+                <tr><td>/sp/combo-hsk</td><td>4.820</td><td><span class="tag paid">5.1%</span></td></tr>
+                <tr><td>/sp/hsk1</td><td>3.910</td><td><span class="tag paid">4.2%</span></td></tr>
+                <tr><td>/sp/bo-thu</td><td>2.140</td><td><span class="tag pending">3.6%</span></td></tr>
+                <tr><td>/sp/hsk2</td><td>1.610</td><td><span class="tag pending">2.9%</span></td></tr>
+              </table></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Phễu chuyển đổi <span class="mini">% = tỉ lệ đi tiếp từ bước trước</span></h3>
+            <div class="funnel">
+              <div class="step"><div class="lbl">Xem trang · <b>12.480</b></div><div class="track"><i style="width:100%"></i></div><div class="drop">100%</div></div>
+              <div class="step"><div class="lbl">Xem khóa học · <b>4.210</b></div><div class="track"><i style="width:34%"></i></div><div class="drop">34%</div></div>
+              <div class="step"><div class="lbl">Vào thanh toán · <b>890</b></div><div class="track"><i style="width:14%"></i></div><div class="drop">21%</div></div>
+              <div class="step"><div class="lbl">Hoàn tất mua · <b>214</b></div><div class="track"><i style="width:6%"></i></div><div class="drop">24%</div></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal + toast (admin) -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()" aria-label="Đóng">×</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- live sale popup -->
+<div class="popup" id="popup">
+  <span class="av">N</span>
+  <div><b id="popName">Ngọc Minh</b><span id="popMsg">vừa đăng ký Combo HSK1+2 · 3 phút trước</span></div>
+</div>
+
+<!-- @MAP-FOOTER ================================================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand"><span class="tianzige mark" style="border-color:#fff"><span class="han hz" style="color:#fff">字</span></span><span style="color:#fff">ZiZi</span></a>
+        <p>Tài liệu và khóa học tự học tiếng Trung cho người Việt mất gốc — học theo nét, nhớ theo bộ thủ.</p>
+        <div class="socials"><a href="#">f</a><a href="#">▶</a><a href="#">♪</a></div>
+      </div>
+      <div><h5>Khóa học</h5><a href="#" onclick="openProduct('hsk1');return false">Khóa HSK1</a><a href="#" onclick="openProduct('hsk2');return false">Khóa HSK2</a><a href="#" onclick="openProduct('combo');return false">Combo HSK1+2</a><a href="#" onclick="openProduct('bothu');return false">Bộ thủ &amp; công thức</a></div>
+      <div><h5>Chính sách</h5><a href="#">Điều khoản dịch vụ</a><a href="#">Chính sách hoàn tiền</a><a href="#">Chính sách bảo mật</a><a href="#">Hướng dẫn thanh toán</a></div>
+      <div><h5>Hỗ trợ</h5><a href="#">Zalo: 09xx xxx xxx</a><a href="#">Email: hotro@zizichinese.com</a><a href="#">Câu hỏi thường gặp</a><a href="#">Nhóm học viên</a></div>
+    </div>
+    <div class="foot-legal">
+      Chủ sở hữu: [Tên bạn] · Địa chỉ: [Địa chỉ đăng ký kinh doanh] · Mã số thuế/ĐKKD: [số] ·
+      © 2026 ZiZi Chinese. Đây là bản prototype demo — hãy thay nội dung, giá và thông tin pháp lý bằng dữ liệu thật của bạn.
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ===== SẢN PHẨM (dùng chung cho web ngoài + admin). Thứ tự mảng = thứ tự hiển thị. ===== */
+  /* @DATA-PRODUCTS ★ Sửa tên/giá/mô tả/thứ tự sản phẩm tại đây */
+  let products=[
+    {id:1,type:'course',char:'一',name:'Khóa HSK1',level:'HSK 1 · mất gốc',
+     desc:'Đặt nền phát âm pinyin chuẩn và 150 từ vựng đầu tiên để nghe – nói được câu cơ bản.',
+     bullets:['Bảng chữ & 6 thanh điệu','150 từ · 15 chủ đề giao tiếp','Luyện đề HSK1 có chữa'],
+     price:199000,priceLabel:'199k',wasLabel:'399k',off:'-50%',status:'sale',lessons:30,res:86,students:1204,revenue:'12.4tr'},
+    {id:2,type:'course',char:'二',name:'Khóa HSK2',level:'HSK 2 · nền tảng',
+     desc:'Mở rộng lên 300 từ và ngữ pháp nền tảng để nói câu dài, tự tin giao tiếp hằng ngày.',
+     bullets:['Toàn bộ ngữ pháp HSK2','300 từ · hội thoại thực tế','Bộ đề thi thử HSK2'],
+     price:249000,priceLabel:'249k',wasLabel:'449k',off:'-45%',status:'sale',lessons:30,res:102,students:642,revenue:'9.8tr'},
+    {id:3,type:'course',char:'中',name:'Combo HSK1+2',level:'Trọn lộ trình 0 → HSK2',featured:true,ribbon:'Tiết kiệm nhất',
+     desc:'Cả hai khóa gộp thành một lộ trình liền mạch, kèm quà tặng luyện thi. Học một mạch từ mất gốc đến giao tiếp.',
+     bullets:['Trọn khóa HSK1 & HSK2','Tặng 500 flashcard + đề thi thử','Ưu tiên hỗ trợ 1–1 qua Zalo'],
+     price:399000,priceLabel:'399k',wasLabel:'848k',off:'-53%',status:'sale',lessons:60,res:188,students:512,revenue:'15.9tr'},
+    {id:4,type:'course',char:'部',name:'Bộ thủ & Công thức tiếng Trung',level:'Nền gốc · học kèm mọi cấp',wide:true,
+     desc:'214 bộ thủ + công thức chiết tự giúp bạn đoán nghĩa, nhớ mặt chữ mà không cần học thuộc lòng. Học kèm mọi cấp độ.',
+     bullets:[],price:149000,priceLabel:'149k',wasLabel:'299k',off:'',status:'sale',lessons:18,res:60,students:918,revenue:'6.1tr'},
+    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (PDF + Excel)',level:'Tài liệu · tra cứu',
+     desc:'File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
+     bullets:['5000 từ kèm pinyin & ví dụ','Excel lọc theo cấp/độ khó','Bản in màu đóng gáy đẹp'],
+     price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:true,hardPrice:189000,shipFee:30000,lessons:0,res:8,students:340,revenue:'34tr'},
+    {id:5,type:'course',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
+     desc:'600 từ vựng và ngữ pháp trung cấp — đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
+     bullets:[],price:1000000,priceLabel:'1.000.000₫',wasLabel:'1.450.000₫',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
+    {id:6,type:'course',char:'四',name:'Khóa HSK4',level:'HSK 4 · trung–cao',
+     desc:'1.200 từ, xử lý văn bản dài và diễn đạt quan điểm. Bước đệm vững vào trình độ cao cấp.',
+     bullets:[],price:1500000,priceLabel:'1.500.000₫',wasLabel:'2.175.000₫',off:'-31%',status:'preorder',lessons:40,res:134,students:74,revenue:'111tr'},
+    {id:7,type:'course',char:'五',name:'Khóa HSK5',level:'HSK 5 · cao cấp',
+     desc:'2.500 từ — đọc báo, xem phim không phụ đề, viết luận. Trình độ cao cấp thực thụ.',
+     bullets:[],price:2500000,priceLabel:'2.500.000₫',wasLabel:'3.625.000₫',off:'-31%',status:'preorder',lessons:44,res:150,students:41,revenue:'102tr'},
+    {id:8,type:'course',char:'六',name:'Khóa HSK6',level:'HSK 6 · thành thạo',
+     desc:'5.000+ từ, thành thạo gần như bản ngữ. Chinh phục mốc HSK cao nhất và tấm bằng danh giá.',
+     bullets:[],price:3500000,priceLabel:'3.500.000₫',wasLabel:'5.075.000₫',off:'-31%',status:'preorder',lessons:48,res:168,students:33,revenue:'115tr'}
+  ];
+  let current = products[0];
+  const fmtVND = n => n.toLocaleString('vi-VN')+'₫';
+
+  function go(view){
+    ['home','product','checkout','admin','learn'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    document.getElementById('view-'+view).style.display='block';
+    if(view==='checkout'){buildCheckout();}
+    if(view==='admin'){
+      document.getElementById('admLogin').style.display = admAuthed?'none':'grid';
+      document.getElementById('admApp').style.display  = admAuthed?'grid':'none';
+    }
+    document.body.classList.toggle('in-admin', view==='admin');
+    document.body.classList.toggle('in-learn', view==='learn');
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+
+  /* ===== render lưới sản phẩm trên web ngoài ===== */
+  function cardHTML(p){
+    const cta = p.status==='preorder'?'Đặt trước ngay':(p.type==='doc'?'Xem tài liệu':'Xem khóa học');
+    const bul = (p.bullets&&p.bullets.length)?`<ul>${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`:'';
+    const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}${p.off?`<span class="off">${p.off}</span>`:''}</div>`;
+    if(p.featured) return `<div class="card featured"><span class="ribbon">${p.ribbon||''}</span>
+      <div class="combo-body"><span class="level">◆◆ ${p.level}</span><h3>${p.name}</h3>
+      <p class="desc">${p.desc}</p>${bul}${price}
+      <button class="btn btn-primary" onclick="openProduct(${p.id})">${p.type==='doc'?'Xem tài liệu':'Mua trọn lộ trình'}</button></div>
+      <span class="tianzige cell" style="width:120px;height:120px;font-size:64px"><span class="han hz">${p.char}</span></span></div>`;
+    if(p.wide) return `<div class="card" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:26px">
+      <span class="tianzige cell" style="width:90px;height:90px;font-size:52px;margin:0"><span class="han hz">${p.char}</span></span>
+      <div style="flex:1"><span class="level">◆ ${p.level}</span><h3 style="margin-bottom:.3rem">${p.name}</h3>
+      <p class="desc" style="margin-bottom:8px">${p.desc}</p></div>
+      <div style="text-align:right">${price}<button class="btn btn-jade" onclick="openProduct(${p.id})">${cta}</button></div></div>`;
+    const badge = p.status==='preorder'?'<span class="preorder">Đặt trước</span>':(p.type==='doc'?'<span class="preorder tag-doc">Tài liệu</span>':'');
+    return `<div class="card">${badge}
+      <span class="tianzige cell"><span class="han hz">${p.char}</span></span>
+      <span class="level">◆ ${p.level}</span><h3>${p.name}</h3>
+      <p class="desc">${p.desc}</p>${bul}${price}
+      <button class="btn btn-jade" onclick="openProduct(${p.id})">${cta}</button></div>`;
+  }
+  function renderPublic(){
+    const pub=products.filter(p=>p.published!==false);
+    const sale=pub.filter(p=>p.status==='sale'), pre=pub.filter(p=>p.status==='preorder');
+    document.getElementById('saleGrid').innerHTML=sale.map(cardHTML).join('');
+    document.getElementById('preGrid').innerHTML=pre.map(cardHTML).join('');
+    document.getElementById('nangcao').style.display = pre.length?'':'none';
+  }
+
+  function openProduct(id){
+    const p=products.find(x=>x.id===id); if(!p)return; current=p;
+    document.getElementById('pChar').textContent=p.char;
+    const cov=document.getElementById('pCover'), cell=document.getElementById('pCharCell');
+    if(p.cover){cov.src=p.cover;cov.style.display='block';cell.style.display='none';}
+    else{cov.style.display='none';cell.style.display='grid';}
+    document.getElementById('pLevel').textContent=p.level;
+    document.getElementById('pTitle').textContent=p.name;
+    document.getElementById('pDesc').textContent=p.desc;
+    document.getElementById('pNow').textContent=p.priceLabel;
+    document.getElementById('pWas').textContent=p.wasLabel||'';
+    document.getElementById('mCtaPrice').textContent=p.priceLabel;
+    const isDoc=p.type==='doc';
+    document.getElementById('pNote').innerHTML = isDoc
+      ? '<b>📄 Tài liệu</b> — bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
+      : '<b>⚡ Khóa học online</b> — kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.';
+    const buyTxt = isDoc?'Mua ngay →':(p.status==='preorder'?'Đặt trước ngay →':'Đăng ký học ngay →');
+    document.getElementById('buyBtn').textContent=buyTxt;
+    document.getElementById('mCtaBtn').textContent=buyTxt;
+    document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':'Bên trong khóa học có gì?';
+    go('product');
+  }
+  let orderCodeVal='ZIZIA1B2', payTimer;
+  function setStep(n){document.querySelectorAll('#view-checkout .steps .st').forEach((s,i)=>s.classList.toggle('on', i<n));}
+  function buildCheckout(){
+    const p=current, isDoc=p.type==='doc'&&p.hasHard;
+    document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
+    document.getElementById('coSub').textContent = p.type==='doc'?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Tài khoản đăng nhập sẽ được gửi về email này.';
+    document.getElementById('fmtChooser').style.display = isDoc?'grid':'none';
+    if(isDoc){
+      document.querySelector('input[name=fmt][value=soft]').checked=true;
+      document.getElementById('fmtSoftP').textContent='Tải về ngay · '+fmtVND(p.price);
+      document.getElementById('fmtHardP').textContent='In màu, giao 2–4 ngày · '+fmtVND(p.hardPrice)+' +ship';
+    }
+    orderCodeVal='ZIZI'+Math.random().toString(36).slice(2,6).toUpperCase();
+    document.getElementById('payCode').textContent=orderCodeVal;
+    document.getElementById('checkoutForm').style.display='block';
+    document.getElementById('successBox').style.display='none';
+    document.getElementById('infoPanel').style.display='block';
+    document.getElementById('payPanel').style.display='none';
+    clearTimeout(payTimer);
+    setStep(1);
+    recalcCheckout();
+  }
+  function recalcCheckout(){
+    const p=current; let total=p.price, hard=false;
+    if(p.type==='doc'&&p.hasHard){
+      const sel=document.querySelector('input[name=fmt]:checked');
+      hard = sel && sel.value==='hard';
+      total = hard ? p.hardPrice + (p.shipFee||0) : p.price;
+    }
+    document.getElementById('addrField').style.display = hard?'block':'none';
+    document.getElementById('sumShipLine').style.display = hard?'flex':'none';
+    document.getElementById('sumShip').textContent = fmtVND(p.shipFee||0);
+    document.getElementById('sumPrice').textContent = fmtVND(hard?p.hardPrice:p.price);
+    document.getElementById('sumName').textContent = p.name + (p.type==='doc'?(hard?' · bản cứng':' · bản mềm'):'');
+    document.getElementById('sumTotal').textContent = fmtVND(total);
+    document.getElementById('payAmount').textContent = fmtVND(total);
+    current._hard=hard;
+  }
+  function createOrder(){
+    // (thực tế: gọi API tạo đơn -> nhận mã QR động). Ở demo ta chuyển sang bước thanh toán.
+    document.getElementById('infoPanel').style.display='none';
+    document.getElementById('payPanel').style.display='block';
+    const st=document.getElementById('payStatus');
+    st.className='pay-status waiting';
+    st.querySelector('.spinner').style.display='block';
+    document.getElementById('payStatusText').textContent='Đang chờ thanh toán — hệ thống tự động đối soát giao dịch…';
+    setStep(2);
+    // Mô phỏng webhook báo "tiền đã về" sau 7 giây
+    clearTimeout(payTimer);
+    payTimer=setTimeout(markPaid, 7000);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function markPaid(){
+    clearTimeout(payTimer);
+    const st=document.getElementById('payStatus');
+    st.className='pay-status done';
+    st.querySelector('.spinner').style.display='none';
+    document.getElementById('payStatusText').textContent='✓ Đã nhận thanh toán! Đang kích hoạt tài khoản…';
+    setTimeout(showSuccess, 1300);
+  }
+  function showSuccess(){
+    const p=current, isDoc=p.type==='doc', hard=p._hard;
+    document.getElementById('checkoutForm').style.display='none';
+    document.getElementById('successBox').style.display='block';
+    document.getElementById('learnCourse').textContent=p.name;
+    const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=p.name;
+    document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':'Khóa đã mở';
+    document.getElementById('credLabel2').textContent = isDoc?(hard?'Giao hàng':'Tải về'):'Trang học';
+    document.getElementById('credVal2').textContent = isDoc?(hard?'2–4 ngày':'Link trong email'):'hoc.zizichinese.com';
+    const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
+    if(isDoc){
+      msg.innerHTML = hard
+        ? 'Đã nhận đơn! Bản mềm đã gửi qua email, bản cứng sẽ được <b>giao trong 2–4 ngày</b>.'
+        : 'Thanh toán thành công! <b>Link tải bản mềm</b> đã gửi tới email — hoặc tải ngay bên dưới.';
+      btn.textContent='⬇ Tải tài liệu về máy'; btn.onclick=()=>toast('Đang tải tài liệu (demo)…');
+    }else{
+      msg.innerHTML='Tài khoản học đã được <b>kích hoạt tự động</b>. Thông tin đăng nhập vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam.';
+      btn.textContent='Vào học ngay →'; btn.onclick=()=>go('learn');
+    }
+    setStep(3);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // admin
+  let admAuthed=false;
+  // Không lưu mật khẩu dạng chữ trong code. Chỉ lưu giá trị băm SHA-256.
+  // Đổi mật khẩu: tự tạo hash mới rồi thay chuỗi dưới đây.
+  const ADM_HASH='4582e50147b49b118c520b3d621a5e78250e1d9ba052c3cc4e6f202636a4e027';
+  async function sha256(txt){
+    const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  async function admLogin(){
+    const p=document.getElementById('admPass').value.trim();
+    let ok=false;
+    try{ ok = (await sha256(p))===ADM_HASH; }catch(e){ ok=false; }
+    if(ok){
+      admAuthed=true;
+      document.getElementById('admErr').textContent='';
+      document.getElementById('admLogin').style.display='none';
+      document.getElementById('admApp').style.display='grid';
+      renderAll();
+    }else{
+      document.getElementById('admErr').textContent='Sai mật khẩu, vui lòng thử lại.';
+    }
+  }
+  function admTab(id,btn){
+    document.querySelectorAll('.adm-tab').forEach(t=>t.hidden=true);
+    document.getElementById('tab-'+id).hidden=false;
+    document.querySelectorAll('.adm-nav button').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('admTitle').textContent=btn.dataset.title;
+    window.scrollTo(0,0);
+  }
+  function chip(el){el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+
+  /* ===== URL admin riêng (không lộ trên web): chỉ vào bằng #quantri ===== */
+  function checkAdminRoute(){ if(location.hash==='#quantri'||location.hash==='#admin'){ go('admin'); } }
+  window.addEventListener('hashchange', checkAdminRoute);
+  // phím tắt kín để mở admin khi test (không lộ trên giao diện): Ctrl/Cmd + Shift + A
+  window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key.toLowerCase()==='a'){ e.preventDefault(); go('admin'); } });
+
+  /* ===== helpers ===== */
+  const val=id=>document.getElementById(id).value.trim();
+  function openModal(title,html,wide){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=html;document.querySelector('#modalBg .modal').classList.toggle('wide',!!wide);document.getElementById('modalBg').classList.add('show');}
+  function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+  const courseNames=()=>products.map(c=>c.name);
+
+  /* ===== dữ liệu demo học viên/đơn (in-memory) ===== */
+  /* @DATA-USERS */
+  let users=[
+    {id:1,name:'Lan Anh',contact:'lananh@gmail.com',course:'Combo HSK1+2',date:'12/06/2026',source:'auto'},
+    {id:2,name:'Minh Tuấn',contact:'Zalo · 0912•••456',course:'Khóa HSK1',date:'28/06/2026',source:'auto'},
+    {id:3,name:'Thu Hà',contact:'thuha@gmail.com',course:'Khóa HSK2',date:'03/07/2026',source:'auto'},
+    {id:4,name:'Đức Anh',contact:'Zalo · 0987•••123',course:'Bộ thủ & Công thức',date:'05/07/2026',source:'auto'},
+    {id:5,name:'Cô Hương (tiền mặt)',contact:'0968•••222',course:'Combo HSK1+2',date:'06/07/2026',source:'manual'}
+  ];
+  /* @DATA-ORDERS */
+  let orders=[
+    {code:'ZIZI-8A2F',cust:'Lan Anh',course:'Combo HSK1+2',amount:399000,channel:'TikTok',status:'paid',time:'2 phút trước'},
+    {code:'ZIZI-7C1D',cust:'Minh Tuấn',course:'Khóa HSK1',amount:199000,channel:'Facebook',status:'paid',time:'18 phút trước'},
+    {code:'ZIZI-7B9A',cust:'Thu Hà',course:'Bộ thủ & Công thức',amount:149000,channel:'Zalo',status:'pending',time:'41 phút trước'},
+    {code:'ZIZI-7A03',cust:'Đức Anh',course:'Khóa HSK2',amount:249000,channel:'TikTok',status:'paid',time:'1 giờ trước'},
+    {code:'ZIZI-79A1',cust:'Hải Yến',course:'Khóa HSK1',amount:199000,channel:'Trực tiếp',status:'refund',time:'3 giờ trước'}
+  ];
+
+  /* ===== PRODUCTS CRUD ===== */
+  const shortPrice=n=> n>=1000000 ? n.toLocaleString('vi-VN')+'₫' : Math.round(n/1000)+'k';
+  function renderCourses(){
+    document.getElementById('courseList').innerHTML=products.map((c,idx)=>`
+      <div class="course-row">
+        <div class="reorder"><button ${idx===0?'disabled':''} onclick="moveProduct(${c.id},-1)" aria-label="Lên">▲</button><button ${idx===products.length-1?'disabled':''} onclick="moveProduct(${c.id},1)" aria-label="Xuống">▼</button></div>
+        <span class="tianzige cch"><span class="han hz">${c.char}</span></span>
+        <div class="meta"><b>${c.name} ${c.type==='doc'?'<span class="minitag">Tài liệu</span>':''}</b><div class="sub">${fmtVND(c.price)}${c.type==='doc'&&c.hasHard?' / cứng '+fmtVND(c.hardPrice):''} · ${c.type==='doc'?(c.res+' file'):(c.lessons+' buổi · '+c.res+' tài nguyên')}</div></div>
+        <div class="stat"><b>${c.students}</b><span>${c.status==='sale'?(c.type==='doc'?'đã bán':'học viên'):'đã đặt'}</span></div>
+        <div class="stat"><b>${c.revenue}</b><span>doanh thu</span></div>
+        <span class="tag ${c.status==='sale'?'active':'pending'}">${c.status==='sale'?'Đang bán':'Đặt trước'}</span>
+        <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editCourse(${c.id})">Sửa</button></div>`).join('');
+    const sale=products.filter(c=>c.status==='sale').length;
+    document.getElementById('courseCount').textContent=`${products.length} sản phẩm (${sale} đang bán · ${products.length-sale} đặt trước)`;
+  }
+  function moveProduct(id,dir){
+    const i=products.findIndex(p=>p.id===id), j=i+dir;
+    if(j<0||j>=products.length)return;
+    [products[i],products[j]]=[products[j],products[i]];
+    renderCourses();renderPublic();toast('Đã đổi vị trí — web ngoài cập nhật theo');
+  }
+  /* ===== helpers cho editor mở rộng ===== */
+  const esc=s=>(s==null?'':s).toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  const slugify=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  /* @DATA-TAGS */
+  const TOPIC_TAGS=[['Đầu tư','dau-tu'],['AI & Công nghệ','ai-cong-nghe'],['Marketing & MXH','marketing-mang-xa-hoi'],['Vibe Coding','vibe-coding'],['Kinh doanh','kinh-doanh'],['Tài chính cá nhân','tai-chinh-ca-nhan'],['Quản trị','quan-tri'],['Kỹ năng','ky-nang'],['Tâm lý học','tam-ly-hoc'],['Tiếng Trung','tieng-trung']];
+  const CATEGORIES=['Tiếng Trung','Tài chính cá nhân','Đầu tư','Kinh doanh','Kỹ năng','Công nghệ','Khác'];
+  let editTags=[], editGallery=[], editCover='';
+
+  function editCourse(id){
+    const c=id?products.find(x=>x.id===id):{id:0,type:'course',char:'字',name:'',level:'',desc:'',price:0,status:'sale'};
+    const isDoc=c.type==='doc';
+    editTags=(c.tags||[]).slice(); editGallery=(c.gallery||[]).slice(); editCover=c.cover||'';
+    const relOpts=products.filter(x=>x.id!==c.id).map(x=>`<option value="${x.id}"${(c.related||[]).includes(x.id)?' selected':''}>${esc(x.name)}</option>`).join('');
+    const catOpts=CATEGORIES.map(x=>`<option${c.category===x?' selected':''}>${x}</option>`).join('');
+    openModal(id?'Chỉnh sửa sản phẩm':'Thêm sản phẩm mới',`<div class="mform bigform">
+
+      ${id&&c.type==='course'?`<button class="btn btn-jade" style="width:100%;justify-content:center;margin-bottom:8px" onclick="manageLessons(${id})">🎬 Quản lý bài học · video · tài nguyên</button>`:''}
+
+      <div class="mgroup"><h4>Thông tin cơ bản</h4>
+        <div class="mrow"><label>Loại sản phẩm<select id="f_type" onchange="toggleDocFields()"><option value="course"${!isDoc?' selected':''}>Khóa học (video)</option><option value="doc"${isDoc?' selected':''}>Tài liệu / Sách (PDF·Excel)</option></select></label>
+        <label>Trạng thái<select id="f_status"><option value="sale"${c.status==='sale'?' selected':''}>Đang bán</option><option value="preorder"${c.status==='preorder'?' selected':''}>Đặt trước</option></select></label></div>
+        <div class="mrow"><label>Tên sản phẩm<input id="f_name" value="${esc(c.name)}" oninput="autoSlug()" placeholder="Vd: Khóa HSK1"></label>
+        <label>Slug (URL)<input id="f_slug" value="${esc(c.slug||slugify(c.name))}" oninput="this.dataset.touched='1'" placeholder="tu-dong-tu-ten"></label></div>
+        <label>Phụ đề / tagline<input id="f_subtitle" value="${esc(c.subtitle||c.level||'')}" placeholder="Vd: Chú mèo dạy tôi về tiền…"></label>
+        <label>Mô tả<textarea id="f_desc" rows="4" placeholder="Mô tả chi tiết sản phẩm…">${esc(c.description||c.desc||'')}</textarea></label>
+        <div class="mrow"><label>Ký tự Hán (icon)<input id="f_char" value="${esc(c.char)}"></label>
+        <label>Nhãn cấp/loại<input id="f_level" value="${esc(c.level||'')}" placeholder="Vd: HSK 1 · mất gốc"></label></div>
+      </div>
+
+      <div class="mgroup"><h4>Ảnh bìa &amp; thư viện</h4>
+        <div class="cover-prev" id="coverPrev">${editCover?`<img src="${esc(editCover)}" alt="">`:'<span class="muted">Chưa có ảnh bìa</span>'}</div>
+        <div class="cover-act"><label class="upl">⬆ Upload ảnh<input type="file" hidden accept="image/*" onchange="onCover(this)"></label>
+        <button class="lnk" onclick="clearCover()" type="button">Xóa ảnh</button></div>
+        <label>Hoặc dán URL ảnh bìa<input id="f_coverUrl" value="${esc(editCover)}" oninput="setCoverUrl(this.value)" placeholder="https://…"></label>
+        <p class="hint-box">Bìa 2D mặt trước · tỉ lệ 2:3 (khuyến nghị 1200×1800px) · JPG/PNG/WebP ≤5MB.</p>
+        <label>Thư viện ảnh (dán URL rồi Enter)<input id="f_galIn" onkeydown="if(event.key==='Enter'){event.preventDefault();addGallery()}" placeholder="https://… ảnh phụ"></label>
+        <div class="gallery" id="galArea"></div>
+      </div>
+
+      <div class="mgroup"><h4>Giá &amp; bán hàng</h4>
+        <div class="mrow"><label>Giá gốc (₫)<input id="f_orig" type="number" value="${c.originalPrice||''}" placeholder="220000"></label>
+        <label>Giá bán (₫)<input id="f_price" type="number" value="${c.price||0}" placeholder="199000"></label></div>
+        <label class="chkline"><input type="checkbox" id="f_preorder" ${c.preorder?'checked':''}> Bật lịch mở bán (preorder)</label>
+        <div class="mrow"><label>Thời điểm mở<input id="f_openat" type="datetime-local" value="${esc(c.openAt||'')}"></label>
+        <label>Danh mục<select id="f_cat">${catOpts}</select></label></div>
+        <label>Ghi chú giao hàng / mở quyền<textarea id="f_delivery" rows="2" placeholder="Vd: Dự kiến giao đầu tháng 7/2026…">${esc(c.delivery||'')}</textarea></label>
+        <div id="docFields" style="display:${isDoc?'block':'none'}">
+          <label class="chkline"><input type="checkbox" id="f_hard" ${c.hasHard?'checked':''}> Bán kèm <b>bản cứng</b> (in, giao tận nơi)</label>
+          <div class="mrow"><label>Giá bản cứng (₫)<input id="f_hardprice" type="number" value="${c.hardPrice||0}"></label>
+          <label>Phí ship (₫)<input id="f_ship" type="number" value="${c.shipFee||30000}"></label></div>
+        </div>
+        <div id="courseFields" style="display:${isDoc?'none':'block'}">
+          <div class="mrow"><label>Số buổi học<input id="f_lessons" type="number" value="${c.lessons||0}"></label>
+          <label>Số tài nguyên<input id="f_res" type="number" value="${c.res||0}"></label></div>
+        </div>
+      </div>
+
+      <div class="mgroup"><h4>Phân loại &amp; liên kết</h4>
+        <div class="mrow"><label>Tác giả<input id="f_author" value="${esc(c.author||'')}" placeholder="Vd: Alex Le"></label>
+        <label>NXB / Đơn vị phát hành<input id="f_pub" value="${esc(c.publisher||'')}" placeholder="Vd: Money Studio"></label></div>
+        <label>Chủ đề (topic tags) — bấm để chọn</label>
+        <div class="tag-pick">${TOPIC_TAGS.map(t=>`<button type="button" onclick="toggleTag('${t[0]}')">${t[0]} <code>/${t[1]}</code></button>`).join('')}</div>
+        <div class="mrow" style="align-items:end"><label>Thêm tag tự do<input id="f_tagIn" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomTag()}" placeholder="Enter để thêm"></label>
+        <button class="btn btn-ghost" style="height:42px" onclick="addCustomTag()">Thêm</button></div>
+        <div class="tag-sel" id="tagArea"></div>
+        <label>Sản phẩm liên quan (Ctrl/Cmd để chọn nhiều)<select id="f_related" multiple size="4">${relOpts}</select></label>
+      </div>
+
+      <div class="mgroup"><h4>Nội dung landing (JSON)</h4>
+        <p class="hint-box">Các block: hero, stats, whyBuy, outline, outcomes, audience, testimonials, packages, faq, cta.</p>
+        <textarea id="f_landing" rows="6" class="mono" placeholder='{ "hero": {...}, "faq": [...] }'>${esc(c.landingJSON||'')}</textarea>
+      </div>
+
+      <div class="mgroup"><h4>Xuất bản</h4>
+        <div class="flag-row">
+          <label class="chkline"><input type="checkbox" id="f_published" ${c.published!==false?'checked':''}> Xuất bản (hiện trên web)</label>
+          <label class="chkline"><input type="checkbox" id="f_featured" ${c.featured?'checked':''}> Nổi bật (thẻ lớn)</label>
+        </div>
+      </div>
+
+      <div class="mact">${id?`<button class="btn btn-ghost del" onclick="delCourse(${id})">Xóa</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-jade" onclick="saveCourse(${c.id})">Lưu thay đổi</button></div>
+      </div>`, true);
+    renderTags(); renderGallery();
+  }
+  function autoSlug(){const s=document.getElementById('f_slug');if(!s.dataset.touched)s.value=slugify(val('f_name'));}
+  function toggleDocFields(){
+    const isDoc=document.getElementById('f_type').value==='doc';
+    document.getElementById('docFields').style.display=isDoc?'block':'none';
+    document.getElementById('courseFields').style.display=isDoc?'none':'block';
+  }
+  function renderCover(){document.getElementById('coverPrev').innerHTML=editCover?`<img src="${esc(editCover)}" alt="">`:'<span class="muted">Chưa có ảnh bìa</span>';}
+  function clearCover(){editCover='';const u=document.getElementById('f_coverUrl');if(u)u.value='';renderCover();}
+  function setCoverUrl(v){editCover=v;renderCover();}
+  function onCover(input){if(input.files&&input.files[0]){editCover=URL.createObjectURL(input.files[0]);document.getElementById('f_coverUrl').value='(đã upload) '+input.files[0].name;renderCover();toast('Đã nhận ảnh bìa (demo)');}}
+  function addGallery(){const el=document.getElementById('f_galIn');if(el.value.trim()){editGallery.push(el.value.trim());el.value='';renderGallery();}}
+  function rmGallery(i){editGallery.splice(i,1);renderGallery();}
+  function renderGallery(){document.getElementById('galArea').innerHTML=editGallery.map((g,i)=>`<span class="chipf">🖼 ${esc(g).slice(0,22)}… <button onclick="rmGallery(${i})">×</button></span>`).join('')||'<span class="muted">Chưa có ảnh phụ</span>';}
+  function toggleTag(name){const i=editTags.indexOf(name);if(i>=0)editTags.splice(i,1);else editTags.push(name);renderTags();}
+  function addCustomTag(){const el=document.getElementById('f_tagIn');const v=el.value.trim();if(v&&!editTags.includes(v)){editTags.push(v);el.value='';renderTags();}}
+  function removeTag(i){editTags.splice(i,1);renderTags();}
+  function renderTags(){document.getElementById('tagArea').innerHTML= editTags.length?('<b>ĐÃ CHỌN:</b> '+editTags.map((t,i)=>`<span class="tagchip">${esc(t)} <code>/${slugify(t)}</code> <button onclick="removeTag(${i})">×</button></span>`).join('')):'<span class="muted">Chưa chọn chủ đề nào</span>';}
+
+  function saveCourse(id){
+    if(!val('f_name')){toast('Nhập tên sản phẩm');return;}
+    const i=products.findIndex(x=>x.id===id);
+    const type=document.getElementById('f_type').value, price=+val('f_price')||0, orig=+val('f_orig')||0;
+    const related=Array.from(document.getElementById('f_related').selectedOptions).map(o=>+o.value);
+    const base={id:id||Date.now(),type,char:val('f_char')||'字',name:val('f_name'),slug:val('f_slug')||slugify(val('f_name')),
+      subtitle:val('f_subtitle'),level:val('f_level'),description:document.getElementById('f_desc').value.trim(),desc:document.getElementById('f_desc').value.trim(),
+      cover:editCover,gallery:editGallery.slice(),price,originalPrice:orig,priceLabel:shortPrice(price),
+      status:document.getElementById('f_status').value,preorder:document.getElementById('f_preorder').checked,openAt:val('f_openat'),
+      category:document.getElementById('f_cat').value,delivery:document.getElementById('f_delivery').value.trim(),
+      author:val('f_author'),publisher:val('f_pub'),tags:editTags.slice(),related,
+      landingJSON:document.getElementById('f_landing').value.trim(),
+      published:document.getElementById('f_published').checked,featured:document.getElementById('f_featured').checked,
+      lessons:type==='course'?(+val('f_lessons')||0):(i>=0?products[i].lessons:0),
+      res: document.getElementById('f_res')?(+val('f_res')||0):(i>=0?products[i].res:0)};
+    if(orig>0){base.wasLabel=shortPrice(orig);base.off=price&&orig>price?('-'+Math.round((1-price/orig)*100)+'%'):'';}
+    else if(i>=0){base.wasLabel=products[i].wasLabel;base.off=products[i].off;}
+    if(type==='doc'){base.hasSoft=true;base.hasHard=document.getElementById('f_hard').checked;base.hardPrice=+val('f_hardprice')||0;base.shipFee=+val('f_ship')||30000;}
+    if(i>=0){products[i]={...products[i],...base};} else {products.push({...base,bullets:[],students:0,revenue:'0'});}
+    renderCourses();renderPublic();closeModal();toast(i>=0?'Đã lưu thay đổi':'Đã thêm sản phẩm mới');
+  }
+  function delCourse(id){if(confirm('Xóa sản phẩm này?')){products=products.filter(x=>x.id!==id);renderCourses();renderPublic();closeModal();toast('Đã xóa sản phẩm');}}
+
+  /* ===== Quản lý bài học: gắn video (nền tảng thứ 3) + tải file bài tập ===== */
+  /* @DATA-LESSONS ★ Giáo trình HSK1 */
+  const HSK1_LESSONS=['Buổi 1 · Nhập môn tiếng Trung','Buổi 2 · Ngữ âm P1','Buổi 3 · Ngữ âm P2','Buổi 4 · Ngữ âm P3',
+    'Buổi 5 · Bài 1 你好','Buổi 6 · Bài 2 汉语不太难','Buổi 7 · Bài 3 明天见','Buổi 8–9 · Bài 4 你去哪儿',
+    'Buổi 10 · Bài 5 这是王老师','Buổi 11 · Bài 6 我学习汉语','Buổi 12–13 · Bài 7 你吃什么',
+    'Buổi 14–15 · Bài 8 苹果一斤多少钱','Buổi 16 · Bài 9 我换人民币','Buổi 17–18 · Bài 10 他住哪儿',
+    'Buổi 18–19 · Bài 11 我们都是留学生','Buổi 20 · Luyện tập','Buổi 21–22 · Bài 12 你在哪儿学习',
+    'Buổi 23–25 · Bài 13 这是不是中药','Buổi 26–28 · Bài 14 你的车是新的还是旧的','Buổi 29–30 · Bài 15 你们公司有多少职员 (Ôn tập)'];
+  let lessonData={};
+  function getLessons(cid){
+    if(!lessonData[cid]){
+      const c=products.find(x=>x.id===cid);
+      const titles = cid===1 ? HSK1_LESSONS.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
+      lessonData[cid]=titles.map(t=>({title:t,video:'',files:[]}));
+    }
+    return lessonData[cid];
+  }
+  function manageLessons(cid){
+    const c=products.find(x=>x.id===cid);
+    openModal('Bài học · '+c.name, `
+      <p class="note-line" style="margin:-4px 0 12px">Sửa <b>tiêu đề</b> ngay trên ô. Dán <b>link/ID video</b> từ nền tảng của bạn (Vimeo/Bunny/VdoCipher), hoặc bấm <b>Tải video lên</b>. File bài tập bấm <b>Tải lên</b>.</p>
+      <div id="lessonMgr" class="lmgr"></div>
+      <div class="mact" style="margin-top:10px;justify-content:space-between">
+        <button class="btn btn-ghost" onclick="addLesson(${cid})">+ Thêm buổi</button>
+        <button class="btn btn-jade" onclick="closeModal();toast('Đã lưu nội dung')">Xong</button></div>`);
+    renderLessonMgr(cid);
+  }
+  function renderLessonMgr(cid){
+    const ls=getLessons(cid);
+    document.getElementById('lessonMgr').innerHTML=ls.map((l,i)=>`
+      <div class="lrow">
+        <div class="ltitle-row">
+          <input class="ltitle-in" value="${(l.title||'').replace(/"/g,'&quot;')}" onchange="setLTitle(${cid},${i},this.value)" placeholder="Tên buổi học">
+          ${l.video?'<span class="ok">● video</span>':''}
+          <button class="ldel" onclick="delLesson(${cid},${i})" aria-label="Xóa buổi">×</button>
+        </div>
+        <div class="lvid"><span class="lic">🎬</span>
+          <input placeholder="Dán link / ID video…" value="${(l.video||'').replace(/"/g,'&quot;')}" onchange="setVideo(${cid},${i},this.value)">
+          <label class="upl vid">Tải video lên<input type="file" hidden accept="video/*" onchange="upVideo(${cid},${i},this)"></label>
+        </div>
+        <div class="lfiles">
+          ${l.files.map((f,fi)=>`<span class="chipf">📄 ${f} <button onclick="rmFile(${cid},${i},${fi})" aria-label="Xóa">×</button></span>`).join('')||'<span class="muted">Chưa có tài liệu</span>'}
+          <label class="upl">+ Tải file bài tập<input type="file" hidden accept=".pdf,.xlsx,.xls,.mp3,.zip,.doc,.docx,.png,.jpg" onchange="addFile(${cid},${i},this)"></label>
+        </div>
+      </div>`).join('');
+  }
+  function setLTitle(cid,i,v){getLessons(cid)[i].title=v;}
+  function setVideo(cid,i,v){getLessons(cid)[i].video=v.trim();renderLessonMgr(cid);toast(v.trim()?'Đã gắn link video':'Đã xóa video');}
+  function upVideo(cid,i,input){if(input.files&&input.files[0]){getLessons(cid)[i].video='(tải lên) '+input.files[0].name;renderLessonMgr(cid);toast('Đã nhận video — sẽ đẩy lên kho khi lưu (demo)');}}
+  function addFile(cid,i,input){if(input.files&&input.files[0]){getLessons(cid)[i].files.push(input.files[0].name);renderLessonMgr(cid);toast('Đã thêm tài liệu (demo)');}}
+  function rmFile(cid,i,fi){getLessons(cid)[i].files.splice(fi,1);renderLessonMgr(cid);}
+  function addLesson(cid){const ls=getLessons(cid);ls.push({title:'Buổi '+(ls.length+1),video:'',files:[]});syncLessonCount(cid);renderLessonMgr(cid);}
+  function delLesson(cid,i){const ls=getLessons(cid);ls.splice(i,1);syncLessonCount(cid);renderLessonMgr(cid);}
+  function syncLessonCount(cid){const c=products.find(x=>x.id===cid);if(c){c.lessons=getLessons(cid).length;renderCourses();renderPublic();}}
+
+  /* ===== USERS CRUD ===== */
+  function renderUsers(){
+    document.getElementById('userList').innerHTML=users.map(u=>`
+      <tr><td>${u.name}</td><td>${u.contact}</td><td>${u.course}</td><td>${u.date}</td>
+      <td><span class="tag active">Đang học</span></td>
+      <td><span class="tag ${u.source==='manual'?'pending':'active'}" style="font-size:.68rem">${u.source==='manual'?'Thủ công':'Tự động'}</span></td>
+      <td><button class="lnk" onclick="editUser(${u.id})">Sửa</button></td></tr>`).join('');
+  }
+  function editUser(id){
+    const u=id?users.find(x=>x.id===id):{id:0,name:'',contact:'',course:products[0].name,date:'',source:'manual'};
+    const opts=courseNames().map(n=>`<option${n===u.course?' selected':''}>${n}</option>`).join('');
+    openModal(id?'Sửa học viên':'Thêm học viên thủ công',`<div class="mform">
+      <label>Họ và tên<input id="u_name" value="${u.name}"></label>
+      <label>Liên hệ (email / Zalo)<input id="u_contact" value="${u.contact}"></label>
+      <label>Khóa đã mua<select id="u_course">${opts}</select></label>
+      <label>Ngày tham gia<input id="u_date" value="${u.date}" placeholder="dd/mm/yyyy"></label>
+      <div class="mact">${id?`<button class="btn btn-ghost del" onclick="delUser(${id})">Xóa</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-jade" onclick="saveUser(${u.id})">Lưu</button></div></div>`);
+  }
+  function saveUser(id){
+    if(!val('u_name')){toast('Nhập tên học viên');return;}
+    const b={id:id||Date.now(),name:val('u_name'),contact:val('u_contact'),course:document.getElementById('u_course').value,date:val('u_date')||new Date().toLocaleDateString('vi-VN')};
+    const i=users.findIndex(x=>x.id===id);
+    if(i>=0){users[i]={...users[i],...b};} else {users.unshift({...b,source:'manual'});}
+    renderUsers();closeModal();toast(i>=0?'Đã cập nhật học viên':'Đã thêm học viên (thủ công)');
+  }
+  function delUser(id){if(confirm('Xóa học viên này?')){users=users.filter(x=>x.id!==id);renderUsers();closeModal();toast('Đã xóa học viên');}}
+
+  /* ===== ORDERS CRUD + filter ===== */
+  const tagFor=s=>s==='paid'?'<span class="tag paid">Đã thanh toán</span>':s==='pending'?'<span class="tag pending">Chờ CK</span>':'<span class="tag refund">Đã hoàn tiền</span>';
+  let orderFilter='all';
+  function renderOrders(){
+    const list=orderFilter==='all'?orders:orders.filter(o=>o.status===orderFilter);
+    document.getElementById('orderList').innerHTML=list.map(o=>`
+      <tr><td>#${o.code}</td><td>${o.cust}</td><td>${o.course}</td><td>${fmtVND(o.amount)}</td><td>${o.channel}</td>
+      <td>${tagFor(o.status)}</td><td>${o.time}</td>
+      <td><button class="lnk" onclick="editOrder('${o.code}')">Sửa</button></td></tr>`).join('')
+      || '<tr><td colspan="8" style="text-align:center;color:var(--ink-60);padding:20px">Không có đơn nào</td></tr>';
+  }
+  function filterOrders(f,btn){orderFilter=f;chip(btn);renderOrders();}
+  function editOrder(code){
+    const o=code?orders.find(x=>x.code===code):{code:'',cust:'',course:products[0].name,amount:products[0].price,channel:'Thủ công',status:'paid',time:'vừa xong'};
+    const opts=courseNames().map(n=>`<option${n===o.course?' selected':''}>${n}</option>`).join('');
+    const st=s=>`<option value="${s}"${o.status===s?' selected':''}>`;
+    openModal(code?'Sửa đơn hàng':'Thêm đơn thủ công',`<div class="mform">
+      <label>Khách hàng<input id="o_cust" value="${o.cust}"></label>
+      <label>Khóa học<select id="o_course">${opts}</select></label>
+      <div class="mrow"><label>Số tiền (₫)<input id="o_amount" type="number" value="${o.amount}"></label>
+      <label>Kênh<input id="o_channel" value="${o.channel}"></label></div>
+      <label>Trạng thái<select id="o_status">${st('paid')}Đã thanh toán</option>${st('pending')}Chờ chuyển khoản</option>${st('refund')}Đã hoàn tiền</option></select></label>
+      <div class="mact">${code?`<button class="btn btn-ghost del" onclick="delOrder('${code}')">Xóa</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-jade" onclick="saveOrder('${o.code}')">Lưu</button></div></div>`);
+  }
+  function saveOrder(code){
+    if(!val('o_cust')){toast('Nhập tên khách hàng');return;}
+    const status=document.getElementById('o_status').value;
+    const b={cust:val('o_cust'),course:document.getElementById('o_course').value,amount:+val('o_amount')||0,channel:val('o_channel'),status};
+    const i=orders.findIndex(x=>x.code===code);
+    let fired=false;
+    if(i>=0){const was=orders[i].status;orders[i]={...orders[i],...b};if(was!=='paid'&&status==='paid')fired=true;}
+    else{orders.unshift({...b,code:'ZIZI-'+Math.random().toString(36).slice(2,6).toUpperCase(),time:'vừa xong'});if(status==='paid')fired=true;}
+    renderOrders();closeModal();
+    toast(fired?'Đã lưu · đã bắn sự kiện Purchase 🎯':'Đã lưu đơn hàng');
+  }
+  function delOrder(code){if(confirm('Xóa đơn này?')){orders=orders.filter(x=>x.code!==code);renderOrders();closeModal();toast('Đã xóa đơn hàng');}}
+
+  /* ===== TRACKING ===== */
+  function saveTracking(){
+    const fb=val('px_fb'),tt=val('px_tt'),ga=val('px_ga');
+    toast('Đã lưu cấu hình Pixel & sự kiện');
+  }
+
+  function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();}
+
+  // countdown
+  let t = 2*3600;
+  setInterval(()=>{ if(t<=0)return; t--;
+    const h=String(Math.floor(t/3600)).padStart(2,'0');
+    const m=String(Math.floor(t%3600/60)).padStart(2,'0');
+    const s=String(t%60).padStart(2,'0');
+    const H=document.getElementById('h'),M=document.getElementById('m'),S=document.getElementById('s');
+    if(H){H.textContent=h;M.textContent=m;S.textContent=s;}
+  },1000);
+
+  // live sale popup
+  const buyers=[['N','Ngọc Minh','vừa đăng ký Combo HSK1+2'],['P','Phương Thảo','vừa đăng ký Khóa HSK1'],
+    ['Đ','Đức Anh','vừa mua Bộ thủ & Công thức'],['H','Hải Yến','vừa đăng ký Khóa HSK2']];
+  let bi=0;
+  function showPop(){
+    const b=buyers[bi%buyers.length]; bi++;
+    const p=document.getElementById('popup');
+    p.querySelector('.av').textContent=b[0];
+    document.getElementById('popName').textContent=b[1];
+    document.getElementById('popMsg').textContent=b[2]+' · '+(2+Math.floor(Math.random()*8))+' phút trước';
+    p.classList.add('show');
+    setTimeout(()=>p.classList.remove('show'),4500);
+  }
+  setTimeout(function loop(){showPop();setTimeout(loop,9000);},4000);
+
+  // init
+  renderAll();
+  checkAdminRoute();
+</script>
+</body>
+</html>

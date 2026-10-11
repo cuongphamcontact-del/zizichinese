@@ -1,0 +1,23 @@
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Trình soạn thảo
+.vscode/
+.idea/
+
+# Biến môi trường / bí mật (KHÔNG bao giờ commit)
+.env
+.env.*
+*.key
+secrets.*
+
+# Sao lưu tạm
+*.bak
+*-backup.html
+*-cu.html
+
+# Node (cho bản thật sau này)
+node_modules/
+.next/
+dist/
