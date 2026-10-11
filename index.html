@@ -130,6 +130,7 @@
   .card .pbadge{position:absolute;left:12px;top:12px;font-size:.64rem;font-weight:800;padding:.32em .7em;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
   .card .pbadge.doc{background:#fff;color:var(--jade-dark)}
   .card .pbadge.pre{background:var(--gold);color:#4a3608}
+  .card .pbadge.live{background:var(--cinnabar);color:#fff}
   .card .body{padding:18px;display:flex;flex-direction:column;flex:1}
   .card h3{font-size:1.06rem;font-weight:700;line-height:1.35;margin-bottom:10px}
   .card .rate{display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:700;margin-bottom:12px}
@@ -616,7 +617,7 @@
         <p class="lead">Lộ trình rõ ràng cùng bé sâu <b>ZiZi</b> — học theo nét, nhớ chữ bằng bộ thủ, đi từ mất gốc đến HSK6. Kích hoạt tài khoản tự động, học lại trọn đời.</p>
         <div class="hero-cta">
           <button class="btn btn-primary" onclick="document.getElementById('khoahoc').scrollIntoView()">Xem khóa học ngay →</button>
-          <a class="btn btn-ghost" href="#danhgia">Tư vấn qua Zalo</a>
+          <a class="btn btn-ghost" href="#danhgia">Tư vấn qua Fanpage</a>
         </div>
         <div class="hero-stats">
           <div class="stat-card"><span class="lbl">Khóa học</span><b>8+</b></div>
@@ -1144,35 +1145,38 @@
   /* ===== SẢN PHẨM (dùng chung cho web ngoài + admin). Thứ tự mảng = thứ tự hiển thị. ===== */
   /* @DATA-PRODUCTS ★ Sửa tên/giá/mô tả/thứ tự sản phẩm tại đây */
   let products=[
-    {id:1,type:'course',char:'一',name:'Khóa HSK1',level:'HSK 1 · mất gốc',
+    {id:1,type:'video',char:'一',name:'Khóa HSK1',level:'HSK 1 · mất gốc',
      desc:'Đặt nền phát âm pinyin chuẩn và 150 từ vựng đầu tiên để nghe – nói được câu cơ bản.',
      bullets:['Bảng chữ & 6 thanh điệu','150 từ · 15 chủ đề giao tiếp','Luyện đề HSK1 có chữa'],
      price:199000,priceLabel:'199k',wasLabel:'399k',off:'-50%',status:'sale',lessons:30,res:86,students:1204,revenue:'12.4tr'},
-    {id:2,type:'course',char:'二',name:'Khóa HSK2',level:'HSK 2 · nền tảng',
+    {id:2,type:'video',char:'二',name:'Khóa HSK2',level:'HSK 2 · nền tảng',
      desc:'Mở rộng lên 300 từ và ngữ pháp nền tảng để nói câu dài, tự tin giao tiếp hằng ngày.',
      bullets:['Toàn bộ ngữ pháp HSK2','300 từ · hội thoại thực tế','Bộ đề thi thử HSK2'],
      price:249000,priceLabel:'249k',wasLabel:'449k',off:'-45%',status:'sale',lessons:30,res:102,students:642,revenue:'9.8tr'},
-    {id:3,type:'course',char:'中',name:'Combo HSK1+2',level:'Trọn lộ trình 0 → HSK2',featured:true,ribbon:'Tiết kiệm nhất',
+    {id:3,type:'video',char:'中',name:'Combo HSK1+2',level:'Trọn lộ trình 0 → HSK2',featured:true,ribbon:'Tiết kiệm nhất',
      desc:'Cả hai khóa gộp thành một lộ trình liền mạch, kèm quà tặng luyện thi. Học một mạch từ mất gốc đến giao tiếp.',
      bullets:['Trọn khóa HSK1 & HSK2','Tặng 500 flashcard + đề thi thử','Ưu tiên hỗ trợ 1–1 qua Zalo'],
      price:399000,priceLabel:'399k',wasLabel:'848k',off:'-53%',status:'sale',lessons:60,res:188,students:512,revenue:'15.9tr'},
-    {id:4,type:'course',char:'部',name:'Bộ thủ & Công thức tiếng Trung',level:'Nền gốc · học kèm mọi cấp',wide:true,
+    {id:4,type:'video',char:'部',name:'Bộ thủ & Công thức tiếng Trung',level:'Nền gốc · học kèm mọi cấp',wide:true,
      desc:'214 bộ thủ + công thức chiết tự giúp bạn đoán nghĩa, nhớ mặt chữ mà không cần học thuộc lòng. Học kèm mọi cấp độ.',
      bullets:[],price:149000,priceLabel:'149k',wasLabel:'299k',off:'',status:'sale',lessons:18,res:60,students:918,revenue:'6.1tr'},
+    {id:10,type:'live',char:'师',name:'Lớp HSK1 trực tiếp cùng giáo viên',level:'Trực tiếp · lớp nhỏ',
+     desc:'Học trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, được chữa phát âm 1-1, lịch cố định hằng tuần và có ghi hình xem lại.',
+     bullets:[],price:1990000,priceLabel:'1.990.000₫',wasLabel:'2.500.000₫',off:'-20%',status:'sale',lessons:24,res:20,students:86,revenue:'171tr'},
     {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (PDF + Excel)',level:'Tài liệu · tra cứu',
      desc:'File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
      bullets:['5000 từ kèm pinyin & ví dụ','Excel lọc theo cấp/độ khó','Bản in màu đóng gáy đẹp'],
      price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:true,hardPrice:189000,shipFee:30000,lessons:0,res:8,students:340,revenue:'34tr'},
-    {id:5,type:'course',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
+    {id:5,type:'video',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
      desc:'600 từ vựng và ngữ pháp trung cấp — đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
      bullets:[],price:1000000,priceLabel:'1.000.000₫',wasLabel:'1.450.000₫',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
-    {id:6,type:'course',char:'四',name:'Khóa HSK4',level:'HSK 4 · trung–cao',
+    {id:6,type:'video',char:'四',name:'Khóa HSK4',level:'HSK 4 · trung–cao',
      desc:'1.200 từ, xử lý văn bản dài và diễn đạt quan điểm. Bước đệm vững vào trình độ cao cấp.',
      bullets:[],price:1500000,priceLabel:'1.500.000₫',wasLabel:'2.175.000₫',off:'-31%',status:'preorder',lessons:40,res:134,students:74,revenue:'111tr'},
-    {id:7,type:'course',char:'五',name:'Khóa HSK5',level:'HSK 5 · cao cấp',
+    {id:7,type:'video',char:'五',name:'Khóa HSK5',level:'HSK 5 · cao cấp',
      desc:'2.500 từ — đọc báo, xem phim không phụ đề, viết luận. Trình độ cao cấp thực thụ.',
      bullets:[],price:2500000,priceLabel:'2.500.000₫',wasLabel:'3.625.000₫',off:'-31%',status:'preorder',lessons:44,res:150,students:41,revenue:'102tr'},
-    {id:8,type:'course',char:'六',name:'Khóa HSK6',level:'HSK 6 · thành thạo',
+    {id:8,type:'video',char:'六',name:'Khóa HSK6',level:'HSK 6 · thành thạo',
      desc:'5.000+ từ, thành thạo gần như bản ngữ. Chinh phục mốc HSK cao nhất và tấm bằng danh giá.',
      bullets:[],price:3500000,priceLabel:'3.500.000₫',wasLabel:'5.075.000₫',off:'-31%',status:'preorder',lessons:48,res:168,students:33,revenue:'115tr'}
   ];
@@ -1196,7 +1200,8 @@
   function cardHTML(p){
     const cta = p.status==='preorder'?'Đặt trước':'Xem chi tiết';
     const badge = p.status==='preorder'?'<span class="pbadge pre">Đặt trước</span>'
-                 :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>':'');
+                 :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>'
+                 :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>':''));
     const thumb = p.cover
       ? `<img src="${p.cover}" alt="">`
       : `<span class="hanbig hz">${p.char}</span>`;
@@ -1205,6 +1210,8 @@
     const cnt = p.students ? `(${p.students>999?(p.students/1000).toFixed(1).replace('.',',')+'k':p.students})` : '';
     const meta = p.type==='doc'
       ? `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`
+      : p.type==='live'
+      ? `<span>${p.lessons||0} buổi trực tiếp</span><span>Học qua Zoom</span>${p.students?`<span>${p.students} học viên</span>`:''}`
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
     const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}</div>`;
     return `<div class="card" onclick="openProduct(${p.id})" style="cursor:pointer">
@@ -1245,14 +1252,16 @@
     document.getElementById('pNow').textContent=p.priceLabel;
     document.getElementById('pWas').textContent=p.wasLabel||'';
     document.getElementById('mCtaPrice').textContent=p.priceLabel;
-    const isDoc=p.type==='doc';
+    const isDoc=p.type==='doc', isLive=p.type==='live';
     document.getElementById('pNote').innerHTML = isDoc
       ? '<b>📄 Tài liệu</b> — bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
+      : isLive
+      ? '<b>🎥 Lớp trực tiếp</b> — học cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, có ghi hình xem lại. Nhận lịch &amp; link phòng học sau khi thanh toán.'
       : '<b>⚡ Khóa học online</b> — kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.';
-    const buyTxt = isDoc?'Mua ngay →':(p.status==='preorder'?'Đặt trước ngay →':'Đăng ký học ngay →');
+    const buyTxt = isDoc?'Mua ngay →':isLive?'Đăng ký lớp ngay →':(p.status==='preorder'?'Đặt trước ngay →':'Đăng ký học ngay →');
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
-    document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':'Bên trong khóa học có gì?';
+    document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
     go('product');
   }
   let orderCodeVal='ZIZIA1B2', payTimer;
@@ -1316,21 +1325,24 @@
     setTimeout(showSuccess, 1300);
   }
   function showSuccess(){
-    const p=current, isDoc=p.type==='doc', hard=p._hard;
+    const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
     loggedIn=true; updateAuthUI();   /* mua xong = có tài khoản → hiện Khu vực học */
     document.getElementById('checkoutForm').style.display='none';
     document.getElementById('successBox').style.display='block';
     document.getElementById('learnCourse').textContent=p.name;
     const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=p.name;
-    document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':'Khóa đã mở';
-    document.getElementById('credLabel2').textContent = isDoc?(hard?'Giao hàng':'Tải về'):'Trang học';
-    document.getElementById('credVal2').textContent = isDoc?(hard?'2–4 ngày':'Link trong email'):'hoc.zizichinese.com';
+    document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':(isLive?'Lớp đã đăng ký':'Khóa đã mở');
+    document.getElementById('credLabel2').textContent = isDoc?(hard?'Giao hàng':'Tải về'):(isLive?'Lịch học':'Trang học');
+    document.getElementById('credVal2').textContent = isDoc?(hard?'2–4 ngày':'Link trong email'):(isLive?'Gửi qua email':'hoc.zizichinese.com');
     const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
     if(isDoc){
       msg.innerHTML = hard
         ? 'Đã nhận đơn! Bản mềm đã gửi qua email, bản cứng sẽ được <b>giao trong 2–4 ngày</b>.'
         : 'Thanh toán thành công! <b>Link tải bản mềm</b> đã gửi tới email — hoặc tải ngay bên dưới.';
       btn.textContent='⬇ Tải tài liệu về máy'; btn.onclick=()=>toast('Đang tải tài liệu (demo)…');
+    }else if(isLive){
+      msg.innerHTML='Đăng ký lớp thành công! <b>Lịch học và link phòng Zoom</b> đã gửi tới email của bạn. Vào khu vực học viên để xem lịch và tài liệu.';
+      btn.textContent='Vào khu vực học →'; btn.onclick=()=>go('learn');
     }else{
       msg.innerHTML='Tài khoản học đã được <b>kích hoạt tự động</b>. Thông tin đăng nhập vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam.';
       btn.textContent='Vào học ngay →'; btn.onclick=()=>go('learn');
@@ -1410,7 +1422,7 @@
       <div class="course-row">
         <div class="reorder"><button ${idx===0?'disabled':''} onclick="moveProduct(${c.id},-1)" aria-label="Lên">▲</button><button ${idx===products.length-1?'disabled':''} onclick="moveProduct(${c.id},1)" aria-label="Xuống">▼</button></div>
         <span class="tianzige cch"><span class="han hz">${c.char}</span></span>
-        <div class="meta"><b>${c.name} ${c.type==='doc'?'<span class="minitag">Tài liệu</span>':''}</b><div class="sub">${fmtVND(c.price)}${c.type==='doc'&&c.hasHard?' / cứng '+fmtVND(c.hardPrice):''} · ${c.type==='doc'?(c.res+' file'):(c.lessons+' buổi · '+c.res+' tài nguyên')}</div></div>
+        <div class="meta"><b>${c.name} ${c.type==='doc'?'<span class="minitag">Tài liệu</span>':c.type==='live'?'<span class="minitag" style="background:var(--cinnabar)">Trực tiếp</span>':'<span class="minitag" style="background:var(--jade-dark)">Video</span>'}</b><div class="sub">${fmtVND(c.price)}${c.type==='doc'&&c.hasHard?' / cứng '+fmtVND(c.hardPrice):''} · ${c.type==='doc'?(c.res+' file'):(c.lessons+(c.type==='live'?' buổi trực tiếp':' buổi · '+c.res+' tài nguyên'))}</div></div>
         <div class="stat"><b>${c.students}</b><span>${c.status==='sale'?(c.type==='doc'?'đã bán':'học viên'):'đã đặt'}</span></div>
         <div class="stat"><b>${c.revenue}</b><span>doanh thu</span></div>
         <span class="tag ${c.status==='sale'?'active':'pending'}">${c.status==='sale'?'Đang bán':'Đặt trước'}</span>
@@ -1433,17 +1445,17 @@
   let editTags=[], editGallery=[], editCover='';
 
   function editCourse(id){
-    const c=id?products.find(x=>x.id===id):{id:0,type:'course',char:'字',name:'',level:'',desc:'',price:0,status:'sale'};
+    const c=id?products.find(x=>x.id===id):{id:0,type:'video',char:'字',name:'',level:'',desc:'',price:0,status:'sale'};
     const isDoc=c.type==='doc';
     editTags=(c.tags||[]).slice(); editGallery=(c.gallery||[]).slice(); editCover=c.cover||'';
     const relOpts=products.filter(x=>x.id!==c.id).map(x=>`<option value="${x.id}"${(c.related||[]).includes(x.id)?' selected':''}>${esc(x.name)}</option>`).join('');
     const catOpts=CATEGORIES.map(x=>`<option${c.category===x?' selected':''}>${x}</option>`).join('');
     openModal(id?'Chỉnh sửa sản phẩm':'Thêm sản phẩm mới',`<div class="mform bigform">
 
-      ${id&&c.type==='course'?`<button class="btn btn-jade" style="width:100%;justify-content:center;margin-bottom:8px" onclick="manageLessons(${id})">🎬 Quản lý bài học · video · tài nguyên</button>`:''}
+      ${id&&c.type!=='doc'?`<button class="btn btn-jade" style="width:100%;justify-content:center;margin-bottom:8px" onclick="manageLessons(${id})">🎬 Quản lý bài học · video · tài nguyên</button>`:''}
 
       <div class="mgroup"><h4>Thông tin cơ bản</h4>
-        <div class="mrow"><label>Loại sản phẩm<select id="f_type" onchange="toggleDocFields()"><option value="course"${!isDoc?' selected':''}>Khóa học (video)</option><option value="doc"${isDoc?' selected':''}>Tài liệu / Sách (PDF·Excel)</option></select></label>
+        <div class="mrow"><label>Loại sản phẩm<select id="f_type" onchange="toggleDocFields()"><option value="video"${c.type==='video'||!c.type?' selected':''}>Khóa học — học qua video</option><option value="live"${c.type==='live'?' selected':''}>Khóa học — trực tiếp với giáo viên</option><option value="doc"${isDoc?' selected':''}>Tài liệu (PDF·Excel, mềm/cứng)</option></select></label>
         <label>Trạng thái<select id="f_status"><option value="sale"${c.status==='sale'?' selected':''}>Đang bán</option><option value="preorder"${c.status==='preorder'?' selected':''}>Đặt trước</option></select></label></div>
         <div class="mrow"><label>Tên sản phẩm<input id="f_name" value="${esc(c.name)}" oninput="autoSlug()" placeholder="Vd: Khóa HSK1"></label>
         <label>Slug (URL)<input id="f_slug" value="${esc(c.slug||slugify(c.name))}" oninput="this.dataset.touched='1'" placeholder="tu-dong-tu-ten"></label></div>
@@ -1541,7 +1553,7 @@
       author:val('f_author'),publisher:val('f_pub'),tags:editTags.slice(),related,
       landingJSON:document.getElementById('f_landing').value.trim(),
       published:document.getElementById('f_published').checked,featured:document.getElementById('f_featured').checked,
-      lessons:type==='course'?(+val('f_lessons')||0):(i>=0?products[i].lessons:0),
+      lessons:type!=='doc'?(+val('f_lessons')||0):(i>=0?products[i].lessons:0),
       res: document.getElementById('f_res')?(+val('f_res')||0):(i>=0?products[i].res:0)};
     if(orig>0){base.wasLabel=shortPrice(orig);base.off=price&&orig>price?('-'+Math.round((1-price/orig)*100)+'%'):'';}
     else if(i>=0){base.wasLabel=products[i].wasLabel;base.off=products[i].off;}
