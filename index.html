@@ -131,6 +131,7 @@
   .card .pbadge.doc{background:#fff;color:var(--jade-dark)}
   .card .pbadge.pre{background:var(--gold);color:#4a3608}
   .card .pbadge.live{background:var(--cinnabar);color:#fff}
+  .card .pbadge.video{background:var(--jade-dark);color:#fff}
   .card .body{padding:18px;display:flex;flex-direction:column;flex:1}
   .card h3{font-size:1.06rem;font-weight:700;line-height:1.35;margin-bottom:10px}
   .card .rate{display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:700;margin-bottom:12px}
@@ -1289,7 +1290,8 @@
     const cta = p.status==='preorder'?'Đặt trước':'Xem chi tiết';
     const badge = p.status==='preorder'?'<span class="pbadge pre">Đặt trước</span>'
                  :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>'
-                 :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>':''));
+                 :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>'
+                 :'<span class="pbadge video">Video tự học</span>'));
     const thumb = p.cover
       ? `<img src="${p.cover}" alt="">`
       : `<span class="hanbig hz">${p.char}</span>`;
@@ -1471,7 +1473,7 @@
       ? '<b>📄 Tài liệu</b> — bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
       : isLive
       ? '<b>🎥 Lớp trực tiếp</b> — học cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, có ghi hình xem lại. Nhận lịch &amp; link phòng học sau khi thanh toán.'
-      : '<b>⚡ Khóa học online</b> — kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.';
+      : '<b>🎬 Khóa học qua video quay sẵn</b> — bạn <b>tự học</b> theo lộ trình, kích hoạt ngay sau thanh toán, xem lại trọn đời trên mọi thiết bị.<br><span style="color:var(--cinnabar);font-weight:600">Lưu ý: đây KHÔNG phải lớp trực tiếp với giáo viên.</span>';
     const buyTxt = isDoc?'Mua ngay →':isLive?'Đăng ký lớp ngay →':(p.status==='preorder'?'Đặt trước ngay →':'Đăng ký học ngay →');
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
