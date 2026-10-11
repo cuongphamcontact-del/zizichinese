@@ -142,7 +142,15 @@
   .price{display:flex;flex-direction:column;line-height:1.2}
   .price .now{font-size:1.25rem;font-weight:800;color:var(--ink)}
   .price .was{font-size:.8rem;text-decoration:line-through;color:var(--ink-60)}
+  .price .per{font-size:.74rem;color:var(--jade-dark);font-weight:700}
   .price .off{display:none}
+  /* khối thông tin lớp trực tiếp (trang sản phẩm) */
+  .live-info{background:var(--jade-tint);border:1px solid var(--jade-line);border-radius:14px;padding:18px 20px;margin:18px 0}
+  .live-info h4{font-size:1rem;margin-bottom:12px;color:var(--jade-dark);display:flex;align-items:center;gap:.5em}
+  .live-info .li-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed var(--jade-line);font-size:.9rem}
+  .live-info .li-row:last-child{border:none}
+  .live-info .li-row span{color:var(--ink-60)}
+  .live-info .li-row b{text-align:right}
 
   /* ---------- reviews ---------- */
   .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:6px}
@@ -792,6 +800,14 @@
         <div class="price"><span class="now" id="pNow">199k</span><span class="was" id="pWas">399k</span><span class="off">Ưu đãi</span></div>
 
         <div class="online-note" id="pNote"><b>⚡ Khóa học online</b> — kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.</div>
+        <div class="live-info" id="liveInfo" style="display:none">
+          <h4>🎓 Thông tin lớp học</h4>
+          <div class="li-row"><span>Thời gian học</span><b id="li_duration">—</b></div>
+          <div class="li-row"><span>Học phí quy đổi</span><b id="li_perMonth">—</b></div>
+          <div class="li-row"><span>Lịch học</span><b id="li_schedule">—</b></div>
+          <div class="li-row"><span>Thời lượng</span><b id="li_session">—</b></div>
+          <div class="li-row"><span>Khung giờ</span><b id="li_slot">—</b></div>
+        </div>
 
         <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="go('checkout')">Đăng ký học ngay →</button>
 
@@ -1225,9 +1241,14 @@
     {id:4,type:'video',char:'部',name:'Bộ thủ & Công thức tiếng Trung',level:'Nền gốc · học kèm mọi cấp',wide:true,
      desc:'214 bộ thủ + công thức chiết tự giúp bạn đoán nghĩa, nhớ mặt chữ mà không cần học thuộc lòng. Học kèm mọi cấp độ.',
      bullets:[],price:149000,priceLabel:'149k',wasLabel:'299k',off:'',status:'sale',lessons:18,res:60,students:918,revenue:'6.1tr'},
-    {id:10,type:'live',char:'师',name:'Lớp HSK1 trực tiếp cùng giáo viên',level:'Trực tiếp · lớp nhỏ',
-     desc:'Học trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, được chữa phát âm 1-1, lịch cố định hằng tuần và có ghi hình xem lại.',
-     bullets:[],price:1990000,priceLabel:'1.990.000₫',wasLabel:'2.500.000₫',off:'-20%',status:'sale',lessons:24,res:20,students:86,revenue:'171tr'},
+    {id:10,type:'live',char:'一',name:'HSK1 trực tiếp với giáo viên — Tiếng Trung cho người mới bắt đầu',level:'Trực tiếp · HSK1 · người mới',
+     desc:'Lớp học online trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, được chữa phát âm 1-1, có ghi hình xem lại. Dành cho người mới bắt đầu.',
+     bullets:[],price:1200000,priceLabel:'1.200.000₫',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:86,revenue:'103tr',
+     live:{duration:'~2,5 tháng',perMonth:'480.000₫/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
+    {id:11,type:'live',char:'二',name:'HSK2 trực tiếp — Nâng cao nền tảng tiếng Trung',level:'Trực tiếp · HSK2 · nâng cao',
+     desc:'Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề cùng giáo viên.',
+     bullets:[],price:1700000,priceLabel:'1.700.000₫',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
+     live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000₫/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
     {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (PDF + Excel)',level:'Tài liệu · tra cứu',
      desc:'File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
      bullets:['5000 từ kèm pinyin & ví dụ','Excel lọc theo cấp/độ khó','Bản in màu đóng gáy đẹp'],
@@ -1278,9 +1299,10 @@
     const meta = p.type==='doc'
       ? `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`
       : p.type==='live'
-      ? `<span>${p.lessons||0} buổi trực tiếp</span><span>Học qua Zoom</span>${p.students?`<span>${p.students} học viên</span>`:''}`
+      ? `<span>${p.lessons||0} buổi trực tiếp</span><span>${p.live?p.live.duration:'Học qua Zoom'}</span><span>${p.live?p.live.slot:'Zoom'}</span>`
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
-    const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}</div>`;
+    const per = (p.type==='live'&&p.live&&p.live.perMonth)?`<span class="per">≈ ${p.live.perMonth}</span>`:'';
+    const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}${per}</div>`;
     return `<div class="card" onclick="openProduct(${p.id})" style="cursor:pointer">
       <div class="thumb">${thumb}${badge}<span class="plabel">ZiZi Chinese</span></div>
       <div class="body">
@@ -1454,6 +1476,15 @@
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
+    const li=document.getElementById('liveInfo');
+    if(isLive && p.live){
+      li.style.display='block';
+      document.getElementById('li_duration').textContent=p.live.duration||'—';
+      document.getElementById('li_perMonth').textContent=p.live.perMonth||'—';
+      document.getElementById('li_schedule').textContent=p.live.schedule||'—';
+      document.getElementById('li_session').textContent=p.live.session||'—';
+      document.getElementById('li_slot').textContent=p.live.slot||'—';
+    } else { li.style.display='none'; }
     go('product');
   }
   let orderCodeVal='ZIZIA1B2', payTimer;
@@ -1686,6 +1717,13 @@
           <div class="mrow"><label>Số buổi học<input id="f_lessons" type="number" value="${c.lessons||0}"></label>
           <label>Số tài nguyên<input id="f_res" type="number" value="${c.res||0}"></label></div>
         </div>
+        <div id="liveFields" style="display:${c.type==='live'?'block':'none'}">
+          <div class="mrow"><label>Thời gian học<input id="f_lv_dur" value="${esc(c.live&&c.live.duration||'')}" placeholder="~2,5 tháng"></label>
+          <label>Học phí/tháng<input id="f_lv_month" value="${esc(c.live&&c.live.perMonth||'')}" placeholder="480.000₫/tháng"></label></div>
+          <label>Lịch học<input id="f_lv_sched" value="${esc(c.live&&c.live.schedule||'')}" placeholder="Thứ 2-4-6 hoặc 3-5-7"></label>
+          <div class="mrow"><label>Thời lượng buổi<input id="f_lv_sess" value="${esc(c.live&&c.live.session||'')}" placeholder="60 phút/buổi"></label>
+          <label>Khung giờ<input id="f_lv_slot" value="${esc(c.live&&c.live.slot||'')}" placeholder="Tối 21h–22h"></label></div>
+        </div>
       </div>
 
       <div class="mgroup"><h4>Phân loại &amp; liên kết</h4>
@@ -1719,9 +1757,10 @@
   }
   function autoSlug(){const s=document.getElementById('f_slug');if(!s.dataset.touched)s.value=slugify(val('f_name'));}
   function toggleDocFields(){
-    const isDoc=document.getElementById('f_type').value==='doc';
+    const t=document.getElementById('f_type').value, isDoc=t==='doc';
     document.getElementById('docFields').style.display=isDoc?'block':'none';
     document.getElementById('courseFields').style.display=isDoc?'none':'block';
+    document.getElementById('liveFields').style.display=t==='live'?'block':'none';
   }
   function renderCover(){document.getElementById('coverPrev').innerHTML=editCover?`<img src="${esc(editCover)}" alt="">`:'<span class="muted">Chưa có ảnh bìa</span>';}
   function clearCover(){editCover='';const u=document.getElementById('f_coverUrl');if(u)u.value='';renderCover();}
@@ -1753,6 +1792,7 @@
     if(orig>0){base.wasLabel=shortPrice(orig);base.off=price&&orig>price?('-'+Math.round((1-price/orig)*100)+'%'):'';}
     else if(i>=0){base.wasLabel=products[i].wasLabel;base.off=products[i].off;}
     if(type==='doc'){base.hasSoft=true;base.hasHard=document.getElementById('f_hard').checked;base.hardPrice=+val('f_hardprice')||0;base.shipFee=+val('f_ship')||30000;}
+    if(type==='live'){base.live={duration:val('f_lv_dur'),perMonth:val('f_lv_month'),schedule:val('f_lv_sched'),session:val('f_lv_sess'),slot:val('f_lv_slot')};}
     if(i>=0){products[i]={...products[i],...base};} else {products.push({...base,bullets:[],students:0,revenue:'0'});}
     renderCourses();renderPublic();closeModal();toast(i>=0?'Đã lưu thay đổi':'Đã thêm sản phẩm mới');
   }
