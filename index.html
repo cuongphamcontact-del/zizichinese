@@ -689,6 +689,7 @@
     .steps{font-size:.72rem}
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
 <body>
 <!--
@@ -1494,6 +1495,33 @@
   /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
   const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
   products.forEach(p=>{ if(!p.slug) p.slug = PRODUCT_SLUGS[p.id] || ('sp-'+p.id); });
+  /* ===== Supabase: đọc sản phẩm từ kho dữ liệu thật (có fallback an toàn) ===== */
+  const SUPABASE_URL='https://xchteoujpstqistejips.supabase.co';
+  const SUPABASE_KEY='sb_publishable_q1lv-nm0nAvtcDVkDcVGKg_xshROd1l';
+  let sbClient=null;
+  function getSB(){ try{ if(!sbClient && window.supabase && window.supabase.createClient) sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){} return sbClient; }
+  function mapRow(r){
+    const off=(r.original_price&&r.price&&r.original_price>r.price)?('-'+Math.round((1-r.price/r.original_price)*100)+'%'):'';
+    return {id:r.id,slug:r.slug,type:r.type,name:r.name,char:r.char_icon||'字',level:r.level_label||'',
+      desc:r.description||'',description:r.description||'',bullets:[],
+      price:r.price,priceLabel:shortPrice(r.price||0),wasLabel:r.original_price?shortPrice(r.original_price):'',off,
+      status:r.status,featured:!!r.featured,published:r.published!==false,
+      lessons:r.lessons_count||0,res:r.res_count||0,students:r.students_count||0,
+      cover:r.cover_url||'',live:r.live_info||null,
+      hasSoft:r.has_soft,hasHard:r.has_hard,hardPrice:r.hard_price,shipFee:r.ship_fee,revenue:''};
+  }
+  async function loadProductsFromDB(){
+    const sb=getSB(); if(!sb) return;
+    try{
+      const {data,error}=await sb.from('products').select('*').order('sort_order',{ascending:true});
+      if(error||!data||!data.length) return;         // lỗi/không có dữ liệu → giữ mặc định
+      products=data.map(mapRow);
+      current=products[0]||current;
+      renderPublic();
+      route();                                        // vẽ lại đúng trang đang mở
+    }catch(e){ /* giữ dữ liệu mặc định nếu có trục trặc */ }
+  }
+
   const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri'};
   let _supHash=false;
   function _applyHash(h){
@@ -1541,13 +1569,13 @@
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
     const per = (p.type==='live'&&p.live&&p.live.perMonth)?`<span class="per">≈ ${p.live.perMonth}</span>`:'';
     const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}${per}</div>`;
-    return `<div class="card" onclick="openProduct(${p.id})" style="cursor:pointer">
+    return `<div class="card" onclick="openProduct('${p.slug}')" style="cursor:pointer">
       <div class="thumb">${thumb}${badge}<span class="plabel">ZiZi Chinese</span></div>
       <div class="body">
         <h3>${p.name}</h3>
         <div class="rate">${rating} <span class="stars">★★★★★</span> <span class="cnt">${cnt}</span></div>
         <div class="meta">${meta}</div>
-        <div class="foot">${price}<button class="btn btn-jade btn-sm" onclick="event.stopPropagation();openProduct(${p.id})">${cta}</button></div>
+        <div class="foot">${price}<button class="btn btn-jade btn-sm" onclick="event.stopPropagation();openProduct('${p.slug}')">${cta}</button></div>
       </div></div>`;
   }
   function toggleNav(){document.getElementById('navDrawer').classList.toggle('open');}
@@ -2395,6 +2423,7 @@
   renderAll();
   restoreSession();
   checkAdminRoute();
+  loadProductsFromDB();   // đọc sản phẩm từ Supabase (nếu có), lỗi thì giữ mặc định
 
   /* ===== con trỏ chuột = bé sâu ZiZi (chỉ máy tính có chuột) ===== */
   (function(){
