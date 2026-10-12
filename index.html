@@ -65,8 +65,8 @@
   .burger{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line-2);background:#fff;font-size:20px;align-items:center;justify-content:center}
 
   /* ---------- hero ---------- */
-  .hero{padding:56px 0 34px;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;top:-140px;right:-120px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,var(--jade-tint),transparent 70%);z-index:0}
+  .hero{padding:56px 0 34px;position:relative}
+  .hero::before{content:"";position:absolute;top:10px;right:-60px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,var(--jade-tint),transparent 70%);z-index:0;pointer-events:none}
   .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center;position:relative;z-index:1}
   .promo-pill{display:inline-flex;align-items:center;gap:.5em;background:#fff;border:1px solid var(--line-2);border-radius:999px;padding:.42em 1em;font-size:.82rem;font-weight:700;color:var(--jade-dark);margin-bottom:20px;box-shadow:var(--shadow)}
   .promo-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--cinnabar)}
@@ -80,7 +80,7 @@
   .stat-card .gdot{width:7px;height:7px;border-radius:50%;background:var(--jade)}
   .stat-card b{display:block;font-size:1.55rem;font-weight:800;margin-top:5px;line-height:1}
 
-  .hero-art{position:relative;display:grid;place-items:center;min-height:320px}
+  .hero-art{position:relative;display:grid;place-items:center;min-height:320px;overflow:visible}
   .mascot-blob{position:absolute;width:88%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 46%,var(--jade-tint),rgba(227,246,242,0) 68%)}
   .mascot{width:min(360px,94%);height:auto;position:relative;z-index:2;filter:drop-shadow(0 18px 24px rgba(19,33,29,.16));animation:sway 4s ease-in-out infinite;transform-origin:50% 90%}
   @keyframes sway{0%,100%{transform:rotate(-2deg) translateY(0) scaleX(1)}25%{transform:rotate(1deg) translateY(-6px) scaleX(.98)}50%{transform:rotate(2deg) translateY(0) scaleX(1.02)}75%{transform:rotate(-1deg) translateY(-4px) scaleX(.99)}}
