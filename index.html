@@ -1592,7 +1592,7 @@
                  :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>'
                  :'<span class="pbadge video">Video</span>'));
     const thumb = p.cover
-      ? `<img src="${p.cover}" alt="">`
+      ? `<img src="${p.cover}" alt="" onerror="this.onerror=null;this.src='assets/zizi-face.png';this.className='thumb-mascot'">`
       : `<img class="thumb-mascot" src="assets/zizi-face.png" alt=""><span class="thumb-char hz">${p.char}</span>`;
     // "rating" demo suy ra từ số liệu sẵn có
     const rseed=(p.slug||p.name||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
@@ -1802,6 +1802,7 @@
     document.getElementById('pChar').textContent=p.char;
     const cov=document.getElementById('pCover'), cell=document.getElementById('pCharCell');
     // Có ảnh bìa → hiện bìa; chưa có → hiện mascot (không để ô trống)
+    cov.onerror=()=>{ cov.onerror=null; cov.src='assets/zizi-mascot.png'; };
     cov.src = p.cover || 'assets/zizi-mascot.png';
     cov.style.display='block'; cell.style.display='none';
     document.getElementById('pLevel').textContent=p.level;
@@ -2179,11 +2180,11 @@
       const ext=(file.name.split('.').pop()||'png').toLowerCase();
       const path='product-'+Date.now()+'.'+ext;
       const {error}=await sb.storage.from('covers').upload(path,file,{upsert:true,contentType:file.type||'image/'+ext});
-      if(error){ urlField.value=''; toast('⚠ Tải ảnh lên lỗi — kiểm tra bucket "covers". Tạm thời dán URL ảnh.'); return; }
+      if(error){ editCover=''; renderCover(); urlField.value=''; toast('⚠ Tải ảnh lên lỗi — kiểm tra bucket "covers". Tạm thời dán URL ảnh.'); return; }
       const {data}=sb.storage.from('covers').getPublicUrl(path);
       editCover=data.publicUrl; renderCover(); urlField.value=data.publicUrl;
       toast('Đã tải ảnh bìa lên kho ✓');
-    }catch(e){ urlField.value=''; toast('⚠ Tải ảnh lên lỗi'); }
+    }catch(e){ editCover=''; renderCover(); urlField.value=''; toast('⚠ Tải ảnh lên lỗi'); }
   }
   function addGallery(){const el=document.getElementById('f_galIn');if(el.value.trim()){editGallery.push(el.value.trim());el.value='';renderGallery();}}
   function rmGallery(i){editGallery.splice(i,1);renderGallery();}
