@@ -1433,7 +1433,7 @@
         <p>Tài liệu và khóa học tự học tiếng Trung cho người Việt mất gốc — học theo nét, nhớ theo bộ thủ.</p>
         <div class="socials"><a href="#">f</a><a href="#">▶</a><a href="#">♪</a></div>
       </div>
-      <div><h5>Khóa học</h5><a href="#" onclick="openProduct('hsk1');return false">Khóa HSK1</a><a href="#" onclick="openProduct('hsk2');return false">Khóa HSK2</a><a href="#" onclick="openProduct('combo');return false">Combo HSK1+2</a><a href="#" onclick="openProduct('bothu');return false">Bộ thủ &amp; công thức</a></div>
+      <div><h5>Khóa học</h5><a href="#" onclick="openProduct('hsk1');return false">Khóa HSK1</a><a href="#" onclick="openProduct('hsk2');return false">Khóa HSK2</a><a href="#" onclick="openProduct('combo');return false">Combo HSK1+2</a><a href="#" onclick="openProduct('bo-thu');return false">Bộ thủ &amp; công thức</a></div>
       <div><h5>Chính sách</h5><a href="#">Điều khoản dịch vụ</a><a href="#">Chính sách hoàn tiền</a><a href="#">Chính sách bảo mật</a><a href="#">Hướng dẫn thanh toán</a></div>
       <div><h5>Hỗ trợ</h5><a href="#">Zalo: 09xx xxx xxx</a><a href="#">Email: hotro@zizichinese.com</a><a href="#">Câu hỏi thường gặp</a><a href="#">Nhóm học viên</a></div>
     </div>
@@ -1491,6 +1491,20 @@
   let current = products[0];
   const fmtVND = n => n.toLocaleString('vi-VN')+'₫';
 
+  /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
+  const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
+  products.forEach(p=>{ if(!p.slug) p.slug = PRODUCT_SLUGS[p.id] || ('sp-'+p.id); });
+  const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri'};
+  let _supHash=false;
+  function _applyHash(h){
+    _supHash=true;
+    try{
+      if(h===''){ history.replaceState(null,'',location.pathname+location.search); }
+      else if(('#'+h)!==location.hash){ location.hash=h; }
+    }catch(e){ if(h!=='') location.hash=h; }
+    setTimeout(()=>{ _supHash=false; },40);
+  }
+
   function go(view){
     ['home','product','checkout','admin','learn','auth'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+view).style.display='block';
@@ -1504,6 +1518,7 @@
     document.body.classList.toggle('in-learn', view==='learn');
     document.body.classList.toggle('in-auth', view==='auth');
     window.scrollTo({top:0,behavior:'auto'});
+    if(view!=='product' && VIEW_HASH[view]!==undefined){ _applyHash(VIEW_HASH[view]); }
   }
 
   /* ===== render lưới sản phẩm trên web ngoài ===== */
@@ -1719,7 +1734,7 @@
   }
 
   function openProduct(id){
-    const p=products.find(x=>x.id===id); if(!p)return; current=p;
+    const p=products.find(x=>x.id===id||x.slug===id); if(!p)return; current=p;
     document.getElementById('pChar').textContent=p.char;
     const cov=document.getElementById('pCover'), cell=document.getElementById('pCharCell');
     // Có ảnh bìa → hiện bìa; chưa có → hiện mascot (không để ô trống)
@@ -1751,6 +1766,7 @@
       document.getElementById('li_slot').textContent=p.live.slot||'—';
     } else { li.style.display='none'; }
     go('product');
+    _applyHash('sp/'+p.slug);
   }
   let orderCodeVal='ZIZIA1B2', payTimer;
   function setStep(n){document.querySelectorAll('#view-checkout .steps .st').forEach((s,i)=>s.classList.toggle('on', i<n));}
@@ -1903,8 +1919,16 @@
   function chip(el){el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
 
   /* ===== URL admin riêng (không lộ trên web): chỉ vào bằng #quantri ===== */
-  function checkAdminRoute(){ if(location.hash==='#quantri'||location.hash==='#admin'){ go('admin'); } }
-  window.addEventListener('hashchange', checkAdminRoute);
+  function route(){
+    if(_supHash) return;
+    const h=(location.hash||'').replace(/^#/,'');
+    if(h==='quantri'||h==='admin'){ go('admin'); return; }
+    if(h.indexOf('sp/')===0){ const slug=decodeURIComponent(h.slice(3)); const p=products.find(x=>x.slug===slug); if(p){ openProduct(p.id); } else { go('home'); } return; }
+    const REV={'':'home','home':'home','thanh-toan':'checkout','hoc':'learn','dang-nhap':'auth'};
+    go(REV[h]!==undefined?REV[h]:'home');
+  }
+  function checkAdminRoute(){ route(); }
+  window.addEventListener('hashchange', route);
   // phím tắt kín để mở admin khi test (không lộ trên giao diện): Ctrl/Cmd + Shift + A
   window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key.toLowerCase()==='a'){ e.preventDefault(); go('admin'); } });
 
