@@ -98,8 +98,8 @@
   @keyframes hop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
 
   /* ---------- con trỏ = bé sâu (ảnh mặt mascot) ---------- */
-  .worm-cursor{position:fixed;top:0;left:0;width:40px;height:40px;pointer-events:none;z-index:9999;will-change:transform;
-    background:url('assets/zizi-face.png') center/contain no-repeat;filter:drop-shadow(0 3px 5px rgba(19,33,29,.35));transition:transform .04s linear}
+  .worm-cursor{position:fixed;top:0;left:0;width:46px;height:46px;pointer-events:none;z-index:9999;will-change:transform;
+    background:url('assets/zizi-cursor.png') center/contain no-repeat;filter:drop-shadow(0 3px 5px rgba(19,33,29,.35));transition:transform .04s linear}
   body.worm-on,body.worm-on a,body.worm-on button,body.worm-on label,body.worm-on .card{cursor:none}
   body.worm-on input,body.worm-on textarea,body.worm-on select{cursor:auto}
   @media (hover:none),(pointer:coarse){.worm-cursor{display:none!important} body.worm-on{cursor:auto!important}}
@@ -1963,7 +1963,7 @@
     (function tick(){
       t+=0.2; x+=(mx-x)*0.22; y+=(my-y)*0.22;
       const wob=Math.sin(t)*7;                       // lắc đầu nhí nhảnh
-      c.style.transform=`translate(${x-20}px,${y-20}px) rotate(${wob}deg)`;
+      c.style.transform=`translate(${x-23}px,${y-23}px) rotate(${wob}deg)`;
       requestAnimationFrame(tick);
     })();
   })();
