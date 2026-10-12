@@ -2069,8 +2069,8 @@
   const esc=s=>(s==null?'':s).toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   const slugify=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   /* @DATA-TAGS */
-  const TOPIC_TAGS=[['Đầu tư','dau-tu'],['AI & Công nghệ','ai-cong-nghe'],['Marketing & MXH','marketing-mang-xa-hoi'],['Vibe Coding','vibe-coding'],['Kinh doanh','kinh-doanh'],['Tài chính cá nhân','tai-chinh-ca-nhan'],['Quản trị','quan-tri'],['Kỹ năng','ky-nang'],['Tâm lý học','tam-ly-hoc'],['Tiếng Trung','tieng-trung']];
-  const CATEGORIES=['Tiếng Trung','Tài chính cá nhân','Đầu tư','Kinh doanh','Kỹ năng','Công nghệ','Khác'];
+  const TOPIC_TAGS=[['Phát âm','phat-am'],['Từ vựng','tu-vung'],['Ngữ pháp','ngu-phap'],['Luyện thi HSK','luyen-thi-hsk'],['Giao tiếp','giao-tiep'],['Bộ thủ & chữ Hán','bo-thu-chu-han'],['Nghe – Nói','nghe-noi'],['Đọc – Viết','doc-viet'],['Tiếng Trung thương mại','tieng-trung-thuong-mai'],['Văn hóa Trung Hoa','van-hoa-trung-hoa']];
+  const CATEGORIES=['Khóa học HSK','Lớp trực tiếp','Tài liệu','Bộ thủ & chữ Hán','Luyện thi HSK','Khác'];
   let editTags=[], editGallery=[], editCover='';
 
   function editCourse(id){
@@ -2088,7 +2088,7 @@
         <label>Trạng thái<select id="f_status"><option value="sale"${c.status==='sale'?' selected':''}>Đang bán</option><option value="preorder"${c.status==='preorder'?' selected':''}>Đặt trước</option></select></label></div>
         <div class="mrow"><label>Tên sản phẩm<input id="f_name" value="${esc(c.name)}" oninput="autoSlug()" placeholder="Vd: Khóa HSK1"></label>
         <label>Slug (URL)<input id="f_slug" value="${esc(c.slug||slugify(c.name))}" oninput="this.dataset.touched='1'" placeholder="tu-dong-tu-ten"></label></div>
-        <label>Phụ đề / tagline<input id="f_subtitle" value="${esc(c.subtitle||c.level||'')}" placeholder="Vd: Chú mèo dạy tôi về tiền…"></label>
+        <label>Phụ đề / tagline<input id="f_subtitle" value="${esc(c.subtitle||c.level||'')}" placeholder="Vd: Từ mất gốc đến giao tiếp cơ bản"></label>
         <label>Mô tả<textarea id="f_desc" rows="4" placeholder="Mô tả chi tiết sản phẩm…">${esc(c.description||c.desc||'')}</textarea></label>
         <div class="mrow"><label>Ký tự Hán (icon)<input id="f_char" value="${esc(c.char)}"></label>
         <label>Nhãn cấp/loại<input id="f_level" value="${esc(c.level||'')}" placeholder="Vd: HSK 1 · mất gốc"></label></div>
@@ -2130,8 +2130,8 @@
       </div>
 
       <div class="mgroup"><h4>Phân loại &amp; liên kết</h4>
-        <div class="mrow"><label>Tác giả<input id="f_author" value="${esc(c.author||'')}" placeholder="Vd: Alex Le"></label>
-        <label>NXB / Đơn vị phát hành<input id="f_pub" value="${esc(c.publisher||'')}" placeholder="Vd: Money Studio"></label></div>
+        <div class="mrow"><label>Tác giả<input id="f_author" value="${esc(c.author||'')}" placeholder="Vd: Giáo viên ZiZi"></label>
+        <label>NXB / Đơn vị phát hành<input id="f_pub" value="${esc(c.publisher||'')}" placeholder="Vd: ZiZi Chinese"></label></div>
         <label>Chủ đề (topic tags) — bấm để chọn</label>
         <div class="tag-pick">${TOPIC_TAGS.map(t=>`<button type="button" onclick="toggleTag('${t[0]}')">${t[0]} <code>/${t[1]}</code></button>`).join('')}</div>
         <div class="mrow" style="align-items:end"><label>Thêm tag tự do<input id="f_tagIn" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomTag()}" placeholder="Enter để thêm"></label>
