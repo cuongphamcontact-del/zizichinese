@@ -301,12 +301,12 @@
   .success p{color:var(--ink-60);max-width:40ch;margin:0 auto 24px}
 
   /* ---------- live-sale popup ---------- */
-  .popup{position:fixed;left:20px;bottom:20px;z-index:60;background:#fff;border:1px solid var(--line-2);
-     border-radius:8px;padding:12px 16px;display:flex;gap:.7rem;align-items:center;box-shadow:var(--shadow);
-     max-width:300px;transform:translateY(140%);transition:transform .5s cubic-bezier(.3,1.2,.4,1)}
-  .popup.show{transform:translateY(0)}
-  .popup .av{width:38px;height:38px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none}
-  .popup b{font-size:.84rem}.popup span{font-size:.76rem;color:var(--ink-60);display:block}
+  .popup{position:fixed;top:84px;right:20px;z-index:60;background:#fff;border:1px solid var(--line-2);
+     border-radius:16px;padding:9px 13px;display:flex;gap:.55rem;align-items:center;box-shadow:var(--shadow);
+     max-width:248px;opacity:0;transform:translateX(16px);pointer-events:none;transition:opacity .4s ease,transform .5s cubic-bezier(.3,1.2,.4,1)}
+  .popup.show{opacity:1;transform:translateX(0);pointer-events:auto}
+  .popup .av{width:30px;height:30px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none;font-size:.82rem}
+  .popup b{font-size:.78rem}.popup span{font-size:.7rem;color:var(--ink-60);display:block}
 
   /* ---------- RESPONSIVE (desktop + tablet + mobile) ---------- */
   .nav-drawer{display:none}
@@ -352,8 +352,8 @@
     .mcta b{font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1}
     .mcta .btn{flex:1;max-width:56%}
     #view-product{padding-bottom:78px}
-    .popup{bottom:86px;left:12px;right:12px;max-width:none;padding:10px 14px}
-    .popup .av{width:32px;height:32px}
+    .popup{top:70px;right:10px;left:auto;bottom:auto;max-width:74%;padding:8px 11px;border-radius:14px}
+    .popup .av{width:28px;height:28px}
     .sec-top{align-items:flex-start}
     .lp h1{font-size:1.6rem}
     .big-cell{max-width:260px;margin:0 auto}
@@ -944,7 +944,7 @@
             </div>
             <div class="qr" style="display:block;margin-top:14px">
               <div class="code"></div>
-              <div class="pay-amount" id="payAmount">199.000₫</div>
+              <div class="pay-amount" id="payAmount">199.000đ</div>
               <div class="bank">
                 <!-- @DATA-BANK --><div><span>Ngân hàng</span><b>Techcombank</b></div>
                 <div><span>Số tài khoản</span><b>1903 xxxx xxxx</b></div>
@@ -966,10 +966,10 @@
 
         <div class="summary">
           <h4>Đơn hàng của bạn</h4>
-          <div class="sum-line"><span id="sumName">Khóa HSK1</span><b id="sumPrice">199.000₫</b></div>
-          <div class="sum-line" id="sumShipLine" style="display:none"><span>Phí ship bản cứng</span><b id="sumShip">30.000₫</b></div>
+          <div class="sum-line"><span id="sumName">Khóa HSK1</span><b id="sumPrice">199.000đ</b></div>
+          <div class="sum-line" id="sumShipLine" style="display:none"><span>Phí ship bản cứng</span><b id="sumShip">30.000đ</b></div>
           <div class="sum-line"><span>Ưu đãi hôm nay</span><b style="color:var(--jade)">Đã áp dụng</b></div>
-          <div class="sum-total"><span>Tổng</span><b id="sumTotal">199.000₫</b></div>
+          <div class="sum-total"><span>Tổng</span><b id="sumTotal">199.000đ</b></div>
           <p style="font-size:.78rem;color:var(--ink-60);margin-top:14px">🛡️ Bảo đảm hoàn tiền 24h · Thanh toán mã hóa an toàn</p>
         </div>
       </div>
@@ -1125,14 +1125,14 @@
         <!-- OVERVIEW -->
         <section class="adm-tab" id="tab-overview">
           <div class="kpis">
-            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val">42.850.000₫</div><div class="chg up">▲ 18% so với tháng trước</div></div>
+            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val">42.850.000đ</div><div class="chg up">▲ 18% so với tháng trước</div></div>
             <div class="kpi"><div class="lbl">Đơn hàng</div><div class="val">214</div><div class="chg up">▲ 9%</div></div>
             <div class="kpi"><div class="lbl">Học viên mới</div><div class="val">187</div><div class="chg up">▲ 12%</div></div>
             <div class="kpi"><div class="lbl">Tỉ lệ chuyển đổi</div><div class="val">4.3%</div><div class="chg up">▲ 0.6đ</div></div>
           </div>
 
           <div class="panel">
-            <h3>Doanh thu 7 ngày gần nhất <span class="mini">Đơn vị: triệu ₫</span></h3>
+            <h3>Doanh thu 7 ngày gần nhất <span class="mini">Đơn vị: triệu đ</span></h3>
             <div class="chart">
               <div class="col"><span class="amt">4.2</span><div class="bar" style="height:47%"></div><span class="day">T2</span></div>
               <div class="col"><span class="amt">5.8</span><div class="bar" style="height:65%"></div><span class="day">T3</span></div>
@@ -1149,10 +1149,10 @@
               <h3>Đơn hàng gần đây <span class="mini">Cập nhật realtime</span></h3>
               <div class="tbl-scroll"><table class="adm-tbl">
                 <tr><th>Mã đơn</th><th>Khách</th><th>Khóa</th><th>Số tiền</th><th>Trạng thái</th></tr>
-                <tr><td>#ZIZI-8A2F</td><td>Lan Anh</td><td>Combo HSK1+2</td><td>399.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
-                <tr><td>#ZIZI-7C1D</td><td>Minh Tuấn</td><td>Khóa HSK1</td><td>199.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
-                <tr><td>#ZIZI-7B9A</td><td>Thu Hà</td><td>Bộ thủ</td><td>149.000₫</td><td><span class="tag pending">Chờ CK</span></td></tr>
-                <tr><td>#ZIZI-7A03</td><td>Đức Anh</td><td>Khóa HSK2</td><td>249.000₫</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+                <tr><td>#ZIZI-8A2F</td><td>Lan Anh</td><td>Combo HSK1+2</td><td>399.000đ</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+                <tr><td>#ZIZI-7C1D</td><td>Minh Tuấn</td><td>Khóa HSK1</td><td>199.000đ</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
+                <tr><td>#ZIZI-7B9A</td><td>Thu Hà</td><td>Bộ thủ</td><td>149.000đ</td><td><span class="tag pending">Chờ CK</span></td></tr>
+                <tr><td>#ZIZI-7A03</td><td>Đức Anh</td><td>Khóa HSK2</td><td>249.000đ</td><td><span class="tag paid">Đã thanh toán</span></td></tr>
               </table></div>
             </div>
             <div class="panel">
@@ -1323,7 +1323,7 @@
               <div class="mrow"><label>Học viên (email / tên)<input id="mn_cust" placeholder="Nhập email hoặc tên"></label>
               <label>Loại sản phẩm<select id="mn_type"><option value="course">Khóa học</option><option value="doc">Tài liệu</option><option value="combo">Combo</option></select></label></div>
               <label>Chọn sản phẩm<select id="mn_prod"></select></label>
-              <div class="mrow"><label>Số tiền (₫, để trống = giá hệ thống)<input id="mn_amount" type="number" placeholder="Vd: 199000"></label>
+              <div class="mrow"><label>Số tiền (đ, để trống = giá hệ thống)<input id="mn_amount" type="number" placeholder="Vd: 199000"></label>
               <label>Kênh / nguồn<input id="mn_channel" value="Tiền mặt" placeholder="Tiền mặt / CK ngoài"></label></label></div>
               <label>Lý do / ghi chú<input id="mn_note" placeholder="Vd: Học viên chuyển khoản trực tiếp qua ngân hàng"></label>
               <button class="btn btn-jade" style="margin-top:4px" onclick="submitManual()">Ghi nhận thanh toán thủ công</button>
@@ -1358,8 +1358,8 @@
         <section class="adm-tab" id="tab-reports" hidden>
           <div class="chips"><button class="on" onclick="chip(this)">Tháng này</button><button onclick="chip(this)">Quý này</button><button onclick="chip(this)">Năm nay</button></div>
           <div class="kpis" style="margin-top:14px">
-            <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val">346.498.295₫</div><div class="chg up">▲ cả năm</div></div>
-            <div class="kpi"><div class="lbl">Sau hoàn tiền</div><div class="val">345.508.295₫</div><div class="chg">Hoàn: 990.000₫</div></div>
+            <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val">346.498.295đ</div><div class="chg up">▲ cả năm</div></div>
+            <div class="kpi"><div class="lbl">Sau hoàn tiền</div><div class="val">345.508.295đ</div><div class="chg">Hoàn: 990.000đ</div></div>
             <div class="kpi"><div class="lbl">Thuế GTGT ước tính</div><div class="val">27.6tr</div><div class="chg">8% áp dụng</div></div>
             <div class="kpi"><div class="lbl">Còn lại ước tính</div><div class="val">317.9tr</div><div class="chg up">Sau thuế &amp; hoàn</div></div>
           </div>
@@ -1465,37 +1465,41 @@
      bullets:[],price:149000,priceLabel:'149k',wasLabel:'299k',off:'',status:'sale',lessons:18,res:60,students:918,revenue:'6.1tr'},
     {id:10,type:'live',char:'一',name:'HSK1 trực tiếp với giáo viên — Tiếng Trung cho người mới bắt đầu',level:'Trực tiếp · HSK1 · người mới',
      desc:'Lớp học online trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, được chữa phát âm 1-1, có ghi hình xem lại. Dành cho người mới bắt đầu.',
-     bullets:[],price:1200000,priceLabel:'1.200.000₫',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:86,revenue:'103tr',
-     live:{duration:'~2,5 tháng',perMonth:'480.000₫/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
+     bullets:[],price:1200000,priceLabel:'1.200.000đ',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:86,revenue:'103tr',
+     live:{duration:'~2,5 tháng',perMonth:'480.000đ/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
     {id:11,type:'live',char:'二',name:'HSK2 trực tiếp — Nâng cao nền tảng tiếng Trung',level:'Trực tiếp · HSK2 · nâng cao',
      desc:'Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề cùng giáo viên.',
-     bullets:[],price:1700000,priceLabel:'1.700.000₫',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
-     live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000₫/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
+     bullets:[],price:1700000,priceLabel:'1.700.000đ',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
+     live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000đ/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
     {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (PDF + Excel)',level:'Tài liệu · tra cứu',
      desc:'File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
      bullets:['5000 từ kèm pinyin & ví dụ','Excel lọc theo cấp/độ khó','Bản in màu đóng gáy đẹp'],
      price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:true,hardPrice:189000,shipFee:30000,lessons:0,res:8,students:340,revenue:'34tr'},
     {id:5,type:'video',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
      desc:'600 từ vựng và ngữ pháp trung cấp — đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
-     bullets:[],price:1000000,priceLabel:'1.000.000₫',wasLabel:'1.450.000₫',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
+     bullets:[],price:1000000,priceLabel:'1.000.000đ',wasLabel:'1.450.000đ',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
     {id:6,type:'video',char:'四',name:'Khóa HSK4',level:'HSK 4 · trung–cao',
      desc:'1.200 từ, xử lý văn bản dài và diễn đạt quan điểm. Bước đệm vững vào trình độ cao cấp.',
-     bullets:[],price:1500000,priceLabel:'1.500.000₫',wasLabel:'2.175.000₫',off:'-31%',status:'preorder',lessons:40,res:134,students:74,revenue:'111tr'},
+     bullets:[],price:1500000,priceLabel:'1.500.000đ',wasLabel:'2.175.000đ',off:'-31%',status:'preorder',lessons:40,res:134,students:74,revenue:'111tr'},
     {id:7,type:'video',char:'五',name:'Khóa HSK5',level:'HSK 5 · cao cấp',
      desc:'2.500 từ — đọc báo, xem phim không phụ đề, viết luận. Trình độ cao cấp thực thụ.',
-     bullets:[],price:2500000,priceLabel:'2.500.000₫',wasLabel:'3.625.000₫',off:'-31%',status:'preorder',lessons:44,res:150,students:41,revenue:'102tr'},
+     bullets:[],price:2500000,priceLabel:'2.500.000đ',wasLabel:'3.625.000đ',off:'-31%',status:'preorder',lessons:44,res:150,students:41,revenue:'102tr'},
     {id:8,type:'video',char:'六',name:'Khóa HSK6',level:'HSK 6 · thành thạo',
      desc:'5.000+ từ, thành thạo gần như bản ngữ. Chinh phục mốc HSK cao nhất và tấm bằng danh giá.',
-     bullets:[],price:3500000,priceLabel:'3.500.000₫',wasLabel:'5.075.000₫',off:'-31%',status:'preorder',lessons:48,res:168,students:33,revenue:'115tr'}
+     bullets:[],price:3500000,priceLabel:'3.500.000đ',wasLabel:'5.075.000đ',off:'-31%',status:'preorder',lessons:48,res:168,students:33,revenue:'115tr'}
   ];
   let current = products[0];
-  const fmtVND = n => n.toLocaleString('vi-VN')+'₫';
+  const fmtVND = n => n.toLocaleString('vi-VN')+'đ';
 
   /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
   const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
   // Ảnh bìa mặc định (dùng khi sản phẩm chưa có ảnh riêng; upload trong admin sẽ ghi đè)
   const LOCAL_COVERS={'hsk1':'assets/cover-hsk1.jpg','hsk2':'assets/cover-hsk2.jpg','combo':'assets/cover-combo.jpg','bo-thu':'assets/cover-bo-thu.jpg','hsk1-truc-tiep':'assets/cover-hsk1-truc-tiep.jpg','hsk2-truc-tiep':'assets/cover-hsk2-truc-tiep.jpg','hsk3':'assets/cover-hsk3.jpg','hsk4':'assets/cover-hsk4.jpg','hsk5':'assets/cover-hsk5.jpg','hsk6':'assets/cover-hsk6.jpg','tai-lieu-5000-tu':'assets/cover-tai-lieu-5000-tu.jpg'};
-  products.forEach(p=>{ if(!p.slug) p.slug = PRODUCT_SLUGS[p.id] || ('sp-'+p.id); if(!p.cover && LOCAL_COVERS[p.slug]) p.cover=LOCAL_COVERS[p.slug]; });
+  const toDong=lbl=>{ if(lbl==null) return ''; lbl=(''+lbl).trim(); if(!lbl) return '';
+    const km=lbl.match(/^([\d.,]+)\s*k$/i);
+    if(km){ const n=Math.round(parseFloat(km[1].replace(/\./g,'').replace(',','.'))*1000); return n.toLocaleString('vi-VN')+'đ'; }
+    return lbl.replace(/đ/g,'đ'); };
+  products.forEach(p=>{ if(!p.slug) p.slug = PRODUCT_SLUGS[p.id] || ('sp-'+p.id); if(!p.cover && LOCAL_COVERS[p.slug]) p.cover=LOCAL_COVERS[p.slug]; p.priceLabel=toDong(p.priceLabel); p.wasLabel=toDong(p.wasLabel); if(p.live&&p.live.perMonth) p.live.perMonth=p.live.perMonth.replace(/đ/g,'đ'); });
   /* ===== Supabase: đọc sản phẩm từ kho dữ liệu thật (có fallback an toàn) ===== */
   const SUPABASE_URL='https://xchteoujpstqistejips.supabase.co';
   const SUPABASE_KEY='sb_publishable_q1lv-nm0nAvtcDVkDcVGKg_xshROd1l';
@@ -1604,7 +1608,7 @@
       : p.type==='live'
       ? `<span>${p.lessons||0} buổi trực tiếp</span><span>${p.live?p.live.duration:'Học qua Zoom'}</span><span>${p.live?p.live.slot:'Zoom'}</span>`
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
-    const per = (p.type==='live'&&p.live&&p.live.perMonth)?`<span class="per">≈ ${p.live.perMonth}</span>`:'';
+    const per = (p.type==='live'&&p.live&&p.live.perMonth)?`<span class="per">≈ ${p.live.perMonth.replace(/đ/g,'đ')}</span>`:'';
     const price = `<div class="price"><span class="now">${p.priceLabel}</span>${p.wasLabel?`<span class="was">${p.wasLabel}</span>`:''}${per}</div>`;
     return `<div class="card" onclick="openProduct('${p.slug}')" style="cursor:pointer">
       <div class="thumb">${thumb}${badge}<span class="plabel">ZiZi Chinese</span></div>
@@ -1826,7 +1830,7 @@
     if(isLive && p.live){
       li.style.display='block';
       document.getElementById('li_duration').textContent=p.live.duration||'—';
-      document.getElementById('li_perMonth').textContent=p.live.perMonth||'—';
+      document.getElementById('li_perMonth').textContent=(p.live.perMonth||'—').replace(/đ/g,'đ');
       document.getElementById('li_schedule').textContent=p.live.schedule||'—';
       document.getElementById('li_session').textContent=p.live.session||'—';
       document.getElementById('li_slot').textContent=p.live.slot||'—';
@@ -2029,7 +2033,7 @@
   ];
 
   /* ===== PRODUCTS CRUD ===== */
-  const shortPrice=n=> n>=1000000 ? n.toLocaleString('vi-VN')+'₫' : Math.round(n/1000)+'k';
+  const shortPrice=n=> (n||0).toLocaleString('vi-VN')+'đ';
   function prodMatch(c){
     if(prodFilter==='doc') return c.type==='doc';
     if(prodFilter==='combo') return /combo/i.test(c.name);
@@ -2107,16 +2111,16 @@
       </div>
 
       <div class="mgroup"><h4>Giá &amp; bán hàng</h4>
-        <div class="mrow"><label>Giá gốc (₫)<input id="f_orig" type="number" value="${c.originalPrice||''}" placeholder="220000"></label>
-        <label>Giá bán (₫)<input id="f_price" type="number" value="${c.price||0}" placeholder="199000"></label></div>
+        <div class="mrow"><label>Giá gốc (đ)<input id="f_orig" type="number" value="${c.originalPrice||''}" placeholder="220000"></label>
+        <label>Giá bán (đ)<input id="f_price" type="number" value="${c.price||0}" placeholder="199000"></label></div>
         <label class="chkline"><input type="checkbox" id="f_preorder" ${c.preorder?'checked':''}> Bật lịch mở bán (preorder)</label>
         <div class="mrow"><label>Thời điểm mở<input id="f_openat" type="datetime-local" value="${esc(c.openAt||'')}"></label>
         <label>Danh mục<select id="f_cat">${catOpts}</select></label></div>
         <label>Ghi chú giao hàng / mở quyền<textarea id="f_delivery" rows="2" placeholder="Vd: Dự kiến giao đầu tháng 7/2026…">${esc(c.delivery||'')}</textarea></label>
         <div id="docFields" style="display:${isDoc?'block':'none'}">
           <label class="chkline"><input type="checkbox" id="f_hard" ${c.hasHard?'checked':''}> Bán kèm <b>bản cứng</b> (in, giao tận nơi)</label>
-          <div class="mrow"><label>Giá bản cứng (₫)<input id="f_hardprice" type="number" value="${c.hardPrice||0}"></label>
-          <label>Phí ship (₫)<input id="f_ship" type="number" value="${c.shipFee||30000}"></label></div>
+          <div class="mrow"><label>Giá bản cứng (đ)<input id="f_hardprice" type="number" value="${c.hardPrice||0}"></label>
+          <label>Phí ship (đ)<input id="f_ship" type="number" value="${c.shipFee||30000}"></label></div>
         </div>
         <div id="courseFields" style="display:${isDoc?'none':'block'}">
           <div class="mrow"><label>Số buổi học<input id="f_lessons" type="number" value="${c.lessons||0}"></label>
@@ -2124,7 +2128,7 @@
         </div>
         <div id="liveFields" style="display:${c.type==='live'?'block':'none'}">
           <div class="mrow"><label>Thời gian học<input id="f_lv_dur" value="${esc(c.live&&c.live.duration||'')}" placeholder="~2,5 tháng"></label>
-          <label>Học phí/tháng<input id="f_lv_month" value="${esc(c.live&&c.live.perMonth||'')}" placeholder="480.000₫/tháng"></label></div>
+          <label>Học phí/tháng<input id="f_lv_month" value="${esc(c.live&&c.live.perMonth||'')}" placeholder="480.000đ/tháng"></label></div>
           <label>Lịch học<input id="f_lv_sched" value="${esc(c.live&&c.live.schedule||'')}" placeholder="Thứ 2-4-6 hoặc 3-5-7"></label>
           <div class="mrow"><label>Thời lượng buổi<input id="f_lv_sess" value="${esc(c.live&&c.live.session||'')}" placeholder="60 phút/buổi"></label>
           <label>Khung giờ<input id="f_lv_slot" value="${esc(c.live&&c.live.slot||'')}" placeholder="Tối 21h–22h"></label></div>
@@ -2339,7 +2343,7 @@
     openModal(code?'Sửa đơn hàng':'Thêm đơn thủ công',`<div class="mform">
       <label>Khách hàng<input id="o_cust" value="${o.cust}"></label>
       <label>Khóa học<select id="o_course">${opts}</select></label>
-      <div class="mrow"><label>Số tiền (₫)<input id="o_amount" type="number" value="${o.amount}"></label>
+      <div class="mrow"><label>Số tiền (đ)<input id="o_amount" type="number" value="${o.amount}"></label>
       <label>Kênh<input id="o_channel" value="${o.channel}"></label></div>
       <label>Trạng thái<select id="o_status">${st('paid')}Đã thanh toán</option>${st('pending')}Chờ chuyển khoản</option>${st('refund')}Đã hoàn tiền</option></select></label>
       <div class="mact">${code?`<button class="btn btn-ghost del" onclick="delOrder('${code}')">Xóa</button>`:''}
@@ -2456,7 +2460,7 @@
   /* --- Báo cáo tài chính --- */
   function renderReports(){
     const by={};products.forEach(p=>{const k=/combo/i.test(p.name)?'Combo':(p.type==='doc'?'Tài liệu':'Khóa học');by[k]=by[k]||{don:0,rev:0};by[k].don+=p.students||0;});
-    const map={'Khóa học':'303.368.200₫','Combo':'15.900.000₫','Tài liệu':'34.000.000₫'};
+    const map={'Khóa học':'303.368.200đ','Combo':'15.900.000đ','Tài liệu':'34.000.000đ'};
     document.getElementById('reportByType').innerHTML=Object.keys(by).map(k=>`<tr><td>${k}</td><td>${by[k].don}</td><td>${map[k]||'—'}</td></tr>`).join('');
   }
 
