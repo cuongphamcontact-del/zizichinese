@@ -363,7 +363,9 @@
   .adm-nav button{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;color:var(--ink);padding:10px 12px;border-radius:10px;font-size:.92rem;font-weight:500;font-family:inherit}
   .adm-nav button:hover{background:var(--paper-2)}
   .adm-nav button.on{background:var(--jade-tint);color:var(--jade-dark);font-weight:700}
-  .adm-nav .ic{font-size:15px;width:18px;text-align:center;flex:none}
+  .adm-nav .ic{width:19px;height:19px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-60)}
+  .adm-nav .ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .adm-nav button.on .ic{color:var(--jade-dark)}
   .side-foot{border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
   .side-foot a{display:block;color:var(--ink-60);font-size:.84rem;padding:8px 12px;border-radius:8px}
   .side-foot a:hover{color:var(--jade-dark);background:var(--paper-2)}
@@ -1032,24 +1034,24 @@
         <span>ZiZi<small>Bảng quản trị</small></span>
       </a>
       <nav class="adm-nav">
-        <button class="on" data-title="Tổng quan" onclick="admTab('overview',this)"><span class="ic">▦</span><span>Tổng quan</span></button>
+        <button class="on" data-title="Tổng quan" onclick="admTab('overview',this)"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Tổng quan</span></button>
         <div class="nav-group">Sản phẩm</div>
-        <button data-title="Khóa học" data-filter="course" onclick="admTab('courses',this)"><span class="ic">📚</span><span>Khóa học</span></button>
-        <button data-title="Tài liệu (bản cứng/mềm)" data-filter="doc" onclick="admTab('courses',this)"><span class="ic">📄</span><span>Tài liệu</span></button>
-        <button data-title="Combo" data-filter="combo" onclick="admTab('courses',this)"><span class="ic">🎁</span><span>Combo</span></button>
-        <button data-title="Danh mục" onclick="admTab('cats',this)"><span class="ic">🏷️</span><span>Danh mục</span></button>
-        <button data-title="Giảng viên" onclick="admTab('teachers',this)"><span class="ic">🧑‍🏫</span><span>Giảng viên</span></button>
-        <button data-title="Thư viện video" onclick="admTab('videos',this)"><span class="ic">🎬</span><span>Video</span></button>
+        <button data-title="Khóa học" data-filter="course" onclick="admTab('courses',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/></svg></span><span>Khóa học</span></button>
+        <button data-title="Tài liệu (bản cứng/mềm)" data-filter="doc" onclick="admTab('courses',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h5"/></svg></span><span>Tài liệu</span></button>
+        <button data-title="Combo" data-filter="combo" onclick="admTab('courses',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span><span>Combo</span></button>
+        <button data-title="Danh mục" onclick="admTab('cats',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0l-7-7A2 2 0 0 1 3 12.2V5a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6l7 7a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg></span><span>Danh mục</span></button>
+        <button data-title="Giảng viên" onclick="admTab('teachers',this)"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><span>Giảng viên</span></button>
+        <button data-title="Thư viện video" onclick="admTab('videos',this)"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M10 9l5 3-5 3z"/></svg></span><span>Video</span></button>
         <div class="nav-group">Bán hàng</div>
-        <button data-title="Đơn hàng" onclick="admTab('orders',this)"><span class="ic">🧾</span><span>Đơn hàng</span></button>
-        <button data-title="Thanh toán thủ công" onclick="admTab('manual',this)"><span class="ic">💵</span><span>Thanh toán thủ công</span></button>
-        <button data-title="Hoàn tiền" onclick="admTab('refunds',this)"><span class="ic">↩️</span><span>Hoàn tiền</span></button>
-        <button data-title="Hóa đơn GTGT" onclick="admTab('invoices',this)"><span class="ic">🧮</span><span>Hóa đơn GTGT</span></button>
-        <button data-title="Báo cáo tài chính" onclick="admTab('reports',this)"><span class="ic">📊</span><span>Báo cáo</span></button>
-        <button data-title="Tracking &amp; pixel" onclick="admTab('tracking',this)"><span class="ic">📈</span><span>Tracking</span></button>
+        <button data-title="Đơn hàng" onclick="admTab('orders',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg></span><span>Đơn hàng</span></button>
+        <button data-title="Thanh toán thủ công" onclick="admTab('manual',this)"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1.2"/></svg></span><span>Thanh toán thủ công</span></button>
+        <button data-title="Hoàn tiền" onclick="admTab('refunds',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10h11a5 5 0 0 1 0 10h-3"/><path d="M7 6l-4 4 4 4"/></svg></span><span>Hoàn tiền</span></button>
+        <button data-title="Hóa đơn GTGT" onclick="admTab('invoices',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><circle cx="10" cy="14" r="1"/><circle cx="13.5" cy="17.5" r="1"/><path d="M14 13l-4 5.5"/></svg></span><span>Hóa đơn GTGT</span></button>
+        <button data-title="Báo cáo tài chính" onclick="admTab('reports',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 3v17h17"/><rect x="7.5" y="12" width="2.6" height="5" rx=".6"/><rect x="12" y="8.5" width="2.6" height="8.5" rx=".6"/><rect x="16.5" y="5.5" width="2.6" height="11.5" rx=".6"/></svg></span><span>Báo cáo</span></button>
+        <button data-title="Tracking &amp; pixel" onclick="admTab('tracking',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/></svg></span><span>Tracking</span></button>
         <div class="nav-group">Khách hàng</div>
-        <button data-title="Học viên" onclick="admTab('users',this)"><span class="ic">👥</span><span>Học viên</span></button>
-        <button data-title="Ghi danh thủ công" onclick="admTab('enroll',this)"><span class="ic">✅</span><span>Ghi danh</span></button>
+        <button data-title="Học viên" onclick="admTab('users',this)"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.2a3.4 3.4 0 0 1 0 6.4"/><path d="M17.5 20a6 6 0 0 0-3-5"/></svg></span><span>Học viên</span></button>
+        <button data-title="Ghi danh thủ công" onclick="admTab('enroll',this)"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.6"/><path d="M3 20a6.5 6.5 0 0 1 11-3.3"/><path d="M15.5 12.5l2 2 4-4"/></svg></span><span>Ghi danh</span></button>
       </nav>
       <div class="side-foot">
         <a href="#" onclick="go('home');return false">↗ Xem trang chủ</a>
@@ -1067,10 +1069,10 @@
         <!-- OVERVIEW -->
         <section class="adm-tab" id="tab-overview">
           <div class="kpis">
-            <div class="kpi"><div class="lbl">💰 Doanh thu tháng</div><div class="val">42.850.000₫</div><div class="chg up">▲ 18% so với tháng trước</div></div>
-            <div class="kpi"><div class="lbl">🧾 Đơn hàng</div><div class="val">214</div><div class="chg up">▲ 9%</div></div>
-            <div class="kpi"><div class="lbl">👥 Học viên mới</div><div class="val">187</div><div class="chg up">▲ 12%</div></div>
-            <div class="kpi"><div class="lbl">🎯 Tỉ lệ chuyển đổi</div><div class="val">4.3%</div><div class="chg up">▲ 0.6đ</div></div>
+            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val">42.850.000₫</div><div class="chg up">▲ 18% so với tháng trước</div></div>
+            <div class="kpi"><div class="lbl">Đơn hàng</div><div class="val">214</div><div class="chg up">▲ 9%</div></div>
+            <div class="kpi"><div class="lbl">Học viên mới</div><div class="val">187</div><div class="chg up">▲ 12%</div></div>
+            <div class="kpi"><div class="lbl">Tỉ lệ chuyển đổi</div><div class="val">4.3%</div><div class="chg up">▲ 0.6đ</div></div>
           </div>
 
           <div class="panel">
@@ -1134,10 +1136,10 @@
           <div class="panel">
             <h3>Tài nguyên đã tải lên <span class="mini">Tổng kho học liệu</span></h3>
             <div class="kpis" style="margin:0">
-              <div class="kpi"><div class="lbl">🎬 Video bài giảng</div><div class="val">214</div></div>
-              <div class="kpi"><div class="lbl">📄 File PDF / tài liệu</div><div class="val">96</div></div>
-              <div class="kpi"><div class="lbl">🃏 Bộ flashcard</div><div class="val">12</div></div>
-              <div class="kpi"><div class="lbl">🎧 File audio</div><div class="val">148</div></div>
+              <div class="kpi"><div class="lbl">Video bài giảng</div><div class="val">214</div></div>
+              <div class="kpi"><div class="lbl">File PDF / tài liệu</div><div class="val">96</div></div>
+              <div class="kpi"><div class="lbl">Bộ flashcard</div><div class="val">12</div></div>
+              <div class="kpi"><div class="lbl">File audio</div><div class="val">148</div></div>
             </div>
           </div>
           <div class="panel">
