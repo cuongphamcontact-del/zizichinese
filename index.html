@@ -1494,7 +1494,7 @@
   /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
   const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
   // Ảnh bìa mặc định (dùng khi sản phẩm chưa có ảnh riêng; upload trong admin sẽ ghi đè)
-  const LOCAL_COVERS={'hsk1':'assets/cover-hsk1.jpg','hsk2':'assets/cover-hsk2.jpg','combo':'assets/cover-combo.jpg'};
+  const LOCAL_COVERS={'hsk1':'assets/cover-hsk1.jpg','hsk2':'assets/cover-hsk2.jpg','combo':'assets/cover-combo.jpg','bo-thu':'assets/cover-bo-thu.jpg','hsk1-truc-tiep':'assets/cover-hsk1-truc-tiep.jpg','hsk2-truc-tiep':'assets/cover-hsk2-truc-tiep.jpg','hsk3':'assets/cover-hsk3.jpg','hsk4':'assets/cover-hsk4.jpg','hsk5':'assets/cover-hsk5.jpg','hsk6':'assets/cover-hsk6.jpg','tai-lieu-5000-tu':'assets/cover-tai-lieu-5000-tu.jpg'};
   products.forEach(p=>{ if(!p.slug) p.slug = PRODUCT_SLUGS[p.id] || ('sp-'+p.id); if(!p.cover && LOCAL_COVERS[p.slug]) p.cover=LOCAL_COVERS[p.slug]; });
   /* ===== Supabase: đọc sản phẩm từ kho dữ liệu thật (có fallback an toàn) ===== */
   const SUPABASE_URL='https://xchteoujpstqistejips.supabase.co';
