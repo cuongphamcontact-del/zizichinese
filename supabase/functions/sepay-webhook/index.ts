@@ -16,7 +16,7 @@
 //
 // Lưu ý: kiểm tra lại tài liệu SePay mới nhất (định dạng payload/xác thực).
 // =====================================================================
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 type SepayPayload = {
   id: number;                 // id giao dịch SePay
