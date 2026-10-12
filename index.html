@@ -55,6 +55,7 @@
   .nav{display:flex;align-items:center;gap:1.2rem;height:72px}
   .brand{display:flex;align-items:center;gap:.55rem;font-weight:800;font-size:1.22rem;letter-spacing:-.02em}
   .brand .logo{width:38px;height:38px;flex:none;border-radius:11px;background:linear-gradient(145deg,#44cdb3,var(--jade));display:grid;place-items:center;color:#fff;font-family:"Noto Serif SC";font-weight:900;font-size:21px;box-shadow:0 6px 14px -6px rgba(26,168,142,.7)}
+  .logo-img{width:40px;height:40px;flex:none;border-radius:11px;object-fit:cover;box-shadow:0 6px 14px -6px rgba(26,168,142,.6)}
   .nav-links{display:flex;gap:1.9rem;margin:0 auto;font-size:.95rem;font-weight:600}
   .nav-links a{color:var(--ink-60);padding:.3rem 0;transition:color .15s}
   .nav-links a:hover,.nav-links a.on{color:var(--jade-dark)}
@@ -81,44 +82,27 @@
 
   .hero-art{position:relative;display:grid;place-items:center;min-height:320px}
   .mascot-blob{position:absolute;width:88%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 46%,var(--jade-tint),rgba(227,246,242,0) 68%)}
-  .mascot{width:min(320px,90%);position:relative;z-index:2;filter:drop-shadow(0 18px 24px rgba(19,33,29,.16));animation:sway 4s ease-in-out infinite}
-  .mascot .seg{fill:var(--jade);stroke:var(--ink);stroke-width:5}
-  .mascot .foot{fill:var(--jade-dark);stroke:var(--ink);stroke-width:4}
-  .mascot .eye-w{fill:#fff;stroke:var(--ink);stroke-width:4}
-  .mascot .pupil{fill:var(--ink)}
-  .mascot .cheek{fill:var(--cinnabar);opacity:.55}
-  .mascot .ant{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round}
-  .mascot .smile{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}
-  .mascot .glint{fill:#fff}
+  .mascot{width:min(360px,94%);height:auto;position:relative;z-index:2;filter:drop-shadow(0 18px 24px rgba(19,33,29,.16));animation:sway 4s ease-in-out infinite;transform-origin:50% 90%}
   @keyframes sway{0%,100%{transform:rotate(-2deg) translateY(0) scaleX(1)}25%{transform:rotate(1deg) translateY(-6px) scaleX(.98)}50%{transform:rotate(2deg) translateY(0) scaleX(1.02)}75%{transform:rotate(-1deg) translateY(-4px) scaleX(.99)}}
 
-  /* ---------- bé sâu bò qua bò lại ---------- */
-  .crawler{position:absolute;bottom:6px;left:0;z-index:2;width:70px;pointer-events:none;animation:crawlX 16s ease-in-out infinite}
-  .crawler-svg{display:block;transform-origin:center bottom;animation:inch .62s ease-in-out infinite}
-  .crawler-svg .cseg{fill:var(--jade);stroke:var(--ink);stroke-width:5}
-  .crawler-svg .cfoot{fill:var(--jade-dark);stroke:var(--ink);stroke-width:4}
-  .crawler-svg .ceye{fill:#fff;stroke:var(--ink);stroke-width:4}
-  .crawler-svg .cpup{fill:var(--ink)}
-  .crawler-svg .cant{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round}
-  .crawler-svg .csmile{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+  /* ---------- bé sâu ZiZi đi qua đi lại ---------- */
+  .crawler{position:absolute;bottom:4px;left:0;z-index:2;width:66px;pointer-events:none;animation:crawlX 18s ease-in-out infinite}
+  .crawler-img{display:block;width:66px;height:auto;filter:drop-shadow(0 6px 8px rgba(19,33,29,.18));animation:hop .5s ease-in-out infinite}
   @keyframes crawlX{
     0%{transform:translateX(2vw) scaleX(1)}
-    46%{transform:translateX(calc(100vw - 90px)) scaleX(1)}
-    50%{transform:translateX(calc(100vw - 90px)) scaleX(-1)}
+    46%{transform:translateX(calc(100vw - 86px)) scaleX(1)}
+    50%{transform:translateX(calc(100vw - 86px)) scaleX(-1)}
     96%{transform:translateX(2vw) scaleX(-1)}
     100%{transform:translateX(2vw) scaleX(1)}
   }
-  @keyframes inch{0%,100%{transform:scaleX(1) scaleY(1)}50%{transform:scaleX(.82) scaleY(1.06) translateY(-4px)}}
+  @keyframes hop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
 
-  /* ---------- con trỏ = bé sâu ---------- */
-  .wseg{position:fixed;top:0;left:0;border-radius:50%;background:var(--jade);border:2px solid var(--ink);pointer-events:none;z-index:9999;will-change:transform;box-shadow:0 2px 5px -2px rgba(19,33,29,.4)}
-  .wseg.whead{background:var(--jade-dark)}
-  .wseg .we{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;top:4px}
-  .wseg .we.we1{left:4px}.wseg .we.we2{right:4px}
-  body.worm-on{cursor:none}
-  body.worm-on a,body.worm-on button,body.worm-on label,body.worm-on .card{cursor:none}
+  /* ---------- con trỏ = bé sâu (ảnh mặt mascot) ---------- */
+  .worm-cursor{position:fixed;top:0;left:0;width:40px;height:40px;pointer-events:none;z-index:9999;will-change:transform;
+    background:url('assets/zizi-face.png') center/contain no-repeat;filter:drop-shadow(0 3px 5px rgba(19,33,29,.35));transition:transform .04s linear}
+  body.worm-on,body.worm-on a,body.worm-on button,body.worm-on label,body.worm-on .card{cursor:none}
   body.worm-on input,body.worm-on textarea,body.worm-on select{cursor:auto}
-  @media (hover:none),(pointer:coarse){.wseg{display:none!important} body.worm-on{cursor:auto!important}}
+  @media (hover:none),(pointer:coarse){.worm-cursor{display:none!important} body.worm-on{cursor:auto!important}}
   .bubble{position:absolute;width:48px;height:48px;border-radius:16px;background:#fff;border:1px solid var(--line-2);display:grid;place-items:center;font-size:21px;font-weight:900;color:var(--jade-dark);z-index:3;box-shadow:var(--shadow);animation:bob 3s ease-in-out infinite}
   .bubble.b1{top:6px;left:2%}
   .bubble.b2{top:52px;right:0;background:var(--gold-soft);color:#4a3608;animation-delay:.7s}
@@ -667,7 +651,7 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="#" onclick="go('home');return false">
-      <span class="logo hz">字</span><span>ZiZi Chinese</span>
+      <img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi Chinese</span>
     </a>
     <nav class="nav-links">
       <a href="#khoahoc" onclick="go('home')">Khóa học</a>
@@ -717,51 +701,13 @@
         <span class="bubble b2 hz">好</span>
         <span class="bubble b3 hz">字</span>
         <div class="mascot-blob"></div>
-        <!-- @MASCOT -->
-        <svg class="mascot" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bé sâu ZiZi">
-          <ellipse cx="158" cy="262" rx="118" ry="13" fill="rgba(46,74,42,.10)"/>
-          <ellipse class="foot" cx="98" cy="236" rx="12" ry="9"/>
-          <ellipse class="foot" cx="140" cy="240" rx="12" ry="9"/>
-          <ellipse class="foot" cx="184" cy="238" rx="12" ry="9"/>
-          <ellipse class="foot" cx="226" cy="232" rx="12" ry="9"/>
-          <circle class="seg" cx="72" cy="205" r="27"/>
-          <circle class="seg" cx="110" cy="198" r="31"/>
-          <circle class="seg" cx="152" cy="188" r="34"/>
-          <circle class="seg" cx="196" cy="172" r="37"/>
-          <path class="ant" d="M224 98 q-10 -24 -18 -32"/>
-          <path class="ant" d="M258 98 q10 -24 18 -32"/>
-          <circle class="seg" cx="204" cy="62" r="9"/>
-          <circle class="seg" cx="276" cy="62" r="9"/>
-          <circle class="pupil" cx="204" cy="62" r="3"/>
-          <circle class="pupil" cx="276" cy="62" r="3"/>
-          <circle class="seg" cx="240" cy="138" r="47"/>
-          <circle class="eye-w" cx="223" cy="132" r="14"/>
-          <circle class="eye-w" cx="258" cy="132" r="14"/>
-          <circle class="pupil" cx="226" cy="134" r="6"/>
-          <circle class="pupil" cx="261" cy="134" r="6"/>
-          <circle class="glint" cx="228" cy="130" r="2.4"/>
-          <circle class="glint" cx="263" cy="130" r="2.4"/>
-          <ellipse class="cheek" cx="210" cy="151" rx="9" ry="6"/>
-          <ellipse class="cheek" cx="272" cy="151" rx="9" ry="6"/>
-          <path class="smile" d="M231 150 q9 9 18 0"/>
-        </svg>
+        <!-- @MASCOT: mascot chính thức ZiZi -->
+        <img class="mascot" src="assets/zizi-mascot.png" alt="Bé sâu ZiZi — mascot ZiZi Chinese">
       </div>
     </div>
-    <!-- bé sâu bò qua bò lại -->
+    <!-- bé sâu ZiZi đi qua đi lại -->
     <div class="crawler" aria-hidden="true">
-      <svg class="crawler-svg" viewBox="0 0 150 54" width="70">
-        <ellipse cx="70" cy="50" rx="58" ry="4" fill="rgba(19,33,29,.08)"/>
-        <ellipse class="cfoot" cx="26" cy="46" rx="7" ry="5"/><ellipse class="cfoot" cx="54" cy="47" rx="7" ry="5"/><ellipse class="cfoot" cx="84" cy="46" rx="7" ry="5"/>
-        <circle class="cseg" cx="20" cy="34" r="16"/>
-        <circle class="cseg" cx="48" cy="32" r="18"/>
-        <circle class="cseg" cx="80" cy="31" r="19"/>
-        <path class="cant" d="M112 20 q4 -14 10 -20"/><path class="cant" d="M126 22 q10 -10 18 -14"/>
-        <circle class="cseg" cx="122" cy="0" r="5"/><circle class="cseg" cx="144" cy="8" r="5"/>
-        <circle class="cseg" cx="118" cy="30" r="22"/>
-        <circle class="ceye" cx="126" cy="26" r="6"/><circle class="ceye" cx="112" cy="27" r="6"/>
-        <circle class="cpup" cx="128" cy="27" r="2.6"/><circle class="cpup" cx="114" cy="28" r="2.6"/>
-        <path class="csmile" d="M110 38 q8 6 16 1"/>
-      </svg>
+      <img class="crawler-img" src="assets/zizi-face.png" alt="">
     </div>
   </section>
 
@@ -965,7 +911,7 @@
 <!-- @MAP-LEARN =================================================== -->
 <div id="view-learn">
   <div class="learn-top">
-    <a class="brand" href="#" onclick="go('home');return false"><span class="tianzige mark"><span class="han hz">字</span></span><span>ZiZi<small>Khu vực học viên</small></span></a>
+    <a class="brand" href="#" onclick="go('home');return false"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi<small>Khu vực học viên</small></span></a>
     <div class="who"><span id="learnName">Xin chào, học viên 👋</span><span class="av" id="learnAv">H</span><a class="lg" href="#" onclick="logout();return false">Đăng xuất</a></div>
   </div>
   <!-- Dashboard: khóa & tài liệu đã sở hữu -->
@@ -1003,7 +949,7 @@
 <!-- ================= AUTH · ĐĂNG NHẬP / TẠO TÀI KHOẢN ================= -->
 <div id="view-auth">
   <div class="auth-top">
-    <a class="brand" href="#" onclick="go('home');return false"><span class="logo hz">字</span><span>ZiZi Chinese</span></a>
+    <a class="brand" href="#" onclick="go('home');return false"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi Chinese</span></a>
     <a class="auth-home" href="#" onclick="go('home');return false">← Trang chủ</a>
   </div>
   <div class="auth-wrap">
@@ -1031,7 +977,7 @@
 <div id="view-admin">
   <div class="adm-login" id="admLogin">
     <div class="login-card">
-      <a class="brand" style="justify-content:center"><span class="tianzige mark"><span class="han hz">字</span></span><span>ZiZi</span></a>
+      <a class="brand" style="justify-content:center"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi</span></a>
       <h2>Đăng nhập quản trị</h2>
       <p class="sub">Khu vực dành riêng cho quản trị viên</p>
       <input id="admUser" type="text" placeholder="Tài khoản" autocomplete="off">
@@ -1045,7 +991,7 @@
   <div class="adm" id="admApp" style="display:none">
     <aside class="adm-side">
       <a class="brand" href="#" onclick="go('home');return false">
-        <span class="tianzige mark"><span class="han hz">字</span></span>
+        <img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi">
         <span>ZiZi<small>Bảng quản trị</small></span>
       </a>
       <nav class="adm-nav">
@@ -1252,7 +1198,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a class="brand"><span class="tianzige mark" style="border-color:#fff"><span class="han hz" style="color:#fff">字</span></span><span style="color:#fff">ZiZi</span></a>
+        <a class="brand"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span style="color:#fff">ZiZi</span></a>
         <p>Tài liệu và khóa học tự học tiếng Trung cho người Việt mất gốc — học theo nét, nhớ theo bộ thủ.</p>
         <div class="socials"><a href="#">f</a><a href="#">▶</a><a href="#">♪</a></div>
       </div>
@@ -2010,26 +1956,14 @@
     if(!window.matchMedia) return;
     if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
     if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const sizes=[20,17,15,14,12,11,10,9], N=sizes.length, segs=[];
-    for(let i=0;i<N;i++){
-      const s=document.createElement('div'); s.className='wseg'+(i===0?' whead':'');
-      s.style.width=s.style.height=sizes[i]+'px'; s.style.zIndex=9999-i;
-      if(i===0) s.innerHTML='<i class="we we1"></i><i class="we we2"></i>';
-      document.body.appendChild(s);
-      segs.push({el:s,x:innerWidth/2,y:innerHeight/2,sz:sizes[i]});
-    }
+    const c=document.createElement('div'); c.className='worm-cursor'; document.body.appendChild(c);
     document.body.classList.add('worm-on');
-    let mx=innerWidth/2,my=innerHeight/2,t=0,moved=false;
-    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;moved=true;});
+    let mx=innerWidth/2,my=innerHeight/2,x=mx,y=my,t=0;
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
     (function tick(){
-      t+=0.18; let px=mx,py=my;
-      for(let i=0;i<N;i++){
-        const s=segs[i];
-        s.x+=(px-s.x)*0.38; s.y+=(py-s.y)*0.38;
-        const wig=i===0?0:Math.sin(t+i*0.7)*3.5;      // ngoe nguẩy
-        s.el.style.transform=`translate(${s.x-s.sz/2}px,${s.y+wig-s.sz/2}px)`;
-        px=s.x; py=s.y;
-      }
+      t+=0.2; x+=(mx-x)*0.22; y+=(my-y)*0.22;
+      const wob=Math.sin(t)*7;                       // lắc đầu nhí nhảnh
+      c.style.transform=`translate(${x-20}px,${y-20}px) rotate(${wob}deg)`;
       requestAnimationFrame(tick);
     })();
   })();
