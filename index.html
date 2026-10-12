@@ -86,14 +86,14 @@
   @keyframes sway{0%,100%{transform:rotate(-2deg) translateY(0) scaleX(1)}25%{transform:rotate(1deg) translateY(-6px) scaleX(.98)}50%{transform:rotate(2deg) translateY(0) scaleX(1.02)}75%{transform:rotate(-1deg) translateY(-4px) scaleX(.99)}}
 
   /* ---------- bé sâu ZiZi đi qua đi lại ---------- */
-  .crawler{position:absolute;bottom:4px;left:0;z-index:2;width:66px;pointer-events:none;animation:crawlX 18s ease-in-out infinite}
-  .crawler-img{display:block;width:66px;height:auto;filter:drop-shadow(0 6px 8px rgba(19,33,29,.18));animation:hop .5s ease-in-out infinite}
+  .crawler{position:absolute;bottom:12px;left:0;z-index:3;width:58px;pointer-events:none;animation:crawlX 14s ease-in-out infinite}
+  .crawler-img{display:block;width:58px;height:auto;filter:drop-shadow(0 6px 8px rgba(19,33,29,.18));animation:hop .5s ease-in-out infinite}
   @keyframes crawlX{
-    0%{transform:translateX(2vw) scaleX(1)}
-    46%{transform:translateX(calc(100vw - 86px)) scaleX(1)}
-    50%{transform:translateX(calc(100vw - 86px)) scaleX(-1)}
-    96%{transform:translateX(2vw) scaleX(-1)}
-    100%{transform:translateX(2vw) scaleX(1)}
+    0%{transform:translateX(56vw) scaleX(1)}
+    46%{transform:translateX(calc(100vw - 80px)) scaleX(1)}
+    50%{transform:translateX(calc(100vw - 80px)) scaleX(-1)}
+    96%{transform:translateX(56vw) scaleX(-1)}
+    100%{transform:translateX(56vw) scaleX(1)}
   }
   @keyframes hop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
 
@@ -1956,10 +1956,10 @@
     if(!window.matchMedia) return;
     if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
     if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const c=document.createElement('div'); c.className='worm-cursor'; document.body.appendChild(c);
+    const c=document.createElement('div'); c.className='worm-cursor'; c.style.opacity='0'; document.body.appendChild(c);
     document.body.classList.add('worm-on');
-    let mx=innerWidth/2,my=innerHeight/2,x=mx,y=my,t=0;
-    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    let mx=innerWidth/2,my=innerHeight/2,x=mx,y=my,t=0,seen=false;
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY; if(!seen){seen=true;x=mx;y=my;c.style.opacity='1';}});
     (function tick(){
       t+=0.2; x+=(mx-x)*0.22; y+=(my-y)*0.22;
       const wob=Math.sin(t)*7;                       // lắc đầu nhí nhảnh
