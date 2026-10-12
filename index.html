@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>ZiZi Chinese — Tự học tiếng Trung từ 0 đến HSK6</title>
 <link rel="icon" type="image/png" href="assets/zizi-logo.png">
 <link rel="apple-touch-icon" href="assets/zizi-logo.png">
@@ -1844,9 +1847,32 @@
   // Không lưu mật khẩu dạng chữ trong code. Chỉ lưu giá trị băm SHA-256.
   // Đổi mật khẩu: tự tạo hash mới rồi thay chuỗi dưới đây.
   const ADM_HASH='97d8a4f8399bc5cda6a4920a07988918a3e090b6b4c1b122cb0805755ef361f8';
+  // SHA-256 thuần JS — dùng khi trình duyệt không có crypto.subtle (http, webview Zalo/FB...)
+  function sha256fallback(str){
+    function rr(n,x){return(x>>>n)|(x<<(32-n));}
+    var H=[1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225];
+    var K=[1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298];
+    var ascii=unescape(encodeURIComponent(str)),bytes=[],i,j,l=ascii.length*8;
+    for(i=0;i<ascii.length;i++)bytes.push(ascii.charCodeAt(i)&0xff);
+    bytes.push(0x80);while((bytes.length%64)!=56)bytes.push(0);
+    for(i=7;i>=0;i--)bytes.push((l/Math.pow(2,i*8))&0xff);
+    for(i=0;i<bytes.length;i+=64){
+      var w=[];for(j=0;j<16;j++)w[j]=(bytes[i+j*4]<<24)|(bytes[i+j*4+1]<<16)|(bytes[i+j*4+2]<<8)|(bytes[i+j*4+3]);
+      for(j=16;j<64;j++){var s0=rr(7,w[j-15])^rr(18,w[j-15])^(w[j-15]>>>3);var s1=rr(17,w[j-2])^rr(19,w[j-2])^(w[j-2]>>>10);w[j]=(w[j-16]+s0+w[j-7]+s1)|0;}
+      var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+      for(j=0;j<64;j++){var S1=rr(6,e)^rr(11,e)^rr(25,e);var ch=(e&f)^((~e)&g);var t1=(h+S1+ch+K[j]+w[j])|0;var S0=rr(2,a)^rr(13,a)^rr(22,a);var mj=(a&b)^(a&c)^(b&c);var t2=(S0+mj)|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;}
+      H[0]=(H[0]+a)|0;H[1]=(H[1]+b)|0;H[2]=(H[2]+c)|0;H[3]=(H[3]+d)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0;
+    }
+    var out='';for(i=0;i<8;i++)out+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return out;
+  }
   async function sha256(txt){
-    const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
-    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    try{
+      if(window.crypto&&crypto.subtle){
+        const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
+        return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      }
+    }catch(e){}
+    return sha256fallback(txt);
   }
   async function admLogin(){
     const p=document.getElementById('admPass').value.trim();
