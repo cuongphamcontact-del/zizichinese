@@ -301,12 +301,12 @@
   .success p{color:var(--ink-60);max-width:40ch;margin:0 auto 24px}
 
   /* ---------- live-sale popup ---------- */
-  .popup{position:fixed;top:84px;right:20px;z-index:60;background:#fff;border:1px solid var(--line-2);
-     border-radius:16px;padding:9px 13px;display:flex;gap:.55rem;align-items:center;box-shadow:var(--shadow);
-     max-width:248px;opacity:0;transform:translateX(16px);pointer-events:none;transition:opacity .4s ease,transform .5s cubic-bezier(.3,1.2,.4,1)}
+  .popup{position:fixed;top:82px;right:18px;z-index:60;background:#fff;border:1px solid var(--line-2);
+     border-radius:13px;padding:6px 11px;display:flex;gap:.45rem;align-items:center;box-shadow:var(--shadow);
+     max-width:200px;opacity:0;transform:translateX(16px);pointer-events:none;transition:opacity .4s ease,transform .5s cubic-bezier(.3,1.2,.4,1)}
   .popup.show{opacity:1;transform:translateX(0);pointer-events:auto}
-  .popup .av{width:30px;height:30px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none;font-size:.82rem}
-  .popup b{font-size:.78rem}.popup span{font-size:.7rem;color:var(--ink-60);display:block}
+  .popup .av{width:25px;height:25px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none;font-size:.72rem}
+  .popup b{font-size:.72rem;line-height:1.2}.popup span{font-size:.64rem;color:var(--ink-60);display:block;line-height:1.25}
 
   /* ---------- RESPONSIVE (desktop + tablet + mobile) ---------- */
   .nav-drawer{display:none}
@@ -352,8 +352,9 @@
     .mcta b{font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1}
     .mcta .btn{flex:1;max-width:56%}
     #view-product{padding-bottom:78px}
-    .popup{top:70px;right:10px;left:auto;bottom:auto;max-width:74%;padding:8px 11px;border-radius:14px}
-    .popup .av{width:28px;height:28px}
+    .popup{top:64px;right:8px;left:auto;bottom:auto;max-width:176px;padding:6px 9px;border-radius:12px;gap:.4rem}
+    .popup .av{width:22px;height:22px;font-size:.66rem}
+    .popup b{font-size:.68rem}.popup span{font-size:.6rem}
     .sec-top{align-items:flex-start}
     .lp h1{font-size:1.6rem}
     .big-cell{max-width:260px;margin:0 auto}
@@ -2494,8 +2495,8 @@
   },1000);
 
   // live sale popup
-  const buyers=[['N','Ngọc Minh','vừa đăng ký Combo HSK1+2'],['P','Phương Thảo','vừa đăng ký Khóa HSK1'],
-    ['Đ','Đức Anh','vừa mua Bộ thủ & Công thức'],['H','Hải Yến','vừa đăng ký Khóa HSK2']];
+  const buyers=[['N','Ngọc Minh','mua Combo HSK1+2'],['P','Phương Thảo','mua HSK1'],
+    ['Đ','Đức Anh','mua Bộ thủ'],['H','Hải Yến','mua HSK2'],['T','Thu Hà','mua HSK3']];
   let bi=0;
   function showPop(){
     const b=buyers[bi%buyers.length]; bi++;
