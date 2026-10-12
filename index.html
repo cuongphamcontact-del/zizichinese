@@ -216,6 +216,16 @@
   .afield input{width:100%;padding:12px 14px;border:1.5px solid var(--line-2);border-radius:11px;font-family:inherit;font-size:.95rem;background:#fff}
   .afield input:focus{border-color:var(--jade);outline:none}
   .auth-err{color:var(--cinnabar);font-size:.85rem;font-weight:600;min-height:1.2em;margin:4px 0 8px;text-align:center}
+  .afterms{display:flex!important;align-items:flex-start;gap:8px;font-weight:400!important;font-size:.84rem;color:var(--ink-60);margin-bottom:6px}
+  .afterms input{width:auto!important;margin:3px 0 0!important}
+  .afterms a{color:var(--jade-dark);font-weight:600}
+  .otp-icon{text-align:center;font-size:40px;margin:4px 0 8px}
+  .otp-lead{text-align:center;color:var(--ink-60);font-size:.92rem;margin-bottom:18px;line-height:1.5}
+  .otp-lead b{color:var(--ink)}
+  .otp-box{width:100%;text-align:center;letter-spacing:.5em;font-size:1.4rem;font-weight:800;padding:14px;border:1.5px solid var(--line-2);border-radius:12px;margin-bottom:12px;font-family:inherit}
+  .otp-box:focus{border-color:var(--jade);outline:none}
+  .otp-demo{text-align:center;font-size:.78rem;color:var(--ink-60);margin-top:14px;background:var(--paper-2);border-radius:8px;padding:8px}
+  .otp-demo b{color:var(--cinnabar);letter-spacing:.15em}
   .auth-submit{width:100%;margin-top:6px}
   .auth-switch{text-align:center;color:var(--ink-60);font-size:.9rem;margin-top:20px}
   .auth-switch a{color:var(--jade-dark);font-weight:700;cursor:pointer}
@@ -997,14 +1007,28 @@
       <p id="authSub">Tiếp tục học trên ZiZi Chinese</p>
       <button class="btn btn-ghost auth-google" onclick="googleAuth()"><span>G</span> <span id="authGoogle">Đăng nhập bằng Google</span></button>
       <div class="auth-div"><span id="authDiv">HOẶC</span></div>
-      <form onsubmit="doAuth(event)">
-        <div class="afield" id="af_name" style="display:none"><label>Họ tên</label><input type="text" id="au_name" placeholder="Nguyễn Văn A"></div>
-        <div class="afield"><label id="lab_email">Email hoặc tên đăng nhập</label><input type="text" id="au_email" placeholder="you@example.com"></div>
+      <form id="authForm" onsubmit="doAuth(event)">
+        <div class="afield" id="af_name" style="display:none"><label>Họ tên <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_name" placeholder="Nguyễn Văn A"></div>
+        <div class="afield"><label id="lab_email">Email hoặc tên đăng nhập <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_email" placeholder="you@example.com"></div>
+        <div class="afield" id="af_phone" style="display:none"><label>Số điện thoại <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="au_phone" placeholder="09xx xxx xxx"></div>
         <div class="afield"><label>Mật khẩu <a id="forgot" class="afw" href="#" onclick="toast('Gửi link đặt lại mật khẩu cần bản thật (Supabase)');return false">Quên mật khẩu?</a></label><input type="password" id="authPass" placeholder="Nhập mật khẩu"></div>
-        <div class="afield" id="af_confirm" style="display:none"><label>Xác nhận mật khẩu</label><input type="password" id="au_confirm" placeholder="Nhập lại mật khẩu"></div>
+        <div class="afield" id="af_confirm" style="display:none"><label>Xác nhận mật khẩu <em style="color:var(--cinnabar)">*</em></label><input type="password" id="au_confirm" placeholder="Nhập lại mật khẩu"></div>
+        <label class="afield afterms" id="af_terms" style="display:none"><input type="checkbox" id="au_terms"> <span>Tôi đồng ý với <a href="#" onclick="toast('Điều khoản dịch vụ');return false">Điều khoản</a> &amp; <a href="#" onclick="toast('Chính sách bảo mật');return false">Bảo mật</a></span></label>
         <div id="authErr" class="auth-err"></div>
         <button class="btn btn-primary auth-submit" id="authSubmit">Đăng nhập</button>
       </form>
+
+      <!-- Bước xác minh email (OTP) -->
+      <div id="otpPanel" style="display:none">
+        <div class="otp-icon">✉️</div>
+        <p class="otp-lead">Nhập mã 6 số vừa gửi tới<br><b id="otpEmail">email của bạn</b></p>
+        <input id="otpInput" class="otp-box" inputmode="numeric" maxlength="6" placeholder="● ● ● ● ● ●" onkeydown="if(event.key==='Enter')verifyOtp()">
+        <div id="otpErr" class="auth-err"></div>
+        <button class="btn btn-primary auth-submit" onclick="verifyOtp()">Xác minh &amp; tạo tài khoản</button>
+        <p class="auth-switch">Chưa nhận được mã? <a onclick="resendOtp()">Gửi lại</a> · <a onclick="backToForm()">Đổi email</a></p>
+        <p class="otp-demo">Demo: mã xác minh là <b id="otpHint">——</b> (bản thật sẽ gửi qua email)</p>
+      </div>
+
       <p class="auth-switch" id="authSwitch">Chưa có tài khoản? <a onclick="openAuth('register')">Tạo tài khoản</a></p>
     </div>
     <p class="auth-foot">© 2026 ZiZi Chinese.</p>
@@ -1496,14 +1520,17 @@
     document.getElementById('authGoogle').textContent = reg?'Đăng ký bằng Google':'Đăng nhập bằng Google';
     document.getElementById('authDiv').textContent = reg?'HOẶC DÙNG EMAIL':'HOẶC';
     document.getElementById('af_name').style.display = reg?'block':'none';
+    document.getElementById('af_phone').style.display = reg?'block':'none';
     document.getElementById('af_confirm').style.display = reg?'block':'none';
-    document.getElementById('lab_email').textContent = reg?'Email':'Email hoặc tên đăng nhập';
+    document.getElementById('af_terms').style.display = reg?'flex':'none';
+    document.getElementById('lab_email').firstChild.textContent = reg?'Email ':'Email hoặc tên đăng nhập ';
     document.getElementById('authPass').placeholder = reg?'Tối thiểu 8 ký tự':'Nhập mật khẩu';
     document.getElementById('forgot').style.display = reg?'none':'';
-    document.getElementById('authSubmit').textContent = reg?'Đăng ký':'Đăng nhập';
+    document.getElementById('authSubmit').textContent = reg?'Tiếp tục →':'Đăng nhập';
     document.getElementById('authSwitch').innerHTML = reg
       ? 'Đã có tài khoản? <a onclick="openAuth(\'login\')">Đăng nhập</a>'
       : 'Chưa có tài khoản? <a onclick="openAuth(\'register\')">Tạo tài khoản</a>';
+    backToForm();  /* đảm bảo hiện form, ẩn OTP */
     go('auth');
   }
   /* ==== Tài khoản chạy thật (lưu trong trình duyệt này) ==== */
@@ -1516,6 +1543,7 @@
     const a=document.getElementById('learnAv'); if(a&&name)a.textContent=name.trim().slice(0,1).toUpperCase();
   }
   function authErr(msg){ const e=document.getElementById('authErr'); if(e)e.textContent=msg||''; }
+  let pending=null, otpCode='';
   async function doAuth(e){
     if(e&&e.preventDefault)e.preventDefault();
     authErr('');
@@ -1525,15 +1553,19 @@
     const users=getUsers();
     if(authMode==='register'){
       const name=(document.getElementById('au_name').value||'').trim();
+      const phone=(document.getElementById('au_phone').value||'').trim();
       const confirm=document.getElementById('au_confirm').value||'';
       if(!name){ authErr('Vui lòng nhập họ tên.'); return; }
       if(!/^\S+@\S+\.\S+$/.test(email)){ authErr('Email chưa đúng định dạng.'); return; }
+      if(!/^0\d{8,10}$/.test(phone.replace(/\s/g,''))){ authErr('Số điện thoại chưa đúng (VD: 09xxxxxxxx).'); return; }
       if(pass.length<8){ authErr('Mật khẩu cần tối thiểu 8 ký tự.'); return; }
       if(pass!==confirm){ authErr('Mật khẩu xác nhận không khớp.'); return; }
+      if(!document.getElementById('au_terms').checked){ authErr('Vui lòng đồng ý Điều khoản & Bảo mật.'); return; }
       if(users.some(u=>u.email===email)){ authErr('Email này đã có tài khoản. Hãy đăng nhập.'); return; }
+      // Lưu tạm + gửi OTP xác minh email
       const ph=await sha256(pass);
-      users.push({name,email,ph,created:Date.now()}); saveUsers(users);
-      setSession(email); finishAuth(name,'Tạo tài khoản thành công!');
+      pending={name,email,phone,ph};
+      sendOtp();
     }else{
       const u=users.find(x=>x.email===email);
       if(!u){ authErr('Chưa có tài khoản với email này — hãy Tạo tài khoản.'); return; }
@@ -1542,12 +1574,45 @@
       setSession(email); finishAuth(u.name,'Đăng nhập thành công!');
     }
   }
+  /* ==== Xác minh email bằng OTP ==== */
+  function sendOtp(){
+    otpCode=(''+Math.floor(100000+Math.random()*900000));
+    document.getElementById('authForm').style.display='none';
+    document.getElementById('authSwitch').style.display='none';
+    document.getElementById('otpPanel').style.display='block';
+    document.getElementById('otpEmail').textContent=pending.email;
+    document.getElementById('otpHint').textContent=otpCode;   // demo (bản thật: gửi qua email)
+    document.getElementById('otpInput').value='';
+    document.getElementById('otpErr').textContent='';
+    // bản thật: gọi API gửi email chứa otpCode
+  }
+  function resendOtp(){ sendOtp(); toast('Đã gửi lại mã xác minh (demo)'); }
+  function backToForm(){
+    const f=document.getElementById('authForm'); if(f)f.style.display='block';
+    const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='block';
+    const o=document.getElementById('otpPanel'); if(o)o.style.display='none';
+  }
+  async function verifyOtp(){
+    const v=(document.getElementById('otpInput').value||'').trim();
+    if(v!==otpCode){ document.getElementById('otpErr').textContent='Mã không đúng, vui lòng thử lại.'; return; }
+    const users=getUsers();
+    users.push({...pending,verified:true,created:Date.now()}); saveUsers(users);
+    setSession(pending.email);
+    finishAuth(pending.name,'Xác minh email thành công! Tài khoản đã được tạo.');
+  }
   function finishAuth(name,msg){
     loggedIn=true; updateAuthUI(); setLearnerName(name); toast(msg);
-    ['au_name','au_email','authPass','au_confirm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    authErr(''); go('learn');
+    ['au_name','au_email','au_phone','authPass','au_confirm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const t=document.getElementById('au_terms'); if(t)t.checked=false;
+    backToForm(); authErr(''); pending=null; go('learn');
   }
-  function googleAuth(){ toast('Đăng nhập bằng Google cần bản thật (Supabase). Hãy dùng email/mật khẩu để thử nhé.'); }
+  function googleAuth(){
+    // Demo: mô phỏng đăng nhập Google. Bản thật dùng Supabase OAuth (không cần OTP).
+    const email='nguoidung.google@gmail.com';
+    const users=getUsers();
+    if(!users.some(u=>u.email===email)){ users.push({name:'Người dùng Google',email,google:true,verified:true,created:Date.now()}); saveUsers(users); }
+    setSession(email); finishAuth('Người dùng Google','Đăng nhập Google thành công (demo)');
+  }
   function restoreSession(){
     let s=null; try{s=localStorage.getItem('zizi_session');}catch(_){}
     if(s){ loggedIn=true; const u=getUsers().find(x=>x.email===s); setLearnerName(u?u.name:'học viên'); }
