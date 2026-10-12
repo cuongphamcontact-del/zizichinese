@@ -1076,7 +1076,7 @@
       <a class="brand" style="justify-content:center"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi</span></a>
       <h2>Đăng nhập quản trị</h2>
       <p class="sub">Khu vực dành riêng cho quản trị viên</p>
-      <input id="admUser" type="text" placeholder="Tài khoản" autocomplete="off">
+      <input id="admUser" type="email" placeholder="Email quản trị" autocomplete="username">
       <input id="admPass" type="password" placeholder="Mật khẩu" onkeydown="if(event.key==='Enter')admLogin()">
       <button class="btn btn-primary" onclick="admLogin()">Đăng nhập</button>
       <div id="admErr"></div>
@@ -1505,7 +1505,7 @@
     return {id:r.id,slug:r.slug,type:r.type,name:r.name,char:r.char_icon||'字',level:r.level_label||'',
       desc:r.description||'',description:r.description||'',bullets:[],
       price:r.price,priceLabel:shortPrice(r.price||0),wasLabel:r.original_price?shortPrice(r.original_price):'',off,
-      status:r.status,featured:!!r.featured,published:r.published!==false,
+      status:r.status,featured:!!r.featured,published:r.published!==false,sort:r.sort_order,
       lessons:r.lessons_count||0,res:r.res_count||0,students:r.students_count||0,
       cover:r.cover_url||'',live:r.live_info||null,
       hasSoft:r.has_soft,hasHard:r.has_hard,hardPrice:r.hard_price,shipFee:r.ship_fee,revenue:''};
@@ -1520,6 +1520,41 @@
       renderPublic();
       route();                                        // vẽ lại đúng trang đang mở
     }catch(e){ /* giữ dữ liệu mặc định nếu có trục trặc */ }
+  }
+  const isUuid=v=>typeof v==='string'&&v.length>=32&&v.indexOf('-')>0;
+  function toDBRow(p,isNew){
+    const row={
+      type:p.type,name:p.name,slug:p.slug,char_icon:p.char||'字',level_label:p.level||'',
+      subtitle:p.subtitle||null,description:p.description||p.desc||'',
+      price:p.price||0,original_price:p.originalPrice||null,
+      status:p.status||'sale',preorder_enabled:!!p.preorder,open_at:p.openAt||null,
+      category:p.category||null,delivery_note:p.delivery||null,
+      author:p.author||null,publisher:p.publisher||null,tags:p.tags||[],
+      published:p.published!==false,featured:!!p.featured,
+      cover_url:p.cover||null,live_info:(p.type==='live'?(p.live||null):null),
+      lessons_count:p.lessons||0,res_count:p.res||0,
+      has_soft:p.type==='doc',has_hard:!!p.hasHard,
+      hard_price:p.hardPrice||null,ship_fee:p.shipFee||null };
+    if(p.landingJSON){ try{ row.landing_json=JSON.parse(p.landingJSON); }catch(e){} }
+    if(!isNew && isUuid(p.id)) row.id=p.id;
+    return row;
+  }
+  async function dbUpsertProduct(p,isNew){
+    const sb=getSB(); if(!sb) return {skipped:true};
+    try{ const {error}=await sb.from('products').upsert(toDBRow(p,isNew),{onConflict:'slug'});
+      return error?{error}:{ok:true}; }catch(e){ return {error:e}; }
+  }
+  async function checkAdminRole(){
+    const sb=getSB(); if(!sb) return false;
+    try{
+      const {data:{user}}=await sb.auth.getUser(); if(!user) return false;
+      const {data}=await sb.from('profiles').select('role').eq('id',user.id).single();
+      return !!(data && data.role==='admin');
+    }catch(e){ return false; }
+  }
+  async function restoreAdminSession(){
+    try{ if(await checkAdminRole()){ admAuthed=true;
+      if(location.hash==='#quantri'||location.hash==='#admin'){ go('admin'); renderAll(); } } }catch(e){}
   }
 
   const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri'};
@@ -1919,19 +1954,24 @@
     return sha256fallback(txt);
   }
   async function admLogin(){
-    const p=document.getElementById('admPass').value.trim();
-    let ok=false;
-    try{ ok = (await sha256(p))===ADM_HASH; }catch(e){ ok=false; }
-    if(ok){
-      admAuthed=true;
-      document.getElementById('admErr').textContent='';
+    const email=document.getElementById('admUser').value.trim();
+    const pass=document.getElementById('admPass').value.trim();
+    const errEl=document.getElementById('admErr');
+    const sb=getSB();
+    if(!sb){ errEl.textContent='Chưa kết nối được Supabase. Kiểm tra mạng rồi thử lại.'; return; }
+    if(!email||!pass){ errEl.textContent='Nhập email và mật khẩu quản trị.'; return; }
+    errEl.textContent='Đang đăng nhập…';
+    try{
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error){ errEl.textContent='Sai email hoặc mật khẩu.'; return; }
+      if(!(await checkAdminRole())){ errEl.textContent='Tài khoản này chưa có quyền quản trị.'; try{await sb.auth.signOut();}catch(e){} return; }
+      admAuthed=true; errEl.textContent='';
       document.getElementById('admLogin').style.display='none';
       document.getElementById('admApp').style.display='grid';
       renderAll();
-    }else{
-      document.getElementById('admErr').textContent='Sai mật khẩu, vui lòng thử lại.';
-    }
+    }catch(e){ errEl.textContent='Lỗi đăng nhập, vui lòng thử lại.'; }
   }
+  async function admLogout(){ try{ const sb=getSB(); if(sb) await sb.auth.signOut(); }catch(e){} admAuthed=false; go('home'); }
   let prodFilter='all';
   function admTab(id,btn){
     document.querySelectorAll('.adm-tab').forEach(t=>t.hidden=true);
@@ -1998,22 +2038,31 @@
     document.getElementById('courseList').innerHTML=list.map((c)=>{
       const idx=products.indexOf(c);
       return `<div class="course-row">
-        <div class="reorder"><button ${idx===0?'disabled':''} onclick="moveProduct(${c.id},-1)" aria-label="Lên">▲</button><button ${idx===products.length-1?'disabled':''} onclick="moveProduct(${c.id},1)" aria-label="Xuống">▼</button></div>
+        <div class="reorder"><button ${idx===0?'disabled':''} onclick="moveProduct('${c.id}',-1)" aria-label="Lên">▲</button><button ${idx===products.length-1?'disabled':''} onclick="moveProduct('${c.id}',1)" aria-label="Xuống">▼</button></div>
         <span class="tianzige cch"><span class="han hz">${c.char}</span></span>
         <div class="meta"><b>${c.name} ${c.type==='doc'?'<span class="minitag">Tài liệu</span>':c.type==='live'?'<span class="minitag" style="background:var(--cinnabar)">Trực tiếp</span>':'<span class="minitag" style="background:var(--jade-dark)">Video</span>'}</b><div class="sub">${fmtVND(c.price)}${c.type==='doc'&&c.hasHard?' / cứng '+fmtVND(c.hardPrice):''} · ${c.type==='doc'?(c.res+' file'):(c.lessons+(c.type==='live'?' buổi trực tiếp':' buổi · '+c.res+' tài nguyên'))}</div></div>
         <div class="stat"><b>${c.students}</b><span>${c.status==='sale'?(c.type==='doc'?'đã bán':'học viên'):'đã đặt'}</span></div>
         <div class="stat"><b>${c.revenue}</b><span>doanh thu</span></div>
         <span class="tag ${c.status==='sale'?'active':'pending'}">${c.status==='sale'?'Đang bán':'Đặt trước'}</span>
-        <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editCourse(${c.id})">Sửa</button></div>`;
+        <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editCourse('${c.id}')">Sửa</button></div>`;
     }).join('') || '<p class="muted" style="padding:16px">Chưa có sản phẩm trong nhóm này.</p>';
     const nameMap={doc:'tài liệu',combo:'combo',course:'khóa học',all:'sản phẩm'};
     document.getElementById('courseCount').textContent=`${list.length} ${nameMap[prodFilter]}`;
   }
-  function moveProduct(id,dir){
-    const i=products.findIndex(p=>p.id===id), j=i+dir;
+  async function moveProduct(id,dir){
+    const i=products.findIndex(p=>String(p.id)===String(id)), j=i+dir;
     if(j<0||j>=products.length)return;
     [products[i],products[j]]=[products[j],products[i]];
-    renderCourses();renderPublic();toast('Đã đổi vị trí — web ngoài cập nhật theo');
+    renderCourses();renderPublic();
+    const a=products[i], b=products[j], sb=getSB();
+    if(sb&&a.sort!=null&&b.sort!=null&&isUuid(a.id)&&isUuid(b.id)){
+      const sa=a.sort, sbv=b.sort; a.sort=sbv; b.sort=sa;   // hoán đổi thứ tự lưu
+      try{
+        await sb.from('products').update({sort_order:a.sort}).eq('id',a.id);
+        await sb.from('products').update({sort_order:b.sort}).eq('id',b.id);
+        toast('Đã đổi vị trí — đồng bộ Supabase');
+      }catch(e){ toast('⚠ Đổi vị trí lỗi trên Supabase'); }
+    } else { toast('Đã đổi vị trí'); }
   }
   /* ===== helpers cho editor mở rộng ===== */
   const esc=s=>(s==null?'':s).toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
@@ -2024,14 +2073,14 @@
   let editTags=[], editGallery=[], editCover='';
 
   function editCourse(id){
-    const c=id?products.find(x=>x.id===id):{id:0,type:'video',char:'字',name:'',level:'',desc:'',price:0,status:'sale'};
+    const c=id?products.find(x=>String(x.id)===String(id)):{id:0,type:'video',char:'字',name:'',level:'',desc:'',price:0,status:'sale'};
     const isDoc=c.type==='doc';
     editTags=(c.tags||[]).slice(); editGallery=(c.gallery||[]).slice(); editCover=c.cover||'';
     const relOpts=products.filter(x=>x.id!==c.id).map(x=>`<option value="${x.id}"${(c.related||[]).includes(x.id)?' selected':''}>${esc(x.name)}</option>`).join('');
     const catOpts=CATEGORIES.map(x=>`<option${c.category===x?' selected':''}>${x}</option>`).join('');
     openModal(id?'Chỉnh sửa sản phẩm':'Thêm sản phẩm mới',`<div class="mform bigform">
 
-      ${id&&c.type!=='doc'?`<button class="btn btn-jade" style="width:100%;justify-content:center;margin-bottom:8px" onclick="manageLessons(${id})">🎬 Quản lý bài học · video · tài nguyên</button>`:''}
+      ${id&&c.type!=='doc'?`<button class="btn btn-jade" style="width:100%;justify-content:center;margin-bottom:8px" onclick="manageLessons('${id}')">🎬 Quản lý bài học · video · tài nguyên</button>`:''}
 
       <div class="mgroup"><h4>Thông tin cơ bản</h4>
         <div class="mrow"><label>Loại sản phẩm<select id="f_type" onchange="toggleDocFields()"><option value="video"${c.type==='video'||!c.type?' selected':''}>Khóa học — học qua video</option><option value="live"${c.type==='live'?' selected':''}>Khóa học — trực tiếp với giáo viên</option><option value="doc"${isDoc?' selected':''}>Tài liệu (PDF·Excel, mềm/cứng)</option></select></label>
@@ -2102,9 +2151,9 @@
         </div>
       </div>
 
-      <div class="mact">${id?`<button class="btn btn-ghost del" onclick="delCourse(${id})">Xóa</button>`:''}
+      <div class="mact">${id?`<button class="btn btn-ghost del" onclick="delCourse('${id}')">Xóa</button>`:''}
       <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
-      <button class="btn btn-jade" onclick="saveCourse(${c.id})">Lưu thay đổi</button></div>
+      <button class="btn btn-jade" onclick="saveCourse('${c.id}')">Lưu thay đổi</button></div>
       </div>`, true);
     renderTags(); renderGallery();
   }
@@ -2118,7 +2167,23 @@
   function renderCover(){document.getElementById('coverPrev').innerHTML=editCover?`<img src="${esc(editCover)}" alt="">`:'<span class="muted">Chưa có ảnh bìa</span>';}
   function clearCover(){editCover='';const u=document.getElementById('f_coverUrl');if(u)u.value='';renderCover();}
   function setCoverUrl(v){editCover=v;renderCover();}
-  function onCover(input){if(input.files&&input.files[0]){editCover=URL.createObjectURL(input.files[0]);document.getElementById('f_coverUrl').value='(đã upload) '+input.files[0].name;renderCover();toast('Đã nhận ảnh bìa (demo)');}}
+  async function onCover(input){
+    if(!(input.files&&input.files[0]))return;
+    const file=input.files[0], sb=getSB();
+    editCover=URL.createObjectURL(file); renderCover();          // xem trước ngay
+    const urlField=document.getElementById('f_coverUrl');
+    if(!sb){ urlField.value='(xem tạm) '+file.name; toast('Chưa kết nối Supabase — ảnh chỉ xem tạm, chưa lưu'); return; }
+    urlField.value='(đang tải lên…) '+file.name;
+    try{
+      const ext=(file.name.split('.').pop()||'png').toLowerCase();
+      const path='product-'+Date.now()+'.'+ext;
+      const {error}=await sb.storage.from('covers').upload(path,file,{upsert:true,contentType:file.type||'image/'+ext});
+      if(error){ urlField.value=''; toast('⚠ Tải ảnh lên lỗi — kiểm tra bucket "covers". Tạm thời dán URL ảnh.'); return; }
+      const {data}=sb.storage.from('covers').getPublicUrl(path);
+      editCover=data.publicUrl; renderCover(); urlField.value=data.publicUrl;
+      toast('Đã tải ảnh bìa lên kho ✓');
+    }catch(e){ urlField.value=''; toast('⚠ Tải ảnh lên lỗi'); }
+  }
   function addGallery(){const el=document.getElementById('f_galIn');if(el.value.trim()){editGallery.push(el.value.trim());el.value='';renderGallery();}}
   function rmGallery(i){editGallery.splice(i,1);renderGallery();}
   function renderGallery(){document.getElementById('galArea').innerHTML=editGallery.map((g,i)=>`<span class="chipf">🖼 ${esc(g).slice(0,22)}… <button onclick="rmGallery(${i})">×</button></span>`).join('')||'<span class="muted">Chưa có ảnh phụ</span>';}
@@ -2127,9 +2192,9 @@
   function removeTag(i){editTags.splice(i,1);renderTags();}
   function renderTags(){document.getElementById('tagArea').innerHTML= editTags.length?('<b>ĐÃ CHỌN:</b> '+editTags.map((t,i)=>`<span class="tagchip">${esc(t)} <code>/${slugify(t)}</code> <button onclick="removeTag(${i})">×</button></span>`).join('')):'<span class="muted">Chưa chọn chủ đề nào</span>';}
 
-  function saveCourse(id){
+  async function saveCourse(id){
     if(!val('f_name')){toast('Nhập tên sản phẩm');return;}
-    const i=products.findIndex(x=>x.id===id);
+    const i=products.findIndex(x=>String(x.id)===String(id));
     const type=document.getElementById('f_type').value, price=+val('f_price')||0, orig=+val('f_orig')||0;
     const related=Array.from(document.getElementById('f_related').selectedOptions).map(o=>+o.value);
     const base={id:id||Date.now(),type,char:val('f_char')||'字',name:val('f_name'),slug:val('f_slug')||slugify(val('f_name')),
@@ -2146,10 +2211,27 @@
     else if(i>=0){base.wasLabel=products[i].wasLabel;base.off=products[i].off;}
     if(type==='doc'){base.hasSoft=true;base.hasHard=document.getElementById('f_hard').checked;base.hardPrice=+val('f_hardprice')||0;base.shipFee=+val('f_ship')||30000;}
     if(type==='live'){base.live={duration:val('f_lv_dur'),perMonth:val('f_lv_month'),schedule:val('f_lv_sched'),session:val('f_lv_sess'),slot:val('f_lv_slot')};}
+    const isNew=i<0;
     if(i>=0){products[i]={...products[i],...base};} else {products.push({...base,bullets:[],students:0,revenue:'0'});}
-    renderCourses();renderPublic();closeModal();toast(i>=0?'Đã lưu thay đổi':'Đã thêm sản phẩm mới');
+    const saved=isNew?products[products.length-1]:products[i];
+    renderCourses();renderPublic();closeModal();
+    const r=await dbUpsertProduct(saved,isNew);
+    if(r&&r.ok){ toast(isNew?'Đã thêm — đã lưu vào Supabase':'Đã lưu — đồng bộ Supabase'); await loadProductsFromDB(); renderCourses(); }
+    else if(r&&r.skipped){ toast('Đã lưu tạm (chưa kết nối Supabase)'); }
+    else { toast('⚠ Lưu lên Supabase lỗi — kiểm tra quyền admin/kết nối'); }
   }
-  function delCourse(id){if(confirm('Xóa sản phẩm này?')){products=products.filter(x=>x.id!==id);renderCourses();renderPublic();closeModal();toast('Đã xóa sản phẩm');}}
+  async function delCourse(id){
+    if(!confirm('Xóa sản phẩm này?'))return;
+    const p=products.find(x=>String(x.id)===String(id));
+    products=products.filter(x=>String(x.id)!==String(id));
+    renderCourses();renderPublic();closeModal();
+    const sb=getSB();
+    if(sb&&p&&isUuid(p.id)){
+      try{ const {error}=await sb.from('products').delete().eq('id',p.id);
+        toast(error?'⚠ Xóa trên Supabase lỗi':'Đã xóa — đồng bộ Supabase'); }
+      catch(e){ toast('⚠ Xóa trên Supabase lỗi'); }
+    } else { toast('Đã xóa'); }
+  }
 
   /* ===== Quản lý bài học: gắn video (nền tảng thứ 3) + tải file bài tập ===== */
   /* @DATA-LESSONS ★ Giáo trình HSK1 */
@@ -2326,7 +2408,7 @@
     const rows=products.filter(p=>p.type!=='doc').map(p=>{
       const ls=getLessons(p.id), withVid=ls.filter(l=>l.video).length;
       return `<tr><td><b>${esc(p.name)}</b></td><td>${ls.length}</td><td>${withVid}/${ls.length}</td>
-      <td>Vimeo / Bunny</td><td style="text-align:right"><button class="lnk" onclick="prodFilter='all';admTab('courses',document.querySelector('[data-filter=course]'));editCourse(${p.id})">Quản lý</button></td></tr>`;
+      <td>Vimeo / Bunny</td><td style="text-align:right"><button class="lnk" onclick="prodFilter='all';admTab('courses',document.querySelector('[data-filter=course]'));editCourse('${p.id}')">Quản lý</button></td></tr>`;
     }).join('');
     document.getElementById('videoList').innerHTML=rows||'<tr><td colspan="5" class="muted" style="padding:16px">Chưa có khóa video</td></tr>';
   }
@@ -2424,6 +2506,7 @@
   restoreSession();
   checkAdminRoute();
   loadProductsFromDB();   // đọc sản phẩm từ Supabase (nếu có), lỗi thì giữ mặc định
+  restoreAdminSession();  // giữ đăng nhập admin sau khi tải lại trang
 
   /* ===== con trỏ chuột = bé sâu ZiZi (chỉ máy tính có chuột) ===== */
   (function(){
