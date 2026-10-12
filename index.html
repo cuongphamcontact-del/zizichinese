@@ -1509,7 +1509,7 @@
       price:r.price,priceLabel:shortPrice(r.price||0),wasLabel:r.original_price?shortPrice(r.original_price):'',off,
       status:r.status,featured:!!r.featured,published:r.published!==false,sort:r.sort_order,
       lessons:r.lessons_count||0,res:r.res_count||0,students:r.students_count||0,
-      cover:r.cover_url||LOCAL_COVERS[r.slug]||'',live:r.live_info||null,
+      cover:((r.cover_url&&/^https?:/.test(r.cover_url))?r.cover_url:(LOCAL_COVERS[r.slug]||'')),live:r.live_info||null,
       hasSoft:r.has_soft,hasHard:r.has_hard,hardPrice:r.hard_price,shipFee:r.ship_fee,revenue:''};
   }
   async function loadProductsFromDB(){
