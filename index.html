@@ -2,6 +2,12 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<script>
+  // Lớp dự phòng cho "Enforce HTTPS" của GitHub Pages: ai vào bằng http:// sẽ được chuyển sang https://
+  if(location.protocol==='http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)){
+    location.replace('https://'+location.host+location.pathname+location.search+location.hash);
+  }
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">

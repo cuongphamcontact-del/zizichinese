@@ -24,9 +24,15 @@ zizichinese/
 ├── index.html          # Toàn bộ website (1 file: HTML + CSS + JS)
 ├── README.md
 ├── .gitignore
-└── docs/
-    ├── sitemap.md      # Sơ đồ site + bản đồ chỉnh sửa nhanh
-    └── spec-ky-thuat.md# Mô tả kỹ thuật để dựng bản thật (Supabase + SePay)
+├── docs/
+│   ├── sitemap.md          # Sơ đồ site + bản đồ chỉnh sửa nhanh
+│   ├── spec-ky-thuat.md    # Mô tả kỹ thuật để dựng bản thật (Supabase + SePay)
+│   └── bao-mat-trien-khai.md # Checklist bảo mật: khóa bí mật, xác nhận email, HTTPS
+├── scripts/check-secrets.sh  # Quét khóa bí mật (GitHub Action chạy mỗi lần push)
+└── supabase/
+    ├── schema.sql
+    ├── config.toml         # Auth: bật xác nhận email; webhook không cần JWT
+    └── functions/sepay-webhook/  # Edge Function phía máy chủ (giữ khóa SePay/service_role)
 ```
 
 Trong `index.html` có sẵn "biển chỉ đường": bấm `Ctrl+F` tìm các nhãn `@THEME`, `@DATA-PRODUCTS`, `@MAP-HOME`, `@MASCOT`… để nhảy đúng chỗ cần sửa.
@@ -39,6 +45,8 @@ Trong `index.html` có sẵn "biển chỉ đường": bấm `Ctrl+F` tìm các 
 ## Lưu ý bảo mật
 
 Mọi thứ trong file này chạy ở trình duyệt nên **ai cũng xem được mã nguồn**. Vì vậy repo này **không được** chứa: mật khẩu thật, khóa API/token, thông tin khách hàng thật, link file khóa học. Trang quản trị ở đây chỉ là lớp che cho bản demo — bản thật bắt buộc xác thực phía máy chủ.
+
+Khóa SePay / `service_role` chỉ nằm trong Edge Function (`supabase/functions/`), đặt bằng `supabase secrets set`. Các bước bật xác nhận email và Enforce HTTPS: xem `docs/bao-mat-trien-khai.md`.
 
 ## Lộ trình
 
