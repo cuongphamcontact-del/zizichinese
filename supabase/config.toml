@@ -1,0 +1,18 @@
+# Cấu hình Supabase CLI cho ZiZi Chinese.
+# Không chứa bí mật — khóa thật đặt bằng `supabase secrets set` (xem docs/bao-mat-trien-khai.md).
+project_id = "zizichinese"
+
+[auth]
+site_url = "https://zizichinese.com"
+additional_redirect_urls = ["https://zizichinese.com/**"]
+
+[auth.email]
+enable_signup = true
+# BẮT BUỘC khi mở đăng ký học viên (Giai đoạn 2): người dùng phải bấm link
+# xác nhận trong email trước khi đăng nhập được.
+enable_confirmations = true
+double_confirm_changes = true
+
+# Webhook SePay không mang JWT của Supabase — tự xác thực bằng SEPAY_WEBHOOK_KEY.
+[functions.sepay-webhook]
+verify_jwt = false
