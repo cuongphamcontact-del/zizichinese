@@ -390,6 +390,38 @@ insert into settings (key,value) values
 on conflict (key) do nothing;
 
 -- =====================================================================
--- XONG. Bước tiếp theo: tạo Storage bucket "covers" (công khai) cho ảnh bìa,
--- và "lesson-files" (riêng tư) cho tài liệu — làm ở mục Storage trên Supabase.
+-- BẢO MẬT BỔ SUNG (chạy sau khi đã có bucket "covers")
+-- =====================================================================
+
+-- 1) CHẶN TỰ NÂNG QUYỀN: người thường KHÔNG được tự đổi role thành admin.
+--    (Nếu không có, học viên đăng nhập có thể tự set role='admin'.)
+create or replace function protect_profile_role() returns trigger as $$
+begin
+  if not is_admin() then
+    new.role := old.role;   -- bỏ qua mọi thay đổi role từ người không phải admin
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+drop trigger if exists trg_protect_role on profiles;
+create trigger trg_protect_role before update on profiles
+  for each row execute function protect_profile_role();
+
+-- 2) QUY TẮC KHO ẢNH "covers": ai cũng XEM được, chỉ admin TẢI LÊN/SỬA/XÓA.
+--    (Cần bucket "covers" đã tạo. Nếu chưa có write policy, admin cũng không upload được.)
+drop policy if exists "covers public read" on storage.objects;
+create policy "covers public read" on storage.objects
+  for select using (bucket_id = 'covers');
+drop policy if exists "covers admin insert" on storage.objects;
+create policy "covers admin insert" on storage.objects
+  for insert to authenticated with check (bucket_id = 'covers' and is_admin());
+drop policy if exists "covers admin update" on storage.objects;
+create policy "covers admin update" on storage.objects
+  for update to authenticated using (bucket_id = 'covers' and is_admin());
+drop policy if exists "covers admin delete" on storage.objects;
+create policy "covers admin delete" on storage.objects
+  for delete to authenticated using (bucket_id = 'covers' and is_admin());
+
+-- =====================================================================
+-- XONG.
 -- =====================================================================
