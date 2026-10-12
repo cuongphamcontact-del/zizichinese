@@ -307,6 +307,16 @@
   .popup.show{opacity:1;transform:translateX(0);pointer-events:auto}
   .popup .av{width:25px;height:25px;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:700;flex:none;font-size:.72rem}
   .popup b{font-size:.72rem;line-height:1.2}.popup span{font-size:.64rem;color:var(--ink-60);display:block;line-height:1.25}
+  /* ---------- máy bay kéo băng rôn cờ Việt Nam ---------- */
+  .flag-plane{position:fixed;top:96px;left:0;z-index:55;display:flex;align-items:center;gap:8px;white-space:nowrap;
+     pointer-events:none;transform:translateX(-140%);animation:fly 28s linear infinite}
+  .fp-banner{display:flex;align-items:center;gap:7px;background:#fff;color:#da251d;border:2px solid #da251d;
+     border-radius:999px;padding:5px 15px;font-weight:800;font-size:.82rem;box-shadow:0 7px 18px -7px rgba(0,0,0,.4)}
+  .fp-flag{width:22px;height:15px;background:#da251d;color:#ffcd00;display:grid;place-items:center;font-size:12px;border-radius:2px;line-height:1;flex:none}
+  .fp-plane{width:34px;height:34px;color:var(--jade-dark);transform:rotate(90deg);flex:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+  @keyframes fly{0%{transform:translateX(-140%)}100%{transform:translateX(110vw)}}
+  body.in-admin .flag-plane,body.in-learn .flag-plane,body.in-auth .flag-plane{display:none!important}
+  @media (prefers-reduced-motion:reduce){.flag-plane{display:none}}
 
   /* ---------- RESPONSIVE (desktop + tablet + mobile) ---------- */
   .nav-drawer{display:none}
@@ -355,6 +365,10 @@
     .popup{top:64px;right:8px;left:auto;bottom:auto;max-width:176px;padding:6px 9px;border-radius:12px;gap:.4rem}
     .popup .av{width:22px;height:22px;font-size:.66rem}
     .popup b{font-size:.68rem}.popup span{font-size:.6rem}
+    .flag-plane{top:62px;gap:6px}
+    .fp-banner{font-size:.64rem;padding:4px 11px;gap:5px}
+    .fp-flag{width:18px;height:12px;font-size:10px}
+    .fp-plane{width:25px}
     .sec-top{align-items:flex-start}
     .lp h1{font-size:1.6rem}
     .big-cell{max-width:260px;margin:0 auto}
@@ -787,10 +801,7 @@
         <img class="mascot" src="assets/zizi-mascot.png" alt="Bé sâu ZiZi — mascot ZiZi Chinese">
       </div>
     </div>
-    <!-- bé sâu ZiZi đi qua đi lại -->
-    <div class="crawler" aria-hidden="true">
-      <img class="crawler-img" src="assets/zizi-face.png" alt="">
-    </div>
+    <!-- bé sâu chạy qua lại đã TẮT theo yêu cầu -->
   </section>
 
   <section class="trust">
@@ -1418,6 +1429,12 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- máy bay kéo băng rôn cờ Việt Nam -->
+<div class="flag-plane" aria-hidden="true">
+  <div class="fp-banner"><span class="fp-flag">★</span>Hoàng Sa – Trường Sa là của Việt Nam</div>
+  <svg class="fp-plane" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12l-9.5-3V3.2c0-.9-.7-1.6-1.5-1.6S9.5 2.3 9.5 3.2V9L2 12v1.8l7.5-2v4.2L7 17.6V19l4-1 4 1v-1.4l-2.5-1.6v-4.2l7.5 2V12z"/></svg>
+</div>
 
 <!-- live sale popup -->
 <div class="popup" id="popup">
@@ -2516,22 +2533,7 @@
   loadProductsFromDB();   // đọc sản phẩm từ Supabase (nếu có), lỗi thì giữ mặc định
   restoreAdminSession();  // giữ đăng nhập admin sau khi tải lại trang
 
-  /* ===== con trỏ chuột = bé sâu ZiZi (chỉ máy tính có chuột) ===== */
-  (function(){
-    if(!window.matchMedia) return;
-    if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const c=document.createElement('div'); c.className='worm-cursor'; c.style.opacity='0'; document.body.appendChild(c);
-    document.body.classList.add('worm-on');
-    let mx=innerWidth/2,my=innerHeight/2,x=mx,y=my,t=0,seen=false;
-    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY; if(!seen){seen=true;x=mx;y=my;c.style.opacity='1';}});
-    (function tick(){
-      t+=0.2; x+=(mx-x)*0.22; y+=(my-y)*0.22;
-      const wob=Math.sin(t)*7;                       // lắc đầu nhí nhảnh
-      c.style.transform=`translate(${x-23}px,${y-23}px) rotate(${wob}deg)`;
-      requestAnimationFrame(tick);
-    })();
-  })();
+  /* Con trỏ chuột hình bé sâu đã TẮT theo yêu cầu. */
 </script>
 </body>
 </html>
