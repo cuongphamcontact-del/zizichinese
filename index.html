@@ -1843,7 +1843,7 @@
   let admAuthed=false;
   // Không lưu mật khẩu dạng chữ trong code. Chỉ lưu giá trị băm SHA-256.
   // Đổi mật khẩu: tự tạo hash mới rồi thay chuỗi dưới đây.
-  const ADM_HASH='4582e50147b49b118c520b3d621a5e78250e1d9ba052c3cc4e6f202636a4e027';
+  const ADM_HASH='97d8a4f8399bc5cda6a4920a07988918a3e090b6b4c1b122cb0805755ef361f8';
   async function sha256(txt){
     const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
     return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
