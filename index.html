@@ -144,6 +144,9 @@
   .card .thumb{position:relative;aspect-ratio:16/10;background:linear-gradient(145deg,var(--jade),#10423a);display:grid;place-items:center;overflow:hidden}
   .card .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .card .thumb .hanbig{font-family:"Noto Serif SC";font-weight:900;font-size:70px;color:rgba(255,255,255,.95);text-shadow:0 4px 18px rgba(0,0,0,.25)}
+  .thumb-mascot{height:78%;width:auto;position:relative;z-index:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.2))}
+  .thumb-char{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.92);color:var(--jade-dark);display:grid;place-items:center;font-weight:900;font-size:20px;z-index:2;line-height:1}
+  .oc-thumb .thumb-char{top:10px;right:10px;width:34px;height:34px;font-size:18px}
   .card .plabel{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.95);color:var(--ink);font-size:.7rem;font-weight:700;padding:.3em .7em;border-radius:999px}
   .card .pbadge{position:absolute;left:12px;top:12px;font-size:.64rem;font-weight:800;padding:.32em .7em;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
   .card .pbadge.doc{background:#fff;color:var(--jade-dark)}
@@ -351,6 +354,25 @@
     .sec-top{align-items:flex-start}
     .lp h1{font-size:1.6rem}
     .big-cell{max-width:260px;margin:0 auto}
+    /* THẺ KHÓA HỌC: dạng ngang gọn, dễ lướt */
+    .card{flex-direction:row;align-items:stretch;border-radius:14px}
+    .card .thumb{width:38%;max-width:140px;aspect-ratio:auto;flex:none}
+    .card .thumb .thumb-mascot{height:66%}
+    .card .thumb .plabel{display:none}
+    .card .thumb .pbadge{font-size:.54rem;padding:.24em .5em;left:8px;top:8px}
+    .card .thumb .thumb-char{width:28px;height:28px;font-size:15px;top:8px;right:8px;border-radius:8px}
+    .card .body{padding:12px 14px;gap:0}
+    .card h3{font-size:.98rem;line-height:1.3;margin-bottom:6px}
+    .card .rate{margin-bottom:8px;font-size:.78rem}
+    .card .meta{display:none}
+    .card .foot{flex-direction:column;align-items:stretch;gap:8px}
+    .card .price{flex-direction:row;align-items:baseline;gap:8px}
+    .card .foot .btn{width:100%;justify-content:center}
+    /* KHU VỰC HỌC: thẻ sở hữu ngang */
+    .learn-dash .owned-card{flex-direction:row;align-items:stretch}
+    .learn-dash .owned-card .oc-thumb{width:40%;max-width:150px;aspect-ratio:auto;flex:none}
+    .learn-dash .owned-card .oc-thumb .thumb-mascot{height:64%}
+    .learn-dash .owned-card .oc-body{padding:14px}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation-duration:.001ms!important;transition:none!important;scroll-behavior:auto}
@@ -508,6 +530,7 @@
   .oc-thumb{position:relative;aspect-ratio:16/9;background:linear-gradient(145deg,var(--jade),#10423a);display:grid;place-items:center;overflow:hidden}
   .oc-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .oc-thumb .hanbig{font-family:"Noto Serif SC";font-weight:900;font-size:56px;color:rgba(255,255,255,.95)}
+  .oc-thumb .thumb-mascot{height:76%;width:auto;position:relative;z-index:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.2))}
   .oc-badge{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.95);color:var(--jade-dark);font-size:.62rem;font-weight:800;padding:.3em .7em;border-radius:999px;text-transform:uppercase}
   .oc-body{padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
   .oc-body h3{font-size:1.02rem;font-weight:700;line-height:1.35}
@@ -640,7 +663,13 @@
     .funnel .lbl{width:140px}
     .learn-wrap{grid-template-columns:1fr}
     .learn-side{position:static}
-    .learn-top{padding:12px 16px}
+    .learn-top{padding:10px 14px}
+    .learn-top .brand small{display:none}
+    .learn-top .brand span:not(.logo){font-size:1rem}
+    .learn-top .who span:first-child{display:none}  /* ẩn "Xin chào..." cho gọn */
+    .learn-top .who{gap:.5rem}
+    .learn-top .lg{font-size:.8rem}
+    .dash-h{font-size:1.5rem}
     .owned-grid{grid-template-columns:1fr}
     /* thẻ KPI gọn 2 cột, bớt trống */
     .kpi{padding:14px}.kpi .val{font-size:1.4rem;margin:3px 0 1px}
@@ -1480,10 +1509,10 @@
     const badge = p.status==='preorder'?'<span class="pbadge pre">Đặt trước</span>'
                  :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>'
                  :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>'
-                 :'<span class="pbadge video">Video tự học</span>'));
+                 :'<span class="pbadge video">Video</span>'));
     const thumb = p.cover
       ? `<img src="${p.cover}" alt="">`
-      : `<span class="hanbig hz">${p.char}</span>`;
+      : `<img class="thumb-mascot" src="assets/zizi-face.png" alt=""><span class="thumb-char hz">${p.char}</span>`;
     // "rating" demo suy ra từ số liệu sẵn có
     const rating = (4.7 + ((p.id||0)%3)*0.1).toFixed(1).replace('.',',');
     const cnt = p.students ? `(${p.students>999?(p.students/1000).toFixed(1).replace('.',',')+'k':p.students})` : '';
@@ -1637,7 +1666,7 @@
     grid.innerHTML=owned.map(o=>{
       const p=products.find(x=>x.id===o.id); if(!p)return '';
       const isDoc=p.type==='doc';
-      const thumb=p.cover?`<img src="${p.cover}">`:`<span class="hanbig hz">${p.char}</span>`;
+      const thumb=p.cover?`<img src="${p.cover}">`:`<img class="thumb-mascot" src="assets/zizi-face.png"><span class="thumb-char hz">${p.char}</span>`;
       const badge=isDoc?'Tài liệu':(p.type==='live'?'Trực tiếp':'Khóa học');
       if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">Tài liệu đã sở hữu · tải về không giới hạn.</p>
