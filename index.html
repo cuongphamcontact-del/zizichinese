@@ -320,7 +320,10 @@
   @keyframes fly{0%{transform:translateX(-140%)}100%{transform:translateX(110vw)}}
   @keyframes wave{0%,100%{transform:perspective(120px) rotateY(0) skewX(0)}25%{transform:perspective(120px) rotateY(17deg) skewX(-3deg)}50%{transform:perspective(120px) rotateY(0) skewX(0)}75%{transform:perspective(120px) rotateY(-17deg) skewX(3deg)}}
   body.in-admin .flag-plane,body.in-learn .flag-plane,body.in-auth .flag-plane{display:none!important}
-  @media (prefers-reduced-motion:reduce){.flag-plane{display:none}}
+  @media (prefers-reduced-motion:reduce){
+    .flag-plane{animation:none;left:50%;transform:translateX(-50%)}
+    .fp-flag{animation:none}
+  }
 
   /* ---------- RESPONSIVE (desktop + tablet + mobile) ---------- */
   .nav-drawer{display:none}
