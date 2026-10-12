@@ -307,22 +307,40 @@
     .nav-drawer a:last-child{border:none}
   }
   @media (max-width:640px){
-    .wrap{padding:0 18px}
-    .hero{padding:34px 0 18px}
-    .hero-stats{grid-template-columns:1fr 1fr}
+    .wrap{padding:0 16px}
+    /* HERO: tiêu đề + nút lên trước, mascot nhỏ lại ở dưới */
+    .hero{padding:22px 0 14px}
+    .hero::before{display:none}
+    .hero-grid{gap:18px}
+    .hero-art{order:2;min-height:auto;margin-top:4px}
+    .mascot{width:min(230px,64%)}
+    .mascot-blob{width:72%}
+    .bubble{display:none}
+    .crawler{display:none}
+    .promo-pill{margin-bottom:14px;font-size:.78rem}
+    .hero h1{font-size:1.95rem;line-height:1.14}
+    .hero p.lead{font-size:1rem;margin-bottom:1.3rem}
+    .hero-stats{grid-template-columns:1fr 1fr;gap:10px;margin-top:1.4rem}
+    .stat-card{padding:12px 13px}.stat-card b{font-size:1.3rem}
     .products,.reviews,.trust .wrap,.foot-grid,.fmt{grid-template-columns:1fr}
-    .nav{height:62px;gap:.6rem}
-    .nav-login{display:none}
-    .nav-drawer.open{top:62px}
-    .hero-cta{width:100%}.hero-cta .btn{flex:1}
+    section.pad{padding:40px 0}
+    .sec-head h2{font-size:1.6rem}
+    .nav{height:60px;gap:.5rem}
+    .brand{font-size:1.08rem}
+    .nav-login,.nav-register{display:none}  /* gọn: chỉ còn logo + menu ☰ */
+    .nav-drawer.open{top:60px}
+    .hero-cta{width:100%}.hero-cta .btn{flex:1;font-size:.95rem;padding:.85em 1em}
     .mcta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;background:rgba(242,250,248,.97);
       backdrop-filter:blur(8px);border-top:1px solid var(--line-2);padding:10px 16px;align-items:center;justify-content:space-between;gap:12px}
-    .mcta small{display:block;font-size:.68rem;color:var(--ink-60)}
-    .mcta b{font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1}
-    .mcta .btn{flex:1;max-width:58%}
+    .mcta small{display:block;font-size:.66rem;color:var(--ink-60)}
+    .mcta b{font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1}
+    .mcta .btn{flex:1;max-width:56%}
     #view-product{padding-bottom:78px}
-    .popup{bottom:78px;left:12px;right:12px;max-width:none}
+    .popup{bottom:86px;left:12px;right:12px;max-width:none;padding:10px 14px}
+    .popup .av{width:32px;height:32px}
     .sec-top{align-items:flex-start}
+    .lp h1{font-size:1.6rem}
+    .big-cell{max-width:260px;margin:0 auto}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation-duration:.001ms!important;transition:none!important;scroll-behavior:auto}
@@ -611,9 +629,20 @@
     .learn-wrap{grid-template-columns:1fr}
     .learn-side{position:static}
     .learn-top{padding:12px 16px}
+    .owned-grid{grid-template-columns:1fr}
+    /* thẻ KPI gọn 2 cột, bớt trống */
+    .kpi{padding:14px}.kpi .val{font-size:1.4rem;margin:3px 0 1px}
+    .adm-top h1{font-size:1.15rem}
+    .modal{padding:20px 16px}.modal.wide{max-width:none}
+    .mrow{grid-template-columns:1fr}
+    .tab-head{gap:10px}.addbtn{width:100%}
   }
   @media (max-width:560px){
-    .kpis,.two-col{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .hero-stats{grid-template-columns:1fr 1fr}
+    .learn-dash{padding:18px 16px}
+    .co-grid{gap:20px}
+    .steps{font-size:.72rem}
   }
 </style>
 </head>
@@ -1594,8 +1623,9 @@
     const p=products.find(x=>x.id===id); if(!p)return; current=p;
     document.getElementById('pChar').textContent=p.char;
     const cov=document.getElementById('pCover'), cell=document.getElementById('pCharCell');
-    if(p.cover){cov.src=p.cover;cov.style.display='block';cell.style.display='none';}
-    else{cov.style.display='none';cell.style.display='grid';}
+    // Có ảnh bìa → hiện bìa; chưa có → hiện mascot (không để ô trống)
+    cov.src = p.cover || 'assets/zizi-mascot.png';
+    cov.style.display='block'; cell.style.display='none';
     document.getElementById('pLevel').textContent=p.level;
     document.getElementById('pTitle').textContent=p.name;
     document.getElementById('pDesc').textContent=p.desc;
