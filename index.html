@@ -1005,12 +1005,22 @@
       <nav class="adm-nav">
         <button class="on" data-title="Tổng quan" onclick="admTab('overview',this)"><span class="ic">▦</span><span>Tổng quan</span></button>
         <div class="nav-group">Sản phẩm</div>
-        <button data-title="Sản phẩm &amp; tài nguyên" onclick="admTab('courses',this)"><span class="ic">📚</span><span>Khóa học &amp; tài liệu</span></button>
+        <button data-title="Khóa học" data-filter="course" onclick="admTab('courses',this)"><span class="ic">📚</span><span>Khóa học</span></button>
+        <button data-title="Tài liệu (bản cứng/mềm)" data-filter="doc" onclick="admTab('courses',this)"><span class="ic">📄</span><span>Tài liệu</span></button>
+        <button data-title="Combo" data-filter="combo" onclick="admTab('courses',this)"><span class="ic">🎁</span><span>Combo</span></button>
+        <button data-title="Danh mục" onclick="admTab('cats',this)"><span class="ic">🏷️</span><span>Danh mục</span></button>
+        <button data-title="Giảng viên" onclick="admTab('teachers',this)"><span class="ic">🧑‍🏫</span><span>Giảng viên</span></button>
+        <button data-title="Thư viện video" onclick="admTab('videos',this)"><span class="ic">🎬</span><span>Video</span></button>
         <div class="nav-group">Bán hàng</div>
-        <button data-title="Đơn hàng &amp; doanh thu" onclick="admTab('orders',this)"><span class="ic">🧾</span><span>Đơn hàng</span></button>
-        <button data-title="Phân tích &amp; tracking" onclick="admTab('tracking',this)"><span class="ic">📈</span><span>Tracking &amp; báo cáo</span></button>
+        <button data-title="Đơn hàng" onclick="admTab('orders',this)"><span class="ic">🧾</span><span>Đơn hàng</span></button>
+        <button data-title="Thanh toán thủ công" onclick="admTab('manual',this)"><span class="ic">💵</span><span>Thanh toán thủ công</span></button>
+        <button data-title="Hoàn tiền" onclick="admTab('refunds',this)"><span class="ic">↩️</span><span>Hoàn tiền</span></button>
+        <button data-title="Hóa đơn GTGT" onclick="admTab('invoices',this)"><span class="ic">🧮</span><span>Hóa đơn GTGT</span></button>
+        <button data-title="Báo cáo tài chính" onclick="admTab('reports',this)"><span class="ic">📊</span><span>Báo cáo</span></button>
+        <button data-title="Tracking &amp; pixel" onclick="admTab('tracking',this)"><span class="ic">📈</span><span>Tracking</span></button>
         <div class="nav-group">Khách hàng</div>
         <button data-title="Học viên" onclick="admTab('users',this)"><span class="ic">👥</span><span>Học viên</span></button>
+        <button data-title="Ghi danh thủ công" onclick="admTab('enroll',this)"><span class="ic">✅</span><span>Ghi danh</span></button>
       </nav>
       <div class="side-foot">
         <a href="#" onclick="go('home');return false">↗ Xem trang chủ</a>
@@ -1180,6 +1190,129 @@
               <div class="step"><div class="lbl">Vào thanh toán · <b>890</b></div><div class="track"><i style="width:14%"></i></div><div class="drop">21%</div></div>
               <div class="step"><div class="lbl">Hoàn tất mua · <b>214</b></div><div class="track"><i style="width:6%"></i></div><div class="drop">24%</div></div>
             </div>
+          </div>
+        </section>
+
+        <!-- DANH MỤC -->
+        <section class="adm-tab" id="tab-cats" hidden>
+          <div class="panel">
+            <div class="tab-head"><h3 style="margin:0">Danh mục khóa học &amp; tài liệu</h3></div>
+            <div class="mrow" style="max-width:520px"><label>Tên danh mục mới<input id="cat_new" placeholder="Vd: Luyện thi HSK"></label>
+            <button class="btn btn-jade" style="height:42px;align-self:end" onclick="addCat()">+ Tạo</button></div>
+            <div class="tbl-scroll" style="margin-top:14px"><table class="adm-tbl">
+              <thead><tr><th>Tên</th><th>Slug</th><th>Số sản phẩm</th><th></th></tr></thead>
+              <tbody id="catList"></tbody>
+            </table></div>
+          </div>
+        </section>
+
+        <!-- GIẢNG VIÊN -->
+        <section class="adm-tab" id="tab-teachers" hidden>
+          <div class="panel">
+            <div class="tab-head"><h3 style="margin:0">Giảng viên <span class="mini" id="teacherCount"></span></h3>
+            <button class="btn btn-jade addbtn" onclick="editTeacher(null)">+ Thêm giảng viên</button></div>
+            <div id="teacherList" style="margin-top:14px"></div>
+          </div>
+        </section>
+
+        <!-- VIDEO LIBRARY -->
+        <section class="adm-tab" id="tab-videos" hidden>
+          <div class="panel">
+            <h3>Thư viện video <span class="mini">Video gắn vào các buổi học</span></h3>
+            <p class="note-line" style="margin:0 0 14px">Video được lưu ở nền tảng thứ 3 (Vimeo/Bunny/VdoCipher). Quản lý link video trong từng khóa ở mục <b>Khóa học → Sửa → Quản lý bài học</b>.</p>
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Khóa học</th><th>Số buổi</th><th>Đã gắn video</th><th>Nền tảng</th><th></th></tr></thead>
+              <tbody id="videoList"></tbody>
+            </table></div>
+          </div>
+        </section>
+
+        <!-- THANH TOÁN THỦ CÔNG -->
+        <section class="adm-tab" id="tab-manual" hidden>
+          <div class="panel">
+            <h3>Ghi nhận đơn ngoài hệ thống</h3>
+            <p class="note-line" style="margin:-6px 0 16px">Dùng khi thu tiền mặt, khách chuyển khoản ngoài SePay… Hệ thống sẽ <b>tạo đơn (tính doanh thu)</b>, tự cấp quyền học và ghi vào danh sách đơn.</p>
+            <div class="mform" style="max-width:none">
+              <div class="mrow"><label>Học viên (email / tên)<input id="mn_cust" placeholder="Nhập email hoặc tên"></label>
+              <label>Loại sản phẩm<select id="mn_type"><option value="course">Khóa học</option><option value="doc">Tài liệu</option><option value="combo">Combo</option></select></label></div>
+              <label>Chọn sản phẩm<select id="mn_prod"></select></label>
+              <div class="mrow"><label>Số tiền (₫, để trống = giá hệ thống)<input id="mn_amount" type="number" placeholder="Vd: 199000"></label>
+              <label>Kênh / nguồn<input id="mn_channel" value="Tiền mặt" placeholder="Tiền mặt / CK ngoài"></label></label></div>
+              <label>Lý do / ghi chú<input id="mn_note" placeholder="Vd: Học viên chuyển khoản trực tiếp qua ngân hàng"></label>
+              <button class="btn btn-jade" style="margin-top:4px" onclick="submitManual()">Ghi nhận thanh toán thủ công</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOÀN TIỀN -->
+        <section class="adm-tab" id="tab-refunds" hidden>
+          <div class="panel">
+            <h3>Hoàn tiền <span class="mini">Chọn đơn đã thanh toán để hoàn</span></h3>
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Mã đơn</th><th>Khách</th><th>Sản phẩm</th><th>Số tiền</th><th>Trạng thái</th><th></th></tr></thead>
+              <tbody id="refundList"></tbody>
+            </table></div>
+          </div>
+        </section>
+
+        <!-- HÓA ĐƠN GTGT -->
+        <section class="adm-tab" id="tab-invoices" hidden>
+          <div class="panel">
+            <h3>Hóa đơn GTGT (VAT) <span class="mini">Yêu cầu xuất hóa đơn từ học viên</span></h3>
+            <p class="note-line" style="margin:-6px 0 14px">Khi khách cần hóa đơn VAT, đơn sẽ hiện ở đây để bạn xuất và đánh dấu đã xử lý.</p>
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Mã đơn</th><th>Khách</th><th>Số tiền</th><th>Thông tin xuất HĐ</th><th>Trạng thái</th><th></th></tr></thead>
+              <tbody id="invoiceList"></tbody>
+            </table></div>
+          </div>
+        </section>
+
+        <!-- BÁO CÁO TÀI CHÍNH -->
+        <section class="adm-tab" id="tab-reports" hidden>
+          <div class="chips"><button class="on" onclick="chip(this)">Tháng này</button><button onclick="chip(this)">Quý này</button><button onclick="chip(this)">Năm nay</button></div>
+          <div class="kpis" style="margin-top:14px">
+            <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val">346.498.295₫</div><div class="chg up">▲ cả năm</div></div>
+            <div class="kpi"><div class="lbl">Sau hoàn tiền</div><div class="val">345.508.295₫</div><div class="chg">Hoàn: 990.000₫</div></div>
+            <div class="kpi"><div class="lbl">Thuế GTGT ước tính</div><div class="val">27.6tr</div><div class="chg">8% áp dụng</div></div>
+            <div class="kpi"><div class="lbl">Còn lại ước tính</div><div class="val">317.9tr</div><div class="chg up">Sau thuế &amp; hoàn</div></div>
+          </div>
+          <div class="two-col">
+            <div class="panel"><h3>Doanh thu theo tháng</h3>
+              <div class="chart">
+                <div class="col"><span class="amt">28</span><div class="bar" style="height:62%"></div><span class="day">T5</span></div>
+                <div class="col"><span class="amt">34</span><div class="bar" style="height:76%"></div><span class="day">T6</span></div>
+                <div class="col"><span class="amt">31</span><div class="bar" style="height:69%"></div><span class="day">T7</span></div>
+                <div class="col"><span class="amt">39</span><div class="bar" style="height:87%"></div><span class="day">T8</span></div>
+                <div class="col"><span class="amt">45</span><div class="bar" style="height:100%"></div><span class="day">T9</span></div>
+                <div class="col"><span class="amt">42</span><div class="bar" style="height:93%"></div><span class="day">T10</span></div>
+              </div>
+            </div>
+            <div class="panel"><h3>Theo loại sản phẩm</h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Loại</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
+                <tbody id="reportByType"></tbody>
+              </table></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GHI DANH -->
+        <section class="adm-tab" id="tab-enroll" hidden>
+          <div class="panel">
+            <h3>Ghi danh thủ công <span class="mini">Cấp quyền học cho học viên</span></h3>
+            <p class="note-line" style="margin:-6px 0 16px">Dùng để tặng khóa, chuyển học viên từ nơi khác, hoặc cấp quyền sau khi thu tiền mặt.</p>
+            <div class="mform" style="max-width:640px">
+              <div class="mrow"><label>Học viên<select id="en_user"></select></label>
+              <label>Khóa / sản phẩm<select id="en_prod"></select></label></div>
+              <button class="btn btn-jade" onclick="submitEnroll()">Cấp quyền học</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Ghi danh gần đây</h3>
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Học viên</th><th>Sản phẩm</th><th>Nguồn</th><th>Ngày</th></tr></thead>
+              <tbody id="enrollList"></tbody>
+            </table></div>
           </div>
         </section>
 
@@ -1603,12 +1736,16 @@
       document.getElementById('admErr').textContent='Sai mật khẩu, vui lòng thử lại.';
     }
   }
+  let prodFilter='all';
   function admTab(id,btn){
     document.querySelectorAll('.adm-tab').forEach(t=>t.hidden=true);
     document.getElementById('tab-'+id).hidden=false;
     document.querySelectorAll('.adm-nav button').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('admTitle').textContent=btn.dataset.title;
+    if(id==='courses'){ prodFilter=btn.dataset.filter||'all'; renderCourses(); }
+    const hooks={cats:renderCats,teachers:renderTeachers,videos:renderVideos,refunds:renderRefunds,invoices:renderInvoices,reports:renderReports,enroll:renderEnroll,manual:fillManual,orders:renderOrders,users:renderUsers};
+    if(hooks[id]) hooks[id]();
     window.scrollTo(0,0);
   }
   function chip(el){el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
@@ -1646,18 +1783,27 @@
 
   /* ===== PRODUCTS CRUD ===== */
   const shortPrice=n=> n>=1000000 ? n.toLocaleString('vi-VN')+'₫' : Math.round(n/1000)+'k';
+  function prodMatch(c){
+    if(prodFilter==='doc') return c.type==='doc';
+    if(prodFilter==='combo') return /combo/i.test(c.name);
+    if(prodFilter==='course') return c.type!=='doc' && !/combo/i.test(c.name);
+    return true;
+  }
   function renderCourses(){
-    document.getElementById('courseList').innerHTML=products.map((c,idx)=>`
-      <div class="course-row">
+    const list=products.filter(prodMatch);
+    document.getElementById('courseList').innerHTML=list.map((c)=>{
+      const idx=products.indexOf(c);
+      return `<div class="course-row">
         <div class="reorder"><button ${idx===0?'disabled':''} onclick="moveProduct(${c.id},-1)" aria-label="Lên">▲</button><button ${idx===products.length-1?'disabled':''} onclick="moveProduct(${c.id},1)" aria-label="Xuống">▼</button></div>
         <span class="tianzige cch"><span class="han hz">${c.char}</span></span>
         <div class="meta"><b>${c.name} ${c.type==='doc'?'<span class="minitag">Tài liệu</span>':c.type==='live'?'<span class="minitag" style="background:var(--cinnabar)">Trực tiếp</span>':'<span class="minitag" style="background:var(--jade-dark)">Video</span>'}</b><div class="sub">${fmtVND(c.price)}${c.type==='doc'&&c.hasHard?' / cứng '+fmtVND(c.hardPrice):''} · ${c.type==='doc'?(c.res+' file'):(c.lessons+(c.type==='live'?' buổi trực tiếp':' buổi · '+c.res+' tài nguyên'))}</div></div>
         <div class="stat"><b>${c.students}</b><span>${c.status==='sale'?(c.type==='doc'?'đã bán':'học viên'):'đã đặt'}</span></div>
         <div class="stat"><b>${c.revenue}</b><span>doanh thu</span></div>
         <span class="tag ${c.status==='sale'?'active':'pending'}">${c.status==='sale'?'Đang bán':'Đặt trước'}</span>
-        <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editCourse(${c.id})">Sửa</button></div>`).join('');
-    const sale=products.filter(c=>c.status==='sale').length;
-    document.getElementById('courseCount').textContent=`${products.length} sản phẩm (${sale} đang bán · ${products.length-sale} đặt trước)`;
+        <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editCourse(${c.id})">Sửa</button></div>`;
+    }).join('') || '<p class="muted" style="padding:16px">Chưa có sản phẩm trong nhóm này.</p>';
+    const nameMap={doc:'tài liệu',combo:'combo',course:'khóa học',all:'sản phẩm'};
+    document.getElementById('courseCount').textContent=`${list.length} ${nameMap[prodFilter]}`;
   }
   function moveProduct(id,dir){
     const i=products.findIndex(p=>p.id===id), j=i+dir;
@@ -1928,6 +2074,118 @@
   function saveTracking(){
     const fb=val('px_fb'),tt=val('px_tt'),ga=val('px_ga');
     toast('Đã lưu cấu hình Pixel & sự kiện');
+  }
+
+  /* ========== CÁC TAB MỞ RỘNG (adapt cho ZiZi) ========== */
+  /* --- Danh mục (CRUD) --- */
+  let cats=CATEGORIES.map(n=>({name:n,slug:slugify(n)}));
+  function renderCats(){
+    document.getElementById('catList').innerHTML=cats.map((c,i)=>{
+      const cnt=products.filter(p=>p.category===c.name).length;
+      return `<tr><td><b>${esc(c.name)}</b></td><td><code>${esc(c.slug)}</code></td><td>${cnt} sản phẩm</td>
+      <td style="text-align:right"><button class="lnk" onclick="delCat(${i})" style="color:var(--cinnabar)">Xóa</button></td></tr>`;
+    }).join('')||'<tr><td colspan="4" class="muted" style="padding:16px">Chưa có danh mục</td></tr>';
+  }
+  function addCat(){const v=val('cat_new');if(!v){toast('Nhập tên danh mục');return;}cats.push({name:v,slug:slugify(v)});document.getElementById('cat_new').value='';renderCats();toast('Đã thêm danh mục');}
+  function delCat(i){if(confirm('Xóa danh mục này?')){cats.splice(i,1);renderCats();toast('Đã xóa');}}
+
+  /* --- Giảng viên (CRUD) --- */
+  let teachers=[
+    {id:1,name:'Cô Hoàng Diễm',subject:'HSK1–HSK3 · Phát âm',courses:4},
+    {id:2,name:'Thầy Minh Quân',subject:'HSK4–HSK6 · Ngữ pháp',courses:3}
+  ];
+  function renderTeachers(){
+    document.getElementById('teacherCount').textContent='· '+teachers.length+' người';
+    document.getElementById('teacherList').innerHTML=teachers.map(t=>`
+      <div class="course-row"><span class="tianzige cch" style="font-size:26px">🧑‍🏫</span>
+      <div class="meta"><b>${esc(t.name)}</b><div class="sub">${esc(t.subject)}</div></div>
+      <div class="stat"><b>${t.courses}</b><span>khóa dạy</span></div>
+      <button class="btn btn-ghost" style="padding:.5em 1em" onclick="editTeacher(${t.id})">Sửa</button></div>`).join('');
+  }
+  function editTeacher(id){
+    const t=id?teachers.find(x=>x.id===id):{id:0,name:'',subject:'',courses:0};
+    openModal(id?'Sửa giảng viên':'Thêm giảng viên',`<div class="mform">
+      <label>Họ tên<input id="t_name" value="${esc(t.name)}"></label>
+      <label>Chuyên môn / mô tả<input id="t_sub" value="${esc(t.subject)}" placeholder="Vd: HSK1–HSK3 · Phát âm"></label>
+      <div class="mact">${id?`<button class="btn btn-ghost del" onclick="delTeacher(${id})">Xóa</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-jade" onclick="saveTeacher(${t.id})">Lưu</button></div></div>`);
+  }
+  function saveTeacher(id){if(!val('t_name')){toast('Nhập tên');return;}
+    const b={name:val('t_name'),subject:val('t_sub')};const i=teachers.findIndex(x=>x.id===id);
+    if(i>=0)teachers[i]={...teachers[i],...b};else teachers.push({id:Date.now(),courses:0,...b});
+    renderTeachers();closeModal();toast('Đã lưu giảng viên');}
+  function delTeacher(id){if(confirm('Xóa giảng viên?')){teachers=teachers.filter(x=>x.id!==id);renderTeachers();closeModal();toast('Đã xóa');}}
+
+  /* --- Thư viện video --- */
+  function renderVideos(){
+    const rows=products.filter(p=>p.type!=='doc').map(p=>{
+      const ls=getLessons(p.id), withVid=ls.filter(l=>l.video).length;
+      return `<tr><td><b>${esc(p.name)}</b></td><td>${ls.length}</td><td>${withVid}/${ls.length}</td>
+      <td>Vimeo / Bunny</td><td style="text-align:right"><button class="lnk" onclick="prodFilter='all';admTab('courses',document.querySelector('[data-filter=course]'));editCourse(${p.id})">Quản lý</button></td></tr>`;
+    }).join('');
+    document.getElementById('videoList').innerHTML=rows||'<tr><td colspan="5" class="muted" style="padding:16px">Chưa có khóa video</td></tr>';
+  }
+
+  /* --- Thanh toán thủ công --- */
+  function fillManual(){
+    const opts=products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${fmtVND(p.price)}</option>`).join('');
+    document.getElementById('mn_prod').innerHTML=opts;
+  }
+  function submitManual(){
+    if(!val('mn_cust')){toast('Nhập học viên');return;}
+    const pid=+document.getElementById('mn_prod').value, p=products.find(x=>x.id===pid);
+    const amount=+val('mn_amount')||p.price;
+    orders.unshift({code:'ZIZI-'+Math.random().toString(36).slice(2,6).toUpperCase(),cust:val('mn_cust'),course:p.name,amount,channel:val('mn_channel')||'Thủ công',status:'paid',time:'vừa xong'});
+    enrollments.unshift({user:val('mn_cust'),prod:p.name,src:'manual',date:new Date().toLocaleDateString('vi-VN')});
+    ['mn_cust','mn_amount','mn_note'].forEach(id=>document.getElementById(id).value='');
+    renderOrders();toast('Đã ghi nhận đơn + cấp quyền + bắn Purchase 🎯');
+  }
+
+  /* --- Hoàn tiền --- */
+  function renderRefunds(){
+    document.getElementById('refundList').innerHTML=orders.map(o=>`
+      <tr><td>#${o.code}</td><td>${esc(o.cust)}</td><td>${esc(o.course)}</td><td>${fmtVND(o.amount)}</td>
+      <td>${tagFor(o.status)}</td><td style="text-align:right">${o.status==='paid'?`<button class="lnk" style="color:var(--cinnabar)" onclick="doRefund('${o.code}')">Hoàn tiền</button>`:'—'}</td></tr>`).join('');
+  }
+  function doRefund(code){if(confirm('Xác nhận hoàn tiền đơn này?')){const o=orders.find(x=>x.code===code);if(o)o.status='refund';renderRefunds();renderOrders();toast('Đã hoàn tiền đơn #'+code);}}
+
+  /* --- Hóa đơn GTGT --- */
+  let invoices=[
+    {code:'ZIZI-8A2F',cust:'Lan Anh',amount:399000,info:'CTY TNHH ABC · MST 0312xxxxxx',status:'pending'},
+    {code:'ZIZI-7A03',cust:'Đức Anh',amount:249000,info:'Cá nhân · CMND 0123xxxxx',status:'done'}
+  ];
+  function renderInvoices(){
+    document.getElementById('invoiceList').innerHTML=invoices.map((v,i)=>`
+      <tr><td>#${v.code}</td><td>${esc(v.cust)}</td><td>${fmtVND(v.amount)}</td><td>${esc(v.info)}</td>
+      <td>${v.status==='done'?'<span class="tag paid">Đã xuất</span>':'<span class="tag pending">Chờ xuất</span>'}</td>
+      <td style="text-align:right">${v.status==='pending'?`<button class="lnk" onclick="issueInv(${i})">Đánh dấu đã xuất</button>`:'—'}</td></tr>`).join('')
+      ||'<tr><td colspan="6" class="muted" style="padding:16px">Chưa có yêu cầu hóa đơn</td></tr>';
+  }
+  function issueInv(i){invoices[i].status='done';renderInvoices();toast('Đã đánh dấu xuất hóa đơn');}
+
+  /* --- Báo cáo tài chính --- */
+  function renderReports(){
+    const by={};products.forEach(p=>{const k=/combo/i.test(p.name)?'Combo':(p.type==='doc'?'Tài liệu':'Khóa học');by[k]=by[k]||{don:0,rev:0};by[k].don+=p.students||0;});
+    const map={'Khóa học':'303.368.200₫','Combo':'15.900.000₫','Tài liệu':'34.000.000₫'};
+    document.getElementById('reportByType').innerHTML=Object.keys(by).map(k=>`<tr><td>${k}</td><td>${by[k].don}</td><td>${map[k]||'—'}</td></tr>`).join('');
+  }
+
+  /* --- Ghi danh thủ công --- */
+  let enrollments=[
+    {user:'Cô Hương',prod:'Combo HSK1+2',src:'manual',date:'06/07/2026'},
+    {user:'Lan Anh',prod:'Combo HSK1+2',src:'auto',date:'12/06/2026'}
+  ];
+  function renderEnroll(){
+    document.getElementById('en_user').innerHTML=users.map(u=>`<option>${esc(u.name)}</option>`).join('');
+    document.getElementById('en_prod').innerHTML=products.map(p=>`<option>${esc(p.name)}</option>`).join('');
+    document.getElementById('enrollList').innerHTML=enrollments.map(e=>`
+      <tr><td>${esc(e.user)}</td><td>${esc(e.prod)}</td><td><span class="tag ${e.src==='manual'?'pending':'active'}" style="font-size:.68rem">${e.src==='manual'?'Thủ công':'Tự động'}</span></td><td>${e.date}</td></tr>`).join('');
+  }
+  function submitEnroll(){
+    const u=document.getElementById('en_user').value, p=document.getElementById('en_prod').value;
+    enrollments.unshift({user:u,prod:p,src:'manual',date:new Date().toLocaleDateString('vi-VN')});
+    renderEnroll();toast('Đã cấp quyền học cho '+u);
   }
 
   function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();}
