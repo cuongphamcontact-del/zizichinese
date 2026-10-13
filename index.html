@@ -941,9 +941,9 @@
             </div>
             <div class="field"><label>Họ và tên</label><input type="text" id="co_name" placeholder="Nguyễn Văn A"></div>
             <div class="field"><label>Email <em style="color:var(--cinnabar)">*</em></label><input type="email" id="co_email" placeholder="ban@email.com"></div>
-            <div class="field"><label>Số điện thoại / Zalo</label><input type="tel" placeholder="09xx xxx xxx"></div>
-            <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
-            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px;font-size:1.05rem" onclick="createOrder()">Tạo đơn &amp; lấy mã thanh toán →</button>
+            <div class="field"><label>Số điện thoại / Zalo</label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
+            <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" id="co_addr" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
+            <button class="btn btn-primary" id="createOrderBtn" style="width:100%;justify-content:center;margin-top:10px;font-size:1.05rem" onclick="createOrder()">Tạo đơn &amp; lấy mã thanh toán →</button>
           </div>
 
           <!-- PANEL 2: thanh toán -->
@@ -953,12 +953,13 @@
               <p style="color:var(--ink-60);font-size:.86rem">Số tiền và nội dung đã được nhúng sẵn trong mã — chỉ cần mở app ngân hàng và quét.</p>
             </div>
             <div class="qr" style="display:block;margin-top:14px">
-              <div class="code"></div>
+              <img id="qrImg" alt="Mã VietQR" style="width:220px;height:220px;margin:0 auto 12px;display:none;object-fit:contain">
+              <div class="code" id="qrPlaceholder"></div>
               <div class="pay-amount" id="payAmount">199.000đ</div>
               <div class="bank">
-                <!-- @DATA-BANK --><div><span>Ngân hàng</span><b>Techcombank</b></div>
-                <div><span>Số tài khoản</span><b>1903 xxxx xxxx</b></div>
-                <div><span>Chủ tài khoản</span><b>ZIZI CHINESE</b></div>
+                <div><span>Ngân hàng</span><b id="payBank">—</b></div>
+                <div><span>Số tài khoản</span><b id="payAcct">—</b></div>
+                <div><span>Chủ tài khoản</span><b id="payName">ZIZI CHINESE</b></div>
                 <div><span>Nội dung <em>(bắt buộc)</em></span><b id="payCode">ZIZI A1B2</b></div>
               </div>
             </div>
@@ -970,7 +971,7 @@
                 <span>Bạn không cần bấm gì thêm. Tài khoản kích hoạt tự động khi tiền về (thường 5–30 giây).</span>
               </div>
             </div>
-            <button class="btn btn-ghost demo-btn" onclick="markPaid()">▶ (Demo) Mô phỏng nhận được tiền</button>
+            <button class="btn btn-ghost demo-btn" id="demoPayBtn" style="display:none" onclick="markPaid()">▶ (Demo) Mô phỏng nhận được tiền</button>
           </div>
         </div>
 
@@ -1600,6 +1601,7 @@
   function go(view){
     ['home','product','checkout','admin','learn','auth'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+view).style.display='block';
+    if(view!=='checkout'){ try{stopPoll();}catch(e){} }
     if(view==='checkout'){buildCheckout();}
     if(view==='admin'){
       document.getElementById('admLogin').style.display = admAuthed?'none':'grid';
@@ -1893,7 +1895,7 @@
     document.getElementById('successBox').style.display='none';
     document.getElementById('infoPanel').style.display='block';
     document.getElementById('payPanel').style.display='none';
-    clearTimeout(payTimer);
+    clearTimeout(payTimer); try{stopPoll();}catch(e){}
     setStep(1);
     recalcCheckout();
   }
@@ -1913,8 +1915,58 @@
     document.getElementById('payAmount').textContent = fmtVND(total);
     current._hard=hard;
   }
-  function createOrder(){
-    // (thực tế: gọi API tạo đơn -> nhận mã QR động). Ở demo ta chuyển sang bước thanh toán.
+  // ---- Gọi Edge Function (server-side) ----
+  function _fnBase(){ return SUPABASE_URL + '/functions/v1'; }
+  async function _callFn(name, opt){
+    opt=opt||{};
+    const url=_fnBase()+'/'+name+(opt.query?('?'+opt.query):'');
+    const r=await fetch(url,{
+      method:opt.method||'GET',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_KEY,'apikey':SUPABASE_KEY},
+      body:opt.body?JSON.stringify(opt.body):undefined
+    });
+    let data={}; try{ data=await r.json(); }catch(e){}
+    return {httpok:r.ok, status:r.status, data};
+  }
+
+  let pollTimer=null, pollTries=0;
+  function stopPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} pollTries=0; }
+
+  async function createOrder(){
+    const p=current;
+    const name=(document.getElementById('co_name')?.value||'').trim();
+    const email=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
+    const phone=(document.getElementById('co_phone')?.value||'').trim();
+    const address=(document.getElementById('co_addr')?.value||'').trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Vui lòng nhập email hợp lệ để nhận tài khoản.'); document.getElementById('co_email')?.focus(); return; }
+    const variant = p.type==='doc' ? (p._hard?'hard':'soft') : 'course';
+    const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
+    if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
+    try{
+      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{slug:p.slug,variant,name,email,phone,address}});
+      if(httpok && data && data.ok){
+        // ---- Đơn thật + VietQR động ----
+        document.getElementById('qrImg').src=data.qr_url;
+        document.getElementById('qrImg').style.display='block';
+        document.getElementById('qrPlaceholder').style.display='none';
+        document.getElementById('demoPayBtn').style.display='none';
+        document.getElementById('payBank').textContent=data.bank.bank;
+        document.getElementById('payAcct').textContent=data.bank.account_no;
+        document.getElementById('payName').textContent=data.bank.account_name;
+        document.getElementById('payCode').textContent=data.code;
+        document.getElementById('payAmount').textContent=fmtVND(data.amount);
+        orderCodeVal=data.code;
+        showPayPanel();
+        startPoll(data.code);
+      }else{
+        demoFallback(data&&data.message);
+      }
+    }catch(e){
+      demoFallback();
+    }finally{ if(btn){ btn.disabled=false; btn.textContent=old; } }
+  }
+
+  function showPayPanel(){
     document.getElementById('infoPanel').style.display='none';
     document.getElementById('payPanel').style.display='block';
     const st=document.getElementById('payStatus');
@@ -1922,45 +1974,67 @@
     st.querySelector('.spinner').style.display='block';
     document.getElementById('payStatusText').textContent='Đang chờ thanh toán — hệ thống tự động đối soát giao dịch…';
     setStep(2);
-    // Mô phỏng webhook báo "tiền đã về" sau 7 giây
-    clearTimeout(payTimer);
-    payTimer=setTimeout(markPaid, 7000);
     window.scrollTo({top:0,behavior:'smooth'});
   }
+
+  // Dùng khi Edge Function chưa deploy (bản xem thử): giữ nguyên trải nghiệm, bật nút demo
+  function demoFallback(msg){
+    document.getElementById('qrImg').style.display='none';
+    document.getElementById('qrPlaceholder').style.display='block';
+    document.getElementById('demoPayBtn').style.display='inline-flex';
+    document.getElementById('payBank').textContent='(cấu hình khi chạy thật)';
+    document.getElementById('payAcct').textContent='—';
+    document.getElementById('payName').textContent='ZIZI CHINESE';
+    document.getElementById('payCode').textContent=orderCodeVal;
+    showPayPanel();
+    if(msg) toast(msg);
+  }
+
+  function startPoll(code){
+    stopPoll();
+    pollTimer=setInterval(async ()=>{
+      pollTries++;
+      if(pollTries>170){ stopPoll(); return; } // ~10 phút thì dừng
+      try{
+        const {httpok,data}=await _callFn('order-status',{query:'code='+encodeURIComponent(code)});
+        if(httpok && data && data.status==='paid'){ stopPoll(); markPaid(); }
+      }catch(e){}
+    }, 3500);
+  }
+
   function markPaid(){
-    clearTimeout(payTimer);
+    stopPoll(); clearTimeout(payTimer);
     const st=document.getElementById('payStatus');
     st.className='pay-status done';
     st.querySelector('.spinner').style.display='none';
     document.getElementById('payStatusText').textContent='✓ Đã nhận thanh toán! Đang kích hoạt tài khoản…';
     setTimeout(showSuccess, 1300);
   }
+
   function showSuccess(){
     const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
     track('Purchase',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
-    /* mua xong = có tài khoản → đăng nhập + hiện Khu vực học */
-    const coName=(document.getElementById('co_name')?.value||'').trim();
     const coEmail=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
-    loggedIn=true; setSession(coEmail||'guest'); setLearnerName(coName||'học viên'); updateAuthUI(); addOwned(p.id);
     document.getElementById('checkoutForm').style.display='none';
     document.getElementById('successBox').style.display='block';
     document.getElementById('learnCourse').textContent=p.name;
     const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=p.name;
     document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':(isLive?'Lớp đã đăng ký':'Khóa đã mở');
-    document.getElementById('credLabel2').textContent = isDoc?(hard?'Giao hàng':'Tải về'):(isLive?'Lịch học':'Trang học');
-    document.getElementById('credVal2').textContent = isDoc?(hard?'2–4 ngày':'Link trong email'):(isLive?'Gửi qua email':'hoc.zizichinese.com');
+    document.getElementById('credLabel2').textContent = 'Email nhận tài khoản';
+    document.getElementById('credVal2').textContent = coEmail||'email của bạn';
     const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
-    if(isDoc){
-      msg.innerHTML = hard
-        ? 'Đã nhận đơn! Bản mềm đã gửi qua email, bản cứng sẽ được <b>giao trong 2–4 ngày</b>.'
-        : 'Thanh toán thành công! <b>Link tải bản mềm</b> đã gửi tới email — hoặc tải ngay bên dưới.';
-      btn.textContent='⬇ Tải tài liệu về máy'; btn.onclick=()=>toast('Đang tải tài liệu (demo)…');
+    if(isDoc && hard){
+      msg.innerHTML='Đã nhận đơn! <b>Link tải bản mềm</b> và thông tin đơn đã gửi tới email của bạn, bản cứng sẽ được <b>giao trong 2–4 ngày</b>. Nhớ kiểm tra cả mục Quảng cáo/Spam.';
+      btn.textContent='Đăng nhập để tải lại →'; btn.onclick=()=>go('auth');
+    }else if(isDoc){
+      msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập và link tải</b> vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam, rồi đăng nhập để tải tài liệu.';
+      btn.textContent='Đăng nhập để vào tải →'; btn.onclick=()=>go('auth');
     }else if(isLive){
-      msg.innerHTML='Đăng ký lớp thành công! <b>Lịch học và link phòng Zoom</b> đã gửi tới email của bạn. Vào khu vực học viên để xem lịch và tài liệu.';
-      btn.textContent='Vào khu vực học →'; btn.onclick=()=>go('learn');
+      msg.innerHTML='Đăng ký lớp thành công! <b>Tài khoản học, lịch học và link phòng Zoom</b> đã gửi tới email của bạn. Đăng nhập để vào khu vực học viên.';
+      btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
     }else{
-      msg.innerHTML='Tài khoản học đã được <b>kích hoạt tự động</b>. Thông tin đăng nhập vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam.';
-      btn.textContent='Vào học ngay →'; btn.onclick=()=>go('learn');
+      msg.innerHTML='Tài khoản học đã được <b>tạo & kích hoạt tự động</b>. <b>Email và mật khẩu đăng nhập</b> vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam, rồi đăng nhập để vào học.';
+      btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
     }
     setStep(3);
     window.scrollTo({top:0,behavior:'smooth'});
