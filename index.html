@@ -1690,7 +1690,9 @@
     const email=(document.getElementById('au_email').value||'').trim().toLowerCase();
     const pass=document.getElementById('authPass').value||'';
     if(!email||!pass){ authErr('Vui lòng nhập email và mật khẩu.'); return; }
-    const users=getUsers();
+    const sb=getSB();
+    if(!sb){ authErr('Chưa kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); return; }
+    const btn=document.getElementById('authSubmit'); const old=btn?btn.textContent:'';
     if(authMode==='register'){
       const name=(document.getElementById('au_name').value||'').trim();
       const phone=(document.getElementById('au_phone').value||'').trim();
@@ -1701,44 +1703,44 @@
       if(pass.length<8){ authErr('Mật khẩu cần tối thiểu 8 ký tự.'); return; }
       if(pass!==confirm){ authErr('Mật khẩu xác nhận không khớp.'); return; }
       if(!document.getElementById('au_terms').checked){ authErr('Vui lòng đồng ý Điều khoản & Bảo mật.'); return; }
-      if(users.some(u=>u.email===email)){ authErr('Email này đã có tài khoản. Hãy đăng nhập.'); return; }
-      // Lưu tạm + gửi OTP xác minh email
-      const ph=await sha256(pass);
-      pending={name,email,phone,ph};
-      sendOtp();
+      if(btn)btn.textContent='Đang tạo tài khoản…';
+      try{
+        const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name,phone}}});
+        if(btn)btn.textContent=old;
+        if(error){ authErr(/already|registered|exists/i.test(error.message)?'Email này đã có tài khoản. Hãy đăng nhập.':('Lỗi: '+error.message)); return; }
+        pending={name,email,phone};
+        if(data && data.session){ finishAuth(name,'Tạo tài khoản thành công!'); }   // nếu tắt xác nhận email
+        else showConfirmNotice(email);                                              // cần xác nhận email
+      }catch(err){ if(btn)btn.textContent=old; authErr('Lỗi kết nối, vui lòng thử lại.'); }
     }else{
-      const u=users.find(x=>x.email===email);
-      if(!u){ authErr('Chưa có tài khoản với email này — hãy Tạo tài khoản.'); return; }
-      const ph=await sha256(pass);
-      if(ph!==u.ph){ authErr('Sai mật khẩu, vui lòng thử lại.'); return; }
-      setSession(email); finishAuth(u.name,'Đăng nhập thành công!');
+      if(btn)btn.textContent='Đang đăng nhập…';
+      try{
+        const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+        if(btn)btn.textContent=old;
+        if(error){ authErr(/confirm/i.test(error.message)?'Bạn cần xác nhận email trước — mở email bấm link kích hoạt.':'Sai email hoặc mật khẩu.'); return; }
+        const nm=(data.user&&data.user.user_metadata&&data.user.user_metadata.full_name)||email.split('@')[0];
+        finishAuth(nm,'Đăng nhập thành công!');
+      }catch(err){ if(btn)btn.textContent=old; authErr('Lỗi kết nối, vui lòng thử lại.'); }
     }
   }
-  /* ==== Xác minh email bằng OTP ==== */
-  function sendOtp(){
-    otpCode=(''+Math.floor(100000+Math.random()*900000));
+  /* ==== Thông báo xác nhận email (thay cho OTP demo) ==== */
+  function showConfirmNotice(email){
     document.getElementById('authForm').style.display='none';
-    document.getElementById('authSwitch').style.display='none';
-    document.getElementById('otpPanel').style.display='block';
-    document.getElementById('otpEmail').textContent=pending.email;
-    document.getElementById('otpHint').textContent=otpCode;   // demo (bản thật: gửi qua email)
-    document.getElementById('otpInput').value='';
-    document.getElementById('otpErr').textContent='';
-    // bản thật: gọi API gửi email chứa otpCode
+    const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
+    const o=document.getElementById('otpPanel');
+    o.style.display='block';
+    o.innerHTML='<div style="text-align:center;padding:6px 0">'
+      +'<div style="font-size:2.2rem">📩</div>'
+      +'<h3 style="margin:.4rem 0">Kiểm tra email của bạn</h3>'
+      +'<p class="sub">Tụi mình vừa gửi <b>link xác nhận</b> tới <b>'+esc(email)+'</b>. Mở email, bấm link để kích hoạt tài khoản, rồi quay lại đăng nhập.</p>'
+      +'<p class="sub" style="font-size:.8rem;color:var(--ink-60)">Không thấy? Kiểm tra mục Quảng cáo/Spam.</p>'
+      +'<button class="btn btn-jade" style="width:100%;justify-content:center" onclick="openAuth(\'login\')">Về trang đăng nhập</button>'
+      +'</div>';
   }
-  function resendOtp(){ sendOtp(); toast('Đã gửi lại mã xác minh (demo)'); }
   function backToForm(){
     const f=document.getElementById('authForm'); if(f)f.style.display='block';
     const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='block';
     const o=document.getElementById('otpPanel'); if(o)o.style.display='none';
-  }
-  async function verifyOtp(){
-    const v=(document.getElementById('otpInput').value||'').trim();
-    if(v!==otpCode){ document.getElementById('otpErr').textContent='Mã không đúng, vui lòng thử lại.'; return; }
-    const users=getUsers();
-    users.push({...pending,verified:true,created:Date.now()}); saveUsers(users);
-    setSession(pending.email);
-    finishAuth(pending.name,'Xác minh email thành công! Tài khoản đã được tạo.');
   }
   function finishAuth(name,msg){
     loggedIn=true; updateAuthUI(); setLearnerName(name); toast(msg);
@@ -1746,27 +1748,36 @@
     const t=document.getElementById('au_terms'); if(t)t.checked=false;
     backToForm(); authErr(''); pending=null; go('learn');
   }
-  function googleAuth(){
-    // Demo: mô phỏng đăng nhập Google. Bản thật dùng Supabase OAuth (không cần OTP).
-    const email='nguoidung.google@gmail.com';
-    const users=getUsers();
-    if(!users.some(u=>u.email===email)){ users.push({name:'Người dùng Google',email,google:true,verified:true,created:Date.now()}); saveUsers(users); }
-    setSession(email); finishAuth('Người dùng Google','Đăng nhập Google thành công (demo)');
+  async function googleAuth(){
+    const sb=getSB(); if(!sb){ authErr('Chưa kết nối máy chủ.'); return; }
+    try{
+      const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+      if(error) authErr('Đăng nhập Google chưa sẵn sàng — cần bật Google trong Supabase (Authentication → Providers).');
+      // không lỗi → trình duyệt tự chuyển sang Google
+    }catch(e){ authErr('Đăng nhập Google chưa sẵn sàng.'); }
   }
-  function restoreSession(){
-    let s=null; try{s=localStorage.getItem('zizi_session');}catch(_){}
-    if(s){ loggedIn=true; const u=getUsers().find(x=>x.email===s); setLearnerName(u?u.name:'học viên'); }
-    updateAuthUI();
+  async function restoreSession(){
+    const sb=getSB();
+    if(sb){
+      try{
+        const {data}=await sb.auth.getSession();
+        if(data && data.session && data.session.user){
+          loggedIn=true;
+          const u=data.session.user;
+          const nm=(u.user_metadata&&u.user_metadata.full_name)||(u.email||'').split('@')[0];
+          setLearnerName(nm); updateAuthUI(); return;
+        }
+      }catch(e){}
+    }
+    loggedIn=false; updateAuthUI();
   }
   function login(){ openAuth('login'); }
   function register(){ openAuth('register'); }
-  function logout(){ loggedIn=false; clearSession(); updateAuthUI(); go('home'); }
+  async function logout(){ const sb=getSB(); try{ if(sb) await sb.auth.signOut(); }catch(e){} loggedIn=false; updateAuthUI(); go('home'); }
 
   /* ==== Khu vực học: khóa/tài liệu đã sở hữu + tiến độ ==== */
   function getOwned(){
-    try{ const o=JSON.parse(localStorage.getItem('zizi_owned')||'null'); if(o) return o; }catch(_){}
-    const def=[{id:1,done:12},{id:4,done:18},{id:9,done:0}]; // demo: HSK1, Bộ thủ, tài liệu
-    saveOwned(def); return def;
+    try{ const o=JSON.parse(localStorage.getItem('zizi_owned')||'[]'); return Array.isArray(o)?o:[]; }catch(_){ return []; }
   }
   function saveOwned(o){ try{localStorage.setItem('zizi_owned',JSON.stringify(o));}catch(_){} }
   function addOwned(id){ const o=getOwned(); if(!o.some(x=>x.id===id)){ o.push({id,done:0}); saveOwned(o);} }
@@ -1786,12 +1797,12 @@
       return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3>
         <div class="oc-prog"><div class="oc-bar"><i style="width:${pct}%"></i></div><small>${done}/${total} buổi · ${pct}%</small></div>
-        <button class="btn btn-primary btn-sm" onclick="openCourse(${p.id})">${done?'Tiếp tục học →':'Bắt đầu học →'}</button></div></div>`;
+        <button class="btn btn-primary btn-sm" onclick="openCourse('${p.id}')">${done?'Tiếp tục học →':'Bắt đầu học →'}</button></div></div>`;
     }).join('');
   }
   function openCourse(id){
-    const p=products.find(x=>x.id===id); if(!p)return;
-    const o=getOwned().find(x=>x.id===id)||{done:0};
+    const p=products.find(x=>String(x.id)===String(id)); if(!p)return;
+    const o=getOwned().find(x=>String(x.id)===String(id))||{done:0};
     const lessons=getLessons(id), total=lessons.length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
     document.getElementById('learnTitle2').textContent=p.name;
     document.getElementById('learnProgBar').style.width=pct+'%';
