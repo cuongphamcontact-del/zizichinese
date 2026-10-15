@@ -440,7 +440,10 @@ create table if not exists discounts (
 alter table discounts enable row level security;
 drop policy if exists p_disc_admin on discounts;
 create policy p_disc_admin on discounts for all using (is_admin()) with check (is_admin());
--- (không cho đọc công khai — kiểm tra & áp mã làm phía máy chủ trong create-order)
+-- Cho khách ĐỌC mã đang bật để xem trước mức giảm ở trang thanh toán.
+-- (Số tiền thật vẫn được tính lại phía máy chủ trong create-order nên không gian lận được.)
+drop policy if exists p_disc_read_active on discounts;
+create policy p_disc_read_active on discounts for select using (active = true);
 
 -- =====================================================================
 -- XONG.

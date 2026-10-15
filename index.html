@@ -986,7 +986,13 @@
             <div class="field"><label>Email <em style="color:var(--cinnabar)">*</em></label><input type="email" id="co_email" placeholder="ban@email.com"></div>
             <div class="field"><label>Số điện thoại / Zalo <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
             <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" id="co_addr" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
-            <div class="field"><label>Mã giảm giá (nếu có)</label><input type="text" id="co_coupon" placeholder="Nhập mã, vd ZIZI10" style="text-transform:uppercase"></div>
+            <div class="field"><label>Mã giảm giá (nếu có)</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="co_coupon" placeholder="Nhập mã, vd ZIZI10" style="text-transform:uppercase;flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();applyCoupon()}">
+                <button type="button" class="btn btn-jade" style="white-space:nowrap" onclick="applyCoupon()">Áp mã</button>
+              </div>
+              <small id="couponMsg" style="display:none;font-size:.8rem;margin-top:6px"></small>
+            </div>
             <button class="btn btn-primary" id="createOrderBtn" style="width:100%;justify-content:center;margin-top:10px;font-size:1.05rem" onclick="createOrder()">Tạo đơn &amp; lấy mã thanh toán →</button>
           </div>
 
@@ -1023,8 +1029,8 @@
           <h4>Đơn hàng của bạn</h4>
           <div class="sum-line"><span id="sumName">Khóa HSK1</span><b id="sumPrice">199.000đ</b></div>
           <div class="sum-line" id="sumShipLine" style="display:none"><span>Phí ship bản cứng</span><b id="sumShip">30.000đ</b></div>
-          <div class="sum-line"><span>Ưu đãi hôm nay</span><b style="color:var(--jade)">Đã áp dụng</b></div>
-          <div class="sum-total"><span>Tổng</span><b id="sumTotal">199.000đ</b></div>
+          <div class="sum-line" id="sumCouponLine" style="display:none"><span id="sumCouponName" style="color:var(--jade-dark)">Mã giảm giá</span><b id="sumCoupon" style="color:var(--jade-dark)">-0đ</b></div>
+          <div class="sum-total"><span>Thành tiền</span><b id="sumTotal">199.000đ</b></div>
           <p style="font-size:.78rem;color:var(--ink-60);margin-top:14px">🛡️ Bảo đảm hoàn tiền 24h · Thanh toán mã hóa an toàn</p>
         </div>
       </div>
@@ -2099,6 +2105,9 @@
   function setStep(n){document.querySelectorAll('#view-checkout .steps .st').forEach((s,i)=>s.classList.toggle('on', i<n));}
   function buildCheckout(){
     const p=current, isDoc=p.type==='doc'&&p.hasHard;
+    _appliedCoupon=null;
+    const cc=document.getElementById('co_coupon'); if(cc)cc.value='';
+    const cm=document.getElementById('couponMsg'); if(cm)cm.style.display='none';
     track('InitiateCheckout',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
     document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
     document.getElementById('coSub').textContent = p.type==='doc'?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Tài khoản đăng nhập sẽ được gửi về email này.';
@@ -2118,6 +2127,36 @@
     setStep(1);
     recalcCheckout();
   }
+  let _appliedCoupon=null;
+  function _calcDiscount(base){
+    if(!_appliedCoupon) return 0;
+    const dc=_appliedCoupon;
+    if((dc.min_amount||0)>base) return 0;
+    let d=dc.kind==='amount'?(dc.value||0):Math.round(base*(dc.value||0)/100);
+    if(d>base)d=base;
+    return d;
+  }
+  async function applyCoupon(){
+    const code=(document.getElementById('co_coupon').value||'').trim().toUpperCase();
+    const msg=document.getElementById('couponMsg');
+    const show=(t,ok)=>{ if(msg){msg.style.display='block'; msg.textContent=t; msg.style.color=ok?'var(--jade-dark)':'var(--cinnabar)';} };
+    _appliedCoupon=null;
+    const p=current; let base=p.price;
+    if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); if(sel&&sel.value==='hard') base=p.hardPrice+(p.shipFee||0); }
+    if(!code){ recalcCheckout(); show('Nhập mã rồi bấm Áp mã.',false); return; }
+    const sb=getSB(); if(!sb){ show('Chưa kết nối máy chủ.',false); return; }
+    try{
+      const {data:dc}=await sb.from('discounts').select('*').eq('code',code).maybeSingle();
+      const now=Date.now();
+      if(!dc||dc.active===false){ show('Mã không tồn tại hoặc đã tắt.',false); recalcCheckout(); return; }
+      if(dc.expires_at&&new Date(dc.expires_at).getTime()<now){ show('Mã đã hết hạn.',false); recalcCheckout(); return; }
+      if(dc.max_uses!=null&&dc.used_count>=dc.max_uses){ show('Mã đã hết lượt dùng.',false); recalcCheckout(); return; }
+      if((dc.min_amount||0)>base){ show('Đơn tối thiểu '+fmtVND(dc.min_amount)+' mới dùng được mã.',false); recalcCheckout(); return; }
+      _appliedCoupon=dc;
+      recalcCheckout();
+      show('🎉 Đã áp mã '+code+': giảm '+fmtVND(_calcDiscount(base))+'.',true);
+    }catch(e){ show('Lỗi kiểm mã, thử lại.',false); }
+  }
   function recalcCheckout(){
     const p=current; let total=p.price, hard=false;
     if(p.type==='doc'&&p.hasHard){
@@ -2125,13 +2164,16 @@
       hard = sel && sel.value==='hard';
       total = hard ? p.hardPrice + (p.shipFee||0) : p.price;
     }
+    const disc=_calcDiscount(total), finalT=Math.max(0,total-disc);
+    const cl=document.getElementById('sumCouponLine');
+    if(cl){ if(_appliedCoupon&&disc>0){ cl.style.display='flex'; document.getElementById('sumCouponName').textContent='Mã '+_appliedCoupon.code; document.getElementById('sumCoupon').textContent='-'+fmtVND(disc); } else { cl.style.display='none'; } }
     document.getElementById('addrField').style.display = hard?'block':'none';
     document.getElementById('sumShipLine').style.display = hard?'flex':'none';
     document.getElementById('sumShip').textContent = fmtVND(p.shipFee||0);
     document.getElementById('sumPrice').textContent = fmtVND(hard?p.hardPrice:p.price);
     document.getElementById('sumName').textContent = p.name + (p.type==='doc'?(hard?' · bản cứng':' · bản mềm'):'');
-    document.getElementById('sumTotal').textContent = fmtVND(total);
-    document.getElementById('payAmount').textContent = fmtVND(total);
+    document.getElementById('sumTotal').textContent = fmtVND(finalT);
+    document.getElementById('payAmount').textContent = fmtVND(finalT);
     current._hard=hard;
   }
   // ---- Gọi Edge Function (server-side) ----
