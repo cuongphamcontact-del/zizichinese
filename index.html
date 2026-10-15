@@ -1004,7 +1004,7 @@
 <div id="view-learn">
   <div class="learn-top">
     <a class="brand" href="#" onclick="go('home');return false"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi<small>Khu vực học viên</small></span></a>
-    <div class="who"><span id="learnName">Xin chào, học viên 👋</span><span class="av" id="learnAv">H</span><a class="lg" href="#" onclick="logout();return false">Đăng xuất</a></div>
+    <div class="who"><span id="learnName">Xin chào, học viên 👋</span><span class="av" id="learnAv">H</span><a class="lg" href="#" onclick="showResetPassword();return false">Đổi mật khẩu</a><a class="lg" href="#" onclick="logout();return false">Đăng xuất</a></div>
   </div>
   <!-- Dashboard: khóa & tài liệu đã sở hữu -->
   <div class="learn-dash" id="learnDash">
@@ -1136,9 +1136,9 @@
         <!-- OVERVIEW -->
         <section class="adm-tab" id="tab-overview">
           <div class="kpis">
-            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val">0đ</div><div class="chg">—</div></div>
-            <div class="kpi"><div class="lbl">Đơn hàng</div><div class="val">0</div><div class="chg">—</div></div>
-            <div class="kpi"><div class="lbl">Học viên mới</div><div class="val">0</div><div class="chg">—</div></div>
+            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val" id="ovRev">0đ</div><div class="chg" id="ovRevSub">—</div></div>
+            <div class="kpi"><div class="lbl">Đơn hàng (đã TT)</div><div class="val" id="ovOrders">0</div><div class="chg" id="ovOrdersSub">—</div></div>
+            <div class="kpi"><div class="lbl">Học viên</div><div class="val" id="ovStudents">0</div><div class="chg">—</div></div>
             <div class="kpi"><div class="lbl">Tỉ lệ chuyển đổi</div><div class="val">—</div><div class="chg">Đo ở GA4/FB</div></div>
           </div>
 
@@ -1328,8 +1328,8 @@
         <section class="adm-tab" id="tab-reports" hidden>
           <div class="chips"><button class="on" onclick="chip(this)">Tháng này</button><button onclick="chip(this)">Quý này</button><button onclick="chip(this)">Năm nay</button></div>
           <div class="kpis" style="margin-top:14px">
-            <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val">0đ</div><div class="chg">—</div></div>
-            <div class="kpi"><div class="lbl">Sau hoàn tiền</div><div class="val">0đ</div><div class="chg">Hoàn: 0đ</div></div>
+            <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val" id="rpGross">0đ</div><div class="chg">—</div></div>
+            <div class="kpi"><div class="lbl">Sau hoàn tiền</div><div class="val" id="rpNet">0đ</div><div class="chg" id="rpRefund">Hoàn: 0đ</div></div>
             <div class="kpi"><div class="lbl">Thuế GTGT ước tính</div><div class="val">0đ</div><div class="chg">8% áp dụng</div></div>
             <div class="kpi"><div class="lbl">Còn lại ước tính</div><div class="val">0đ</div><div class="chg">Sau thuế &amp; hoàn</div></div>
           </div>
@@ -2288,6 +2288,10 @@
           <label class="chkline"><input type="checkbox" id="f_hard" ${c.hasHard?'checked':''}> Bán kèm <b>bản cứng</b> (in, giao tận nơi)</label>
           <div class="mrow"><label>Giá bản cứng (đ)<input id="f_hardprice" type="number" value="${c.hardPrice||0}"></label>
           <label>Phí ship (đ)<input id="f_ship" type="number" value="${c.shipFee||30000}"></label></div>
+          ${id?`<label style="margin-top:10px">📄 File tài liệu cho học viên tải (mỗi dòng 1 link — dạng <b>Tên | URL</b> hoặc chỉ URL)
+          <textarea id="f_docfiles" rows="3" placeholder="5000 từ HSK (PDF) | https://drive.google.com/...\n5000 từ HSK (Excel) | https://..."></textarea></label>
+          <button class="btn btn-jade" type="button" style="margin-top:6px" onclick="saveDocFiles('${id}')">💾 Lưu link tài liệu</button>
+          <p class="hint-box">Dán link Google Drive/Dropbox (đặt chia sẻ "ai có link"), học viên bấm "Tải tài liệu" sẽ mở các link này.</p>`:'<p class="hint-box">Lưu sản phẩm trước, rồi mở lại để thêm file tài liệu tải về.</p>'}
         </div>
         <div id="courseFields" style="display:${isDoc?'none':'block'}">
           <div class="mrow"><label>Số buổi học<input id="f_lessons" type="number" value="${c.lessons||0}"></label>
@@ -2330,6 +2334,26 @@
       <button class="btn btn-jade" onclick="saveCourse('${c.id}')">Lưu thay đổi</button></div>
       </div>`, true);
     renderTags(); renderGallery();
+    if(isDoc&&id) fillDocFiles(id);
+  }
+  async function fillDocFiles(id){
+    const sb=getSB(); if(!sb) return;
+    try{
+      const {data}=await sb.from('product_files').select('name,file_url').eq('product_id',id).order('sort_order',{ascending:true});
+      const ta=document.getElementById('f_docfiles'); if(!ta||!data) return;
+      ta.value=data.map(f=>(f.name?f.name+' | ':'')+(f.file_url||'')).join('\n');
+    }catch(e){}
+  }
+  async function saveDocFiles(id){
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ.'); return; }
+    const ta=document.getElementById('f_docfiles'); if(!ta) return;
+    const lines=ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const rows=lines.map((ln,i)=>{ const parts=ln.split('|'); let name='',url=''; if(parts.length>=2){name=parts[0].trim();url=parts.slice(1).join('|').trim();}else{url=parts[0].trim();name='Tài liệu '+(i+1);} return {product_id:id,name,file_url:url,sort_order:i}; }).filter(r=>/^https?:/i.test(r.file_url));
+    try{
+      await sb.from('product_files').delete().eq('product_id',id);
+      if(rows.length){ const {error}=await sb.from('product_files').insert(rows); if(error){ toast('Lỗi lưu: '+error.message); return; } }
+      toast('Đã lưu '+rows.length+' link tài liệu');
+    }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
   function autoSlug(){const s=document.getElementById('f_slug');if(!s.dataset.touched)s.value=slugify(val('f_name'));}
   function toggleDocFields(){
@@ -2656,7 +2680,36 @@
     renderEnroll();toast('Đã cấp quyền học cho '+u);
   }
 
-  function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();}
+  function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();loadAdminData();}
+  // Đọc ĐƠN HÀNG THẬT từ Supabase → doanh thu + danh sách đơn (admin phải đăng nhập có quyền)
+  async function loadAdminData(){
+    const sb=getSB(); if(!sb) return;
+    try{
+      const {data,error}=await sb.from('orders')
+        .select('code,customer_name,customer_email,amount,status,channel,created_at,product_id')
+        .order('created_at',{ascending:false});
+      if(error||!data) return;
+      const smap={paid:'paid',pending:'pending',refunded:'refund',cancelled:'pending',review:'pending'};
+      orders=data.map(o=>({
+        code:o.code, cust:o.customer_name||o.customer_email||'—',
+        course:((products.find(p=>String(p.id)===String(o.product_id))||{}).name)||'—',
+        amount:o.amount||0, channel:o.channel||'web',
+        status:smap[o.status]||'pending', time:new Date(o.created_at).toLocaleDateString('vi-VN')
+      }));
+      const now=new Date(), mStart=new Date(now.getFullYear(),now.getMonth(),1);
+      const paid=data.filter(o=>o.status==='paid');
+      const gross=paid.reduce((s,o)=>s+(o.amount||0),0);
+      const monthRev=paid.filter(o=>new Date(o.created_at)>=mStart).reduce((s,o)=>s+(o.amount||0),0);
+      const refunded=data.filter(o=>o.status==='refunded').reduce((s,o)=>s+(o.amount||0),0);
+      const students=new Set(paid.map(o=>(o.customer_email||'').toLowerCase()).filter(Boolean)).size;
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+      set('ovRev',fmtVND(monthRev)); set('ovRevSub','Tổng: '+fmtVND(gross));
+      set('ovOrders',String(paid.length)); set('ovOrdersSub',data.length+' đơn tất cả');
+      set('ovStudents',String(students));
+      set('rpGross',fmtVND(gross)); set('rpNet',fmtVND(gross-refunded)); set('rpRefund','Hoàn: '+fmtVND(refunded));
+      renderOrders();
+    }catch(e){}
+  }
 
   // countdown
   let t = 2*3600;
