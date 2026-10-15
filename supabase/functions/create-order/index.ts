@@ -67,6 +67,26 @@ Deno.serve(async (req) => {
       }
     }
 
+    // 2b) Áp mã giảm giá (kiểm tra phía máy chủ)
+    const baseAmount = amount;
+    let discount = 0;
+    let appliedCoupon: any = null;
+    const couponCode = String(body.coupon || "").trim().toUpperCase();
+    if (couponCode) {
+      const { data: dc } = await sb.from("discounts").select("*").eq("code", couponCode).maybeSingle();
+      const now = Date.now();
+      if (!dc || dc.active === false) { /* bỏ qua: mã sai */ }
+      else if (dc.expires_at && new Date(dc.expires_at).getTime() < now) { /* hết hạn */ }
+      else if (dc.max_uses != null && dc.used_count >= dc.max_uses) { /* hết lượt */ }
+      else if ((dc.min_amount || 0) > baseAmount) { /* chưa đạt đơn tối thiểu */ }
+      else {
+        discount = dc.kind === "amount" ? (dc.value || 0) : Math.round(baseAmount * (dc.value || 0) / 100);
+        if (discount > baseAmount) discount = baseAmount;
+        amount = Math.max(0, baseAmount - discount);
+        appliedCoupon = dc;
+      }
+    }
+
     // 3) Thông tin ngân hàng (admin điền ở Cài đặt → settings.bank_info)
     const { data: bankRow } = await sb.from("settings").select("value").eq("key", "bank_info").maybeSingle();
     const bank = (bankRow?.value || {}) as { bank?: string; account_no?: string; account_name?: string };
@@ -99,6 +119,11 @@ Deno.serve(async (req) => {
     }
     if (!order) return json({ error: "code_clash" }, 500);
 
+    // 4b) Tăng lượt dùng mã (sau khi đã tạo đơn)
+    if (appliedCoupon) {
+      await sb.from("discounts").update({ used_count: (appliedCoupon.used_count || 0) + 1 }).eq("id", appliedCoupon.id);
+    }
+
     // 5) Dựng ảnh VietQR động (số tiền + nội dung = mã đơn đã nhúng sẵn)
     const acctName = encodeURIComponent(bank.account_name || "ZIZI CHINESE");
     const qr_url = `https://img.vietqr.io/image/${bank.bank}-${bank.account_no}-compact2.png` +
@@ -111,6 +136,9 @@ Deno.serve(async (req) => {
       qr_url,
       bank: { bank: bank.bank, account_no: bank.account_no, account_name: bank.account_name || "ZIZI CHINESE" },
       product: { name: prod.name, type: prod.type },
+      base_amount: baseAmount,
+      discount,
+      coupon: appliedCoupon ? { code: appliedCoupon.code, kind: appliedCoupon.kind, value: appliedCoupon.value } : null,
     });
   } catch (e) {
     return json({ error: "server", message: String(e) }, 500);

@@ -423,5 +423,25 @@ create policy "covers admin delete" on storage.objects
   for delete to authenticated using (bucket_id = 'covers' and is_admin());
 
 -- =====================================================================
+-- MÃ GIẢM GIÁ (coupons) — chạy khối này để bật tính năng giảm giá
+-- =====================================================================
+create table if not exists discounts (
+  id          uuid primary key default gen_random_uuid(),
+  code        text unique not null,          -- nhập không phân biệt hoa thường (lưu IN HOA)
+  kind        text not null default 'percent',-- 'percent' (%) | 'amount' (đ)
+  value       int  not null default 0,        -- % (1-100) hoặc số tiền (đ)
+  min_amount  int  default 0,                 -- đơn tối thiểu để áp mã
+  max_uses    int,                            -- null = không giới hạn lượt
+  used_count  int  not null default 0,
+  expires_at  timestamptz,                    -- null = không hết hạn
+  active      bool not null default true,
+  created_at  timestamptz not null default now()
+);
+alter table discounts enable row level security;
+drop policy if exists p_disc_admin on discounts;
+create policy p_disc_admin on discounts for all using (is_admin()) with check (is_admin());
+-- (không cho đọc công khai — kiểm tra & áp mã làm phía máy chủ trong create-order)
+
+-- =====================================================================
 -- XONG.
 -- =====================================================================
