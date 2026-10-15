@@ -1063,8 +1063,8 @@
     <div class="auth-card">
       <h2 id="authTitle">Đăng nhập</h2>
       <p id="authSub">Tiếp tục học trên ZiZi Chinese</p>
-      <button class="btn btn-ghost auth-google" onclick="googleAuth()"><span>G</span> <span id="authGoogle">Đăng nhập bằng Google</span></button>
-      <div class="auth-div"><span id="authDiv">HOẶC</span></div>
+      <button class="btn btn-ghost auth-google" style="display:none" onclick="googleAuth()"><span>G</span> <span id="authGoogle">Đăng nhập bằng Google</span></button>
+      <div class="auth-div" style="display:none"><span id="authDiv">HOẶC</span></div>
       <form id="authForm" onsubmit="doAuth(event)">
         <div class="afield" id="af_name" style="display:none"><label>Họ tên <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_name" placeholder="Nguyễn Văn A"></div>
         <div class="afield"><label id="lab_email">Email hoặc tên đăng nhập <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_email" placeholder="you@example.com"></div>
