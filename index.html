@@ -1918,13 +1918,12 @@
   }
   /* ==== Quên / đặt lại mật khẩu (Supabase thật) ==== */
   async function forgotPassword(){
-    const email=(document.getElementById('au_email').value||'').trim().toLowerCase();
-    if(!/^\S+@\S+\.\S+$/.test(email)){ authErr('Nhập email của bạn vào ô phía trên rồi bấm "Quên mật khẩu?".'); document.getElementById('au_email').focus(); return; }
-    const sb=getSB(); if(!sb){ authErr('Chưa kết nối máy chủ.'); return; }
+    const email=(document.getElementById('au_email').value||'').replace(/\s/g,'').toLowerCase();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ authErr('Nhập đúng email của bạn vào ô "Email" phía trên rồi bấm "Quên mật khẩu?".'); document.getElementById('au_email').focus(); return; }
     authErr('');
     try{
-      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-      if(error){ authErr('Không gửi được: '+error.message); return; }
+      const {httpok,data}=await _callFn('forgot-password',{method:'POST',body:{email}});
+      if(!(httpok&&data&&data.ok)){ authErr('Không gửi được: '+((data&&data.message)||'thử lại sau.')); return; }
     }catch(e){ authErr('Lỗi kết nối, thử lại.'); return; }
     document.getElementById('authForm').style.display='none';
     const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
