@@ -1395,9 +1395,9 @@
             <h3>Ghi danh thủ công <span class="mini">Cấp quyền học cho học viên</span></h3>
             <p class="note-line" style="margin:-6px 0 16px">Dùng để tặng khóa, chuyển học viên từ nơi khác, hoặc cấp quyền sau khi thu tiền mặt.</p>
             <div class="mform" style="max-width:640px">
-              <div class="mrow"><label>Học viên<select id="en_user"></select></label>
+              <div class="mrow"><label>Email học viên<input id="en_user" type="email" placeholder="email đã đăng ký tài khoản"></label>
               <label>Khóa / sản phẩm<select id="en_prod"></select></label></div>
-              <button class="btn btn-jade" onclick="submitEnroll()">Cấp quyền học</button>
+              <button class="btn btn-jade" onclick="submitEnroll()">Cấp quyền học (miễn phí)</button>
             </div>
           </div>
           <div class="panel">
@@ -2749,7 +2749,11 @@
       <tr><td>#${o.code}</td><td>${esc(o.cust)}</td><td>${esc(o.course)}</td><td>${fmtVND(o.amount)}</td>
       <td>${tagFor(o.status)}</td><td style="text-align:right">${o.status==='paid'?`<button class="lnk" style="color:var(--cinnabar)" onclick="doRefund('${o.code}')">Hoàn tiền</button>`:'—'}</td></tr>`).join('');
   }
-  function doRefund(code){if(confirm('Xác nhận hoàn tiền đơn này?')){const o=orders.find(x=>x.code===code);if(o)o.status='refund';renderRefunds();renderOrders();toast('Đã hoàn tiền đơn #'+code);}}
+  async function doRefund(code){
+    if(!confirm('Xác nhận hoàn tiền đơn này?'))return;
+    const sb=getSB(); if(sb){ const {error}=await sb.from('orders').update({status:'refunded'}).eq('code',code); if(error){toast('Lỗi: '+error.message);return;} }
+    await loadAdminData(); renderRefunds(); toast('Đã hoàn tiền đơn #'+code);
+  }
 
   /* --- Hóa đơn GTGT --- */
   let invoices=[
@@ -2773,16 +2777,32 @@
 
   /* --- Ghi danh thủ công --- */
   let enrollments=[];   // bắt đầu từ 0
-  function renderEnroll(){
-    document.getElementById('en_user').innerHTML=users.map(u=>`<option>${esc(u.name)}</option>`).join('');
-    document.getElementById('en_prod').innerHTML=products.map(p=>`<option>${esc(p.name)}</option>`).join('');
-    document.getElementById('enrollList').innerHTML=enrollments.map(e=>`
-      <tr><td>${esc(e.user)}</td><td>${esc(e.prod)}</td><td><span class="tag ${e.src==='manual'?'pending':'active'}" style="font-size:.68rem">${e.src==='manual'?'Thủ công':'Tự động'}</span></td><td>${e.date}</td></tr>`).join('');
+  async function renderEnroll(){
+    document.getElementById('en_prod').innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+    const el=document.getElementById('enrollList'); if(!el)return;
+    const sb=getSB(); if(!sb)return;
+    try{
+      const {data}=await sb.from('enrollments').select('product_id,granted_by,created_at,profiles(email,full_name)').order('created_at',{ascending:false}).limit(200);
+      el.innerHTML=(data||[]).map(e=>{
+        const name=((products.find(p=>String(p.id)===String(e.product_id))||{}).name)||'—';
+        const who=(e.profiles&&(e.profiles.full_name||e.profiles.email))||'—';
+        return `<tr><td>${esc(who)}</td><td>${esc(name)}</td><td><span class="tag ${e.granted_by==='purchase'?'active':'pending'}" style="font-size:.68rem">${e.granted_by==='purchase'?'Mua':'Thủ công'}</span></td><td>${new Date(e.created_at).toLocaleDateString('vi-VN')}</td></tr>`;
+      }).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--ink-60);padding:18px">Chưa có ghi danh</td></tr>';
+    }catch(e){}
   }
-  function submitEnroll(){
-    const u=document.getElementById('en_user').value, p=document.getElementById('en_prod').value;
-    enrollments.unshift({user:u,prod:p,src:'manual',date:new Date().toLocaleDateString('vi-VN')});
-    renderEnroll();toast('Đã cấp quyền học cho '+u);
+  async function submitEnroll(){
+    const email=(document.getElementById('en_user').value||'').trim().toLowerCase();
+    const pid=document.getElementById('en_prod').value;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Nhập email học viên hợp lệ'); return; }
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ'); return; }
+    try{
+      const {data:prof}=await sb.from('profiles').select('id').eq('email',email).maybeSingle();
+      if(!prof||!prof.id){ toast('Email này chưa có tài khoản — nhờ học viên đăng ký trước.'); return; }
+      const {error}=await sb.from('enrollments').upsert({user_id:prof.id,product_id:pid,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true});
+      if(error){ toast('Lỗi: '+error.message); return; }
+      document.getElementById('en_user').value='';
+      renderEnroll(); toast('Đã cấp quyền học cho '+email+' ✅');
+    }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
 
   function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();loadAdminData();}
