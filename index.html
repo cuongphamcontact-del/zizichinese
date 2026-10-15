@@ -1235,9 +1235,15 @@
             <div class="chips"><button class="on" onclick="chip(this)">Tất cả học viên</button><button onclick="chip(this)">Đang hoạt động</button><button onclick="chip(this)">Mới trong tuần</button></div>
             <button class="btn btn-jade addbtn" onclick="editUser(null)">+ Thêm học viên</button>
           </div>
+          <div class="kpis" style="margin-bottom:16px">
+            <div class="kpi"><div class="lbl">Học viên đã mua</div><div class="val" id="usTotal">0</div></div>
+            <div class="kpi"><div class="lbl">Mới trong tháng</div><div class="val" id="usNew">0</div></div>
+            <div class="kpi"><div class="lbl">Khách chưa TT</div><div class="val" id="usLeads">0</div><div class="chg">có đơn chờ</div></div>
+            <div class="kpi"><div class="lbl">Chi tiêu TB/HV</div><div class="val" id="usArpu">0đ</div><div class="chg">ARPU</div></div>
+          </div>
           <div class="panel">
             <div class="tbl-scroll"><table class="adm-tbl">
-              <thead><tr><th>Học viên</th><th>Liên hệ</th><th>Khóa đã mua</th><th>Ngày</th><th>Trạng thái</th><th>Nguồn</th><th></th></tr></thead>
+              <thead><tr><th>Học viên</th><th>Liên hệ</th><th>Khóa đã mua · chi tiêu</th><th>Tham gia</th><th>Trạng thái</th><th>Nguồn</th><th></th></tr></thead>
               <tbody id="userList"></tbody>
             </table></div>
           </div>
@@ -1274,6 +1280,16 @@
             <h3>Trạng thái đo lường</h3>
             <p class="note-line" id="pxState" style="margin-top:0">Chưa cấu hình pixel. Nhập ID ở trên rồi bấm <b>Lưu cấu hình</b> — pixel sẽ tự chạy trên website.</p>
             <p class="note-line" style="margin-bottom:0">📊 <b>Số liệu chi tiết đo ở đâu?</b> Sau khi pixel chạy, xem <b>nguồn truy cập</b>, <b>phễu chuyển đổi</b> và <b>tỉ lệ chuyển đổi (CR)</b> trực tiếp trong <b>Facebook Events Manager</b>, <b>TikTok Events Manager</b> và <b>Google Analytics 4</b> — đó là nơi đo lường chính xác và theo thời gian thực. Doanh số & đơn hàng thật xem ở tab <b>Đơn hàng</b> / <b>Báo cáo</b>.</p>
+          </div>
+          <div class="panel">
+            <h3>Báo cáo doanh thu theo nguồn <span class="mini">Đơn đã thanh toán · theo kênh/fanpage/chiến dịch</span></h3>
+            <div class="tbl-scroll"><table class="adm-tbl">
+              <thead><tr><th>Nguồn</th><th>Đơn</th><th>Doanh thu</th><th>Tỉ trọng DT</th></tr></thead>
+              <tbody id="srcList"><tr><td colspan="4" style="text-align:center;color:var(--ink-60);padding:18px">Đang tải…</td></tr></tbody>
+            </table></div>
+            <p class="note-line">Nguồn lấy từ link khách bấm vào. Để phân biệt fanpage/ads, gắn tham số vào link đăng ở mỗi nơi, ví dụ:<br>
+            <code>zizichinese.com/?src=fanpage-hsk</code> · <code>?src=fanpage-giaotiep</code> · <code>?utm_source=fb-ads&utm_campaign=hsk1-thang10</code><br>
+            Khách bấm link nào → đơn của họ tự gắn nguồn đó. (Đơn trước khi bật tính năng này sẽ hiện nguồn <code>web</code>.)</p>
           </div>
         </section>
 
@@ -2193,7 +2209,7 @@
     btn.classList.add('on');
     document.getElementById('admTitle').textContent=btn.dataset.title;
     if(id==='courses'){ prodFilter=btn.dataset.filter||'all'; renderCourses(); }
-    const hooks={cats:renderCats,teachers:renderTeachers,videos:renderVideos,refunds:renderRefunds,invoices:renderInvoices,reports:renderReports,enroll:renderEnroll,manual:fillManual,orders:renderOrders,users:renderUsers};
+    const hooks={cats:renderCats,teachers:renderTeachers,videos:renderVideos,refunds:renderRefunds,invoices:renderInvoices,reports:renderReports,enroll:renderEnroll,manual:fillManual,orders:renderOrders,users:renderUsers,overview:renderOverview,tracking:renderTrackingSources};
     if(hooks[id]) hooks[id]();
     window.scrollTo(0,0);
   }
@@ -2515,12 +2531,37 @@
 
   /* ===== USERS CRUD ===== */
   function renderUsers(){
-    document.getElementById('userList').innerHTML=users.map(u=>`
-      <tr><td>${u.name}</td><td>${u.contact}</td><td>${u.course}</td><td>${u.date}</td>
-      <td><span class="tag active">Đang học</span></td>
-      <td><span class="tag ${u.source==='manual'?'pending':'active'}" style="font-size:.68rem">${u.source==='manual'?'Thủ công':'Tự động'}</span></td>
-      <td><button class="lnk" onclick="editUser(${u.id})">Sửa</button></td></tr>`).join('')
-      || '<tr><td colspan="7" style="text-align:center;color:var(--ink-60);padding:20px">Chưa có học viên</td></tr>';
+    const el=document.getElementById('userList'); if(!el)return;
+    const map=new Map();
+    _ordersRaw.forEach(o=>{
+      const email=(o.customer_email||'').toLowerCase(); if(!email)return;
+      const g=map.get(email)||{email,name:'',phone:'',prods:new Set(),spent:0,first:o.created_at,src:o.channel||'web',paid:0};
+      if(o.customer_name&&!g.name)g.name=o.customer_name;
+      if(o.customer_phone&&!g.phone)g.phone=o.customer_phone;
+      if(o.status==='paid'){ g.prods.add(o.product_id); g.spent+=o.amount||0; g.paid++; }
+      if(new Date(o.created_at)<new Date(g.first))g.first=o.created_at;
+      map.set(email,g);
+    });
+    const rows=[...map.values()].sort((a,b)=>b.spent-a.spent);
+    const now=new Date(), mStart=new Date(now.getFullYear(),now.getMonth(),1);
+    const buyers=rows.filter(r=>r.paid>0);
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('usTotal',String(buyers.length));
+    set('usNew',String(buyers.filter(r=>new Date(r.first)>=mStart).length));
+    set('usLeads',String(rows.length-buyers.length));
+    set('usArpu',fmtVND(buyers.length?Math.round(buyers.reduce((s,r)=>s+r.spent,0)/buyers.length):0));
+    el.innerHTML=rows.map(r=>{
+      const courses=[...r.prods].map(id=>((products.find(p=>String(p.id)===String(id))||{}).name)||'').filter(Boolean);
+      const cTxt=courses.length?(courses.length>1?esc(courses[0])+' <span style="color:var(--ink-60)">+'+(courses.length-1)+'</span>':esc(courses[0])):'<span style="color:var(--ink-60)">—</span>';
+      const stTag=r.paid>0?'<span class="tag active">Đã mua</span>':'<span class="tag pending">Chưa TT</span>';
+      return `<tr><td><b>${esc(r.name||'—')}</b></td>
+        <td>${esc(r.email)}${r.phone?'<br><span style="color:var(--ink-60);font-size:.8rem">'+esc(r.phone)+'</span>':''}</td>
+        <td>${cTxt}${r.paid>0?'<br><span style="color:var(--jade-dark);font-size:.78rem;font-weight:600">'+fmtVND(r.spent)+'</span>':''}</td>
+        <td>${new Date(r.first).toLocaleDateString('vi-VN')}</td>
+        <td>${stTag}</td>
+        <td><span class="tag" style="font-size:.68rem">${esc(r.src||'web')}</span></td>
+        <td></td></tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--ink-60);padding:20px">Chưa có học viên — khi có đơn hàng sẽ hiện ở đây</td></tr>';
   }
   function editUser(id){
     const u=id?users.find(x=>x.id===id):{id:0,name:'',contact:'',course:products[0].name,date:'',source:'manual'};
@@ -2733,6 +2774,17 @@
       set('rpGross',fmtVND(gross)); set('rpNet',fmtVND(gross-refunded)); set('rpRefund','Hoàn: '+fmtVND(refunded));
       renderOrders(); renderOverview();
     }catch(e){}
+  }
+  // ===== Báo cáo theo nguồn (tracking) =====
+  function renderTrackingSources(){
+    const el=document.getElementById('srcList'); if(!el)return;
+    const paid=_ordersRaw.filter(o=>o.status==='paid');
+    const m=new Map();
+    paid.forEach(o=>{ const k=o.channel||'web'; const g=m.get(k)||{cnt:0,rev:0}; g.cnt++; g.rev+=o.amount||0; m.set(k,g); });
+    const total=paid.reduce((s,o)=>s+(o.amount||0),0)||1;
+    const arr=[...m.entries()].sort((a,b)=>b[1].rev-a[1].rev);
+    el.innerHTML=arr.map(([k,v])=>`<tr><td><b>${esc(k)}</b></td><td>${v.cnt}</td><td>${fmtVND(v.rev)}</td><td>${Math.round(v.rev/total*100)}%</td></tr>`).join('')
+      || '<tr><td colspan="4" style="text-align:center;color:var(--ink-60);padding:18px">Chưa có đơn đã thanh toán</td></tr>';
   }
   // ===== OVERVIEW lọc theo thời gian =====
   let _ovRange={type:'7d'};
