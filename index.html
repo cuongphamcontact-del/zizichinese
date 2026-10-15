@@ -444,6 +444,21 @@
   .chart .bar{width:100%;max-width:42px;background:linear-gradient(var(--jade-line),var(--jade-dark));border-radius:5px 5px 0 0;transition:.3s}
   .chart .col:hover .bar{background:linear-gradient(var(--cinnabar),#e0715f)}
   .chart .day{font-size:.72rem;color:var(--ink-60)}
+  .ovdate{display:flex;gap:8px;align-items:center}
+  .ovdate input{padding:8px 10px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.86rem;background:#fff}
+  .ovdate span{color:var(--ink-60)}
+  .ov-chart{display:flex;align-items:flex-end;gap:6px;height:180px;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+  .ov-chart .col{flex:1 0 24px;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:24px}
+  .ov-chart .bar{width:100%;max-width:40px;min-height:2px;background:linear-gradient(var(--jade-line),var(--jade-dark));border-radius:5px 5px 0 0;transition:.3s}
+  .ov-chart .col:hover .bar{background:linear-gradient(var(--cinnabar),#e0715f)}
+  .ov-chart .amt{font-size:.62rem;color:var(--ink-60);font-weight:600;white-space:nowrap}
+  .ov-chart .lb{font-size:.64rem;color:var(--ink-60);white-space:nowrap}
+  .best-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .best-row:last-child{border:none}
+  .best-row .rk{width:22px;height:22px;flex:none;border-radius:50%;background:var(--jade-tint);color:var(--jade-dark);display:grid;place-items:center;font-weight:800;font-size:.75rem}
+  .best-row .bn{flex:1;font-size:.88rem;font-weight:600}
+  .best-row .bv{font-size:.84rem;color:var(--jade-dark);font-weight:700}
+  .best-row .bc{font-size:.74rem;color:var(--ink-60)}
 
   table.adm-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
   .adm-tbl th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-60);padding:8px 10px;border-bottom:2px solid var(--line)}
@@ -1135,29 +1150,41 @@
 
         <!-- OVERVIEW -->
         <section class="adm-tab" id="tab-overview">
+          <div class="tab-head" style="flex-wrap:wrap;gap:10px">
+            <div class="chips" id="ovRangeChips">
+              <button onclick="ovRange('today',this)">Hôm nay</button>
+              <button class="on" onclick="ovRange('7d',this)">7 ngày</button>
+              <button onclick="ovRange('month',this)">Tháng này</button>
+              <button onclick="ovRange('quarter',this)">Quý này</button>
+              <button onclick="ovRange('year',this)">Năm nay</button>
+            </div>
+            <div class="ovdate"><input type="date" id="ovFrom" onchange="ovRangeCustom()"><span>→</span><input type="date" id="ovTo" onchange="ovRangeCustom()"></div>
+          </div>
+
           <div class="kpis">
-            <div class="kpi"><div class="lbl">Doanh thu tháng</div><div class="val" id="ovRev">0đ</div><div class="chg" id="ovRevSub">—</div></div>
-            <div class="kpi"><div class="lbl">Đơn hàng (đã TT)</div><div class="val" id="ovOrders">0</div><div class="chg" id="ovOrdersSub">—</div></div>
-            <div class="kpi"><div class="lbl">Học viên</div><div class="val" id="ovStudents">0</div><div class="chg">—</div></div>
-            <div class="kpi"><div class="lbl">Tỉ lệ chuyển đổi</div><div class="val">—</div><div class="chg">Đo ở GA4/FB</div></div>
+            <div class="kpi"><div class="lbl" id="ovRevLbl">Doanh thu</div><div class="val" id="ovRev">0đ</div><div class="chg" id="ovRevSub">—</div></div>
+            <div class="kpi"><div class="lbl">Đơn đã thanh toán</div><div class="val" id="ovOrders">0</div><div class="chg" id="ovOrdersSub">—</div></div>
+            <div class="kpi"><div class="lbl">Khách mua</div><div class="val" id="ovStudents">0</div><div class="chg">trong khoảng chọn</div></div>
+            <div class="kpi"><div class="lbl">Giá trị đơn TB</div><div class="val" id="ovAov">0đ</div><div class="chg">AOV</div></div>
           </div>
 
           <div class="panel">
-            <h3>Doanh thu 7 ngày gần nhất <span class="mini">Đơn vị: triệu đ</span></h3>
-            <p class="note-line" style="margin:6px 0 0">Chưa có dữ liệu doanh thu — biểu đồ sẽ tự cập nhật khi có đơn hàng thật.</p>
+            <h3>Doanh thu <span class="mini" id="ovChartUnit">theo ngày</span></h3>
+            <div id="ovChart" class="ov-chart"></div>
+            <p class="note-line" id="ovChartNote" style="display:none;margin:6px 0 0">Chưa có doanh thu trong khoảng này.</p>
           </div>
 
           <div class="two-col">
             <div class="panel">
-              <h3>Đơn hàng gần đây <span class="mini">Cập nhật realtime</span></h3>
+              <h3>Đơn hàng gần đây</h3>
               <div class="tbl-scroll"><table class="adm-tbl">
-                <tr><th>Mã đơn</th><th>Khách</th><th>Khóa</th><th>Số tiền</th><th>Trạng thái</th></tr>
-                <tr><td colspan="5" style="text-align:center;color:var(--ink-60);padding:18px">Chưa có đơn hàng</td></tr>
+                <thead><tr><th>Mã đơn</th><th>Khách</th><th>Khóa</th><th>Số tiền</th><th>Trạng thái</th></tr></thead>
+                <tbody id="ovRecent"><tr><td colspan="5" style="text-align:center;color:var(--ink-60);padding:18px">Đang tải…</td></tr></tbody>
               </table></div>
             </div>
             <div class="panel">
-              <h3>Khóa bán chạy <span class="mini">Tháng này</span></h3>
-              <p class="note-line" style="margin:0">Chưa có dữ liệu — xếp hạng cập nhật khi có đơn thật.</p>
+              <h3>Khóa bán chạy <span class="mini">Trong khoảng chọn</span></h3>
+              <div id="ovBest"><p class="note-line" style="margin:0">Đang tải…</p></div>
             </div>
           </div>
         </section>
@@ -2010,7 +2037,7 @@
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
     try{
-      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{slug:p.slug,variant,name,email,phone,address}});
+      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{slug:p.slug,variant,name,email,phone,address,source:getSource()}});
       if(httpok && data && data.ok){
         // ---- Đơn thật + VietQR động ----
         document.getElementById('qrImg').src=data.qr_url;
@@ -2681,14 +2708,16 @@
   }
 
   function renderAll(){renderPublic();renderCourses();renderUsers();renderOrders();loadAdminData();}
-  // Đọc ĐƠN HÀNG THẬT từ Supabase → doanh thu + danh sách đơn (admin phải đăng nhập có quyền)
+  // Đọc ĐƠN HÀNG THẬT từ Supabase (admin có quyền) → lưu raw để báo cáo lọc theo thời gian
+  let _ordersRaw=[];
   async function loadAdminData(){
     const sb=getSB(); if(!sb) return;
     try{
       const {data,error}=await sb.from('orders')
-        .select('code,customer_name,customer_email,amount,status,channel,created_at,product_id')
+        .select('code,customer_name,customer_email,customer_phone,amount,status,channel,created_at,product_id')
         .order('created_at',{ascending:false});
       if(error||!data) return;
+      _ordersRaw=data;
       const smap={paid:'paid',pending:'pending',refunded:'refund',cancelled:'pending',review:'pending'};
       orders=data.map(o=>({
         code:o.code, cust:o.customer_name||o.customer_email||'—',
@@ -2696,19 +2725,97 @@
         amount:o.amount||0, channel:o.channel||'web',
         status:smap[o.status]||'pending', time:new Date(o.created_at).toLocaleDateString('vi-VN')
       }));
-      const now=new Date(), mStart=new Date(now.getFullYear(),now.getMonth(),1);
-      const paid=data.filter(o=>o.status==='paid');
-      const gross=paid.reduce((s,o)=>s+(o.amount||0),0);
-      const monthRev=paid.filter(o=>new Date(o.created_at)>=mStart).reduce((s,o)=>s+(o.amount||0),0);
+      // Báo cáo tổng (Reports): toàn thời gian
+      const paidAll=data.filter(o=>o.status==='paid');
+      const gross=paidAll.reduce((s,o)=>s+(o.amount||0),0);
       const refunded=data.filter(o=>o.status==='refunded').reduce((s,o)=>s+(o.amount||0),0);
-      const students=new Set(paid.map(o=>(o.customer_email||'').toLowerCase()).filter(Boolean)).size;
       const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-      set('ovRev',fmtVND(monthRev)); set('ovRevSub','Tổng: '+fmtVND(gross));
-      set('ovOrders',String(paid.length)); set('ovOrdersSub',data.length+' đơn tất cả');
-      set('ovStudents',String(students));
       set('rpGross',fmtVND(gross)); set('rpNet',fmtVND(gross-refunded)); set('rpRefund','Hoàn: '+fmtVND(refunded));
-      renderOrders();
+      renderOrders(); renderOverview();
     }catch(e){}
+  }
+  // ===== OVERVIEW lọc theo thời gian =====
+  let _ovRange={type:'7d'};
+  function ovRange(type,btn){ _ovRange={type}; chip(btn); const f=document.getElementById('ovFrom'),t=document.getElementById('ovTo'); if(f)f.value=''; if(t)t.value=''; renderOverview(); }
+  function ovRangeCustom(){
+    const f=document.getElementById('ovFrom').value, t=document.getElementById('ovTo').value;
+    if(!f||!t) return;
+    _ovRange={type:'custom',from:f,to:t};
+    document.querySelectorAll('#ovRangeChips button').forEach(b=>b.classList.remove('on'));
+    renderOverview();
+  }
+  function _ovBounds(){
+    const now=new Date(); let start, end=now;
+    const d0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    if(_ovRange.type==='today'){ start=d0; }
+    else if(_ovRange.type==='7d'){ start=new Date(d0); start.setDate(start.getDate()-6); }
+    else if(_ovRange.type==='month'){ start=new Date(now.getFullYear(),now.getMonth(),1); }
+    else if(_ovRange.type==='quarter'){ start=new Date(now.getFullYear(),Math.floor(now.getMonth()/3)*3,1); }
+    else if(_ovRange.type==='year'){ start=new Date(now.getFullYear(),0,1); }
+    else if(_ovRange.type==='custom'){ start=new Date(_ovRange.from+'T00:00:00'); end=new Date(_ovRange.to+'T23:59:59'); }
+    else { start=new Date(d0); start.setDate(start.getDate()-6); }
+    return {start,end};
+  }
+  function renderOverview(){
+    if(!document.getElementById('ovRev')) return;
+    const {start,end}=_ovBounds();
+    const inRange=o=>{ const d=new Date(o.created_at); return d>=start&&d<=end; };
+    const paid=_ordersRaw.filter(o=>o.status==='paid'&&inRange(o));
+    const rev=paid.reduce((s,o)=>s+(o.amount||0),0);
+    const buyers=new Set(paid.map(o=>(o.customer_email||'').toLowerCase()).filter(Boolean)).size;
+    const aov=paid.length?Math.round(rev/paid.length):0;
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+    const lblMap={today:'Doanh thu hôm nay','7d':'Doanh thu 7 ngày',month:'Doanh thu tháng này',quarter:'Doanh thu quý này',year:'Doanh thu năm nay',custom:'Doanh thu (khoảng chọn)'};
+    set('ovRevLbl',lblMap[_ovRange.type]||'Doanh thu');
+    set('ovRev',fmtVND(rev)); set('ovRevSub',paid.length+' đơn');
+    set('ovOrders',String(paid.length)); set('ovOrdersSub','');
+    set('ovStudents',String(buyers));
+    set('ovAov',fmtVND(aov));
+    _ovChart(paid,start,end);
+    _ovRecent();
+    _ovBest(paid);
+  }
+  function _ovChart(paid,start,end){
+    const box=document.getElementById('ovChart'), note=document.getElementById('ovChartNote'); if(!box)return;
+    const spanDays=(end-start)/86400000;
+    const byMonth=spanDays>45;
+    document.getElementById('ovChartUnit').textContent=byMonth?'theo tháng':'theo ngày';
+    const buckets=new Map();
+    const key=d=>byMonth?(d.getFullYear()+'-'+(d.getMonth()+1)):(d.getDate()+'/'+(d.getMonth()+1));
+    // khởi tạo mốc liên tục
+    const cur=new Date(start);
+    if(byMonth){ cur.setDate(1); while(cur<=end){ buckets.set(cur.getFullYear()+'-'+(cur.getMonth()+1),0); cur.setMonth(cur.getMonth()+1); } }
+    else { cur.setHours(0,0,0,0); while(cur<=end){ buckets.set(cur.getDate()+'/'+(cur.getMonth()+1),0); cur.setDate(cur.getDate()+1); } }
+    paid.forEach(o=>{ const d=new Date(o.created_at); const k=key(d); if(buckets.has(k)) buckets.set(k,buckets.get(k)+(o.amount||0)); });
+    const arr=[...buckets.entries()];
+    const max=Math.max(1,...arr.map(x=>x[1]));
+    if(!paid.length){ box.innerHTML=''; note.style.display='block'; return; }
+    note.style.display='none';
+    box.innerHTML=arr.map(([k,v])=>{
+      const h=Math.round(v/max*150)+2;
+      const lbl=v>=1000000?(Math.round(v/100000)/10)+'tr':(v>=1000?Math.round(v/1000)+'k':v);
+      return `<div class="col" title="${k}: ${fmtVND(v)}"><span class="amt">${v?lbl:''}</span><div class="bar" style="height:${h}px"></div><span class="lb">${k}</span></div>`;
+    }).join('');
+  }
+  function _ovRecent(){
+    const el=document.getElementById('ovRecent'); if(!el)return;
+    const rows=_ordersRaw.slice(0,8);
+    const stMap={paid:'paid',pending:'pending',refunded:'refund',cancelled:'pending',review:'pending'};
+    el.innerHTML=rows.map(o=>{
+      const course=((products.find(p=>String(p.id)===String(o.product_id))||{}).name)||'—';
+      return `<tr><td>#${esc(o.code||'')}</td><td>${esc(o.customer_name||o.customer_email||'—')}</td><td>${esc(course)}</td><td>${fmtVND(o.amount||0)}</td><td>${tagFor(stMap[o.status]||'pending')}</td></tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-60);padding:18px">Chưa có đơn hàng</td></tr>';
+  }
+  function _ovBest(paid){
+    const el=document.getElementById('ovBest'); if(!el)return;
+    const m=new Map();
+    paid.forEach(o=>{ const id=o.product_id; const cur=m.get(id)||{rev:0,cnt:0}; cur.rev+=o.amount||0; cur.cnt++; m.set(id,cur); });
+    const arr=[...m.entries()].sort((a,b)=>b[1].rev-a[1].rev).slice(0,5);
+    if(!arr.length){ el.innerHTML='<p class="note-line" style="margin:0">Chưa có đơn trong khoảng này.</p>'; return; }
+    el.innerHTML=arr.map(([id,v],i)=>{
+      const name=((products.find(p=>String(p.id)===String(id))||{}).name)||'—';
+      return `<div class="best-row"><span class="rk">${i+1}</span><span class="bn">${esc(name)}</span><span style="text-align:right"><span class="bv">${fmtVND(v.rev)}</span><br><span class="bc">${v.cnt} đơn</span></span></div>`;
+    }).join('');
   }
 
   // countdown
@@ -2736,6 +2843,17 @@
   }
   setTimeout(function loop(){showPop();setTimeout(loop,9000);},4000);
 
+  // Bắt nguồn đơn hàng (ads/fanpage) từ URL — lưu first-touch để gắn vào đơn
+  function captureSource(){
+    try{
+      const p=new URLSearchParams(location.search);
+      let s=p.get('utm_source')||p.get('src')||p.get('ref')||(p.get('fbclid')?'facebook-ads':'')||(p.get('gclid')?'google-ads':'');
+      const camp=p.get('utm_campaign')||p.get('utm_content')||'';
+      if(s){ const v=(camp?(s+' / '+camp):s).slice(0,120); localStorage.setItem('zizi_src',v); }
+    }catch(e){}
+  }
+  function getSource(){ try{ return localStorage.getItem('zizi_src')||'web'; }catch(e){ return 'web'; } }
+  captureSource();
   // init
   renderAll();
   restoreSession();

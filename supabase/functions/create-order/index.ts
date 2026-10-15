@@ -34,7 +34,8 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json().catch(() => ({}));
-    const { slug, product_id, variant = "course", name = "", email = "", phone = "", address = "" } = body;
+    const { slug, product_id, variant = "course", name = "", email = "", phone = "", address = "", source = "" } = body;
+    const channel = (String(source || "web").trim() || "web").slice(0, 120);
 
     const mail = String(email).trim().toLowerCase();
     if (!mail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
@@ -89,7 +90,7 @@ Deno.serve(async (req) => {
         ship_fee: ship,
         status: "pending",
         source: "auto",
-        channel: "web",
+        channel,
       }).select("id,code,amount").single();
       if (!error) order = data;
       else if (!String(error.message || "").includes("duplicate")) {
