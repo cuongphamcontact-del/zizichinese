@@ -528,6 +528,26 @@
   .learn-top .who{display:flex;align-items:center;gap:.8rem;font-size:.85rem}
   .learn-top .who .av{width:34px;height:34px;border-radius:50%;background:var(--jade);display:grid;place-items:center;font-weight:700;color:#fff}
   .learn-top .lg{color:#bcd9cd;font-size:.82rem}.learn-top .lg:hover{color:#fff}
+  .learn-top .who{position:relative}
+  .umenu-btn{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 10px 4px 14px;color:#eafaf3;cursor:pointer;font-family:inherit}
+  .umenu-btn .um-info{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
+  .umenu-btn .um-info b{font-size:.84rem;color:#fff;font-weight:700}
+  .umenu-btn .um-info small{font-size:.7rem;color:#bcd9cd}
+  .umenu-btn .um-caret{opacity:.85;flex:none}
+  .umenu{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:14px;box-shadow:0 14px 34px -10px rgba(0,0,0,.35);min-width:232px;padding:8px;display:none;z-index:40}
+  .umenu.open{display:block}
+  .umenu a{display:flex;align-items:center;gap:.7rem;padding:11px 12px;border-radius:9px;color:var(--ink);font-size:.92rem;cursor:pointer;font-weight:500}
+  .umenu a:hover{background:var(--paper-2)}
+  .umenu a.danger{color:var(--cinnabar)}
+  .umenu a span{width:20px;text-align:center;flex:none}
+  .pmodal{position:fixed;inset:0;background:rgba(15,30,26,.5);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+  .pmbox{background:#fff;border-radius:18px;padding:26px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+  .pmbox h3{margin:0 0 16px}
+  .pmbox label{display:block;font-size:.8rem;font-weight:600;color:var(--ink-60);margin-bottom:12px}
+  .pmbox input{width:100%;margin-top:5px;padding:11px 13px;border:1.5px solid var(--line-2);border-radius:10px;font-family:inherit;font-size:.95rem;background:#fff}
+  .pmbox input:disabled{background:var(--paper-2);color:var(--ink-60)}
+  .pmact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+  @media(max-width:560px){ .umenu-btn .um-info{display:none} }
   .learn-wrap{max-width:1140px;margin:0 auto;padding:26px 22px 60px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
   .player{aspect-ratio:16/9;background:linear-gradient(135deg,var(--jade-dark),var(--ink));border-radius:14px;display:grid;place-items:center;position:relative;overflow:hidden}
   .player::after{content:"字";position:absolute;font-family:"Noto Serif SC";font-weight:900;font-size:210px;color:rgba(255,255,255,.06);line-height:1}
@@ -1019,7 +1039,19 @@
 <div id="view-learn">
   <div class="learn-top">
     <a class="brand" href="#" onclick="go('home');return false"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span>ZiZi<small>Khu vực học viên</small></span></a>
-    <div class="who"><span id="learnName">Xin chào, học viên 👋</span><span class="av" id="learnAv">H</span><a class="lg" href="#" onclick="showResetPassword();return false">Đổi mật khẩu</a><a class="lg" href="#" onclick="logout();return false">Đăng xuất</a></div>
+    <div class="who">
+      <button class="umenu-btn" onclick="toggleUserMenu(event)">
+        <span class="um-info"><b id="umName">Học viên</b><small id="umEmail"></small></span>
+        <span class="av" id="learnAv">H</span>
+        <svg class="um-caret" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="umenu" id="umenu" onclick="event.stopPropagation()">
+        <a onclick="openProfile()"><span>👤</span> Hồ sơ cá nhân</a>
+        <a onclick="closeUserMenu();go('learn')"><span>📚</span> Khóa học của tôi</a>
+        <a onclick="closeUserMenu();showResetPassword()"><span>🔒</span> Đổi mật khẩu</a>
+        <a class="danger" onclick="logout()"><span>🚪</span> Đăng xuất</a>
+      </div>
+    </div>
   </div>
   <!-- Dashboard: khóa & tài liệu đã sở hữu -->
   <div class="learn-dash" id="learnDash">
@@ -1723,9 +1755,39 @@
   function saveUsers(u){ try{localStorage.setItem('zizi_users',JSON.stringify(u));}catch(_){} }
   function setSession(email){ try{localStorage.setItem('zizi_session',email);}catch(_){} }
   function clearSession(){ try{localStorage.removeItem('zizi_session');}catch(_){} }
+  let _learnerEmail='';
   function setLearnerName(name){
-    const n=document.getElementById('learnName'); if(n)n.textContent='Xin chào, '+(name||'học viên')+' 👋';
-    const a=document.getElementById('learnAv'); if(a&&name)a.textContent=name.trim().slice(0,1).toUpperCase();
+    const nm=name||'học viên';
+    const n=document.getElementById('learnName'); if(n)n.textContent='Xin chào, '+nm+' 👋';
+    const um=document.getElementById('umName'); if(um&&name)um.textContent=nm;
+    const a=document.getElementById('learnAv'); if(a&&name)a.textContent=nm.trim().slice(0,1).toUpperCase();
+  }
+  function setLearnerEmail(email){ _learnerEmail=email||''; const e=document.getElementById('umEmail'); if(e)e.textContent=_learnerEmail; }
+  function toggleUserMenu(e){ if(e)e.stopPropagation(); const m=document.getElementById('umenu'); if(m)m.classList.toggle('open'); }
+  function closeUserMenu(){ const m=document.getElementById('umenu'); if(m)m.classList.remove('open'); }
+  document.addEventListener('click',()=>closeUserMenu());
+  function openProfile(){
+    closeUserMenu();
+    const curName=(document.getElementById('umName')?.textContent||'').trim();
+    openModal('Hồ sơ cá nhân',`<div class="mform">
+      <label>Email (không đổi)<input value="${esc(_learnerEmail)}" disabled></label>
+      <label>Họ tên<input id="pf_name" value="${esc(curName)}" placeholder="Nguyễn Văn A"></label>
+      <label>Số điện thoại<input id="pf_phone" placeholder="09xxxxxxxx"></label>
+      <div class="mact"><button class="btn btn-ghost" onclick="closeModal()">Đóng</button>
+      <button class="btn btn-jade" onclick="saveProfile()">Lưu hồ sơ</button></div></div>`);
+    const sb=getSB();
+    if(sb){ sb.auth.getUser().then(({data})=>{ const ph=data&&data.user&&data.user.user_metadata&&data.user.user_metadata.phone; const el=document.getElementById('pf_phone'); if(el&&ph)el.value=ph; }).catch(()=>{}); }
+  }
+  async function saveProfile(){
+    const name=(document.getElementById('pf_name').value||'').trim();
+    const phone=(document.getElementById('pf_phone').value||'').trim();
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ'); return; }
+    try{
+      const {error}=await sb.auth.updateUser({data:{full_name:name,phone}});
+      if(error){ toast('Lỗi: '+error.message); return; }
+      try{ const {data:u}=await sb.auth.getUser(); if(u&&u.user) await sb.from('profiles').update({full_name:name,phone}).eq('id',u.user.id); }catch(e){}
+      setLearnerName(name); closeModal(); toast('Đã lưu hồ sơ ✅');
+    }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
   function authErr(msg){ const e=document.getElementById('authErr'); if(e)e.textContent=msg||''; }
   let pending=null, otpCode='';
@@ -1754,7 +1816,7 @@
         if(btn)btn.textContent=old;
         if(error){ authErr(/already|registered|exists/i.test(error.message)?'Email này đã có tài khoản. Hãy đăng nhập.':('Lỗi: '+error.message)); return; }
         pending={name,email,phone};
-        if(data && data.session){ finishAuth(name,'Tạo tài khoản thành công!'); }   // nếu tắt xác nhận email
+        if(data && data.session){ setLearnerEmail(email); finishAuth(name,'Tạo tài khoản thành công!'); }   // nếu tắt xác nhận email
         else showConfirmNotice(email);                                              // cần xác nhận email
       }catch(err){ if(btn)btn.textContent=old; authErr('Lỗi kết nối, vui lòng thử lại.'); }
     }else{
@@ -1764,7 +1826,7 @@
         if(btn)btn.textContent=old;
         if(error){ authErr(/confirm/i.test(error.message)?'Bạn cần xác nhận email trước — mở email bấm link kích hoạt.':'Sai email hoặc mật khẩu.'); return; }
         const nm=(data.user&&data.user.user_metadata&&data.user.user_metadata.full_name)||email.split('@')[0];
-        finishAuth(nm,'Đăng nhập thành công!');
+        setLearnerEmail(email); finishAuth(nm,'Đăng nhập thành công!');
       }catch(err){ if(btn)btn.textContent=old; authErr('Lỗi kết nối, vui lòng thử lại.'); }
     }
   }
@@ -1841,7 +1903,7 @@
       const {data,error}=await sb.auth.updateUser({password:p});
       if(error){ e.textContent='Lỗi: '+error.message; return; }
       const nm=(data&&data.user&&data.user.user_metadata&&data.user.user_metadata.full_name)||'học viên';
-      loggedIn=true; setLearnerName(nm); updateAuthUI(); backToForm(); authErr(''); toast('Đổi mật khẩu thành công!'); go('learn');
+      loggedIn=true; setLearnerName(nm); if(data&&data.user)setLearnerEmail(data.user.email||''); updateAuthUI(); backToForm(); authErr(''); toast('Đổi mật khẩu thành công!'); go('learn');
     }catch(err){ e.textContent='Lỗi kết nối, thử lại.'; }
   }
   async function restoreSession(){
@@ -1854,7 +1916,7 @@
           loggedIn=true;
           const u=data.session.user;
           const nm=(u.user_metadata&&u.user_metadata.full_name)||(u.email||'').split('@')[0];
-          setLearnerName(nm); updateAuthUI(); return;
+          setLearnerName(nm); setLearnerEmail(u.email||''); updateAuthUI(); return;
         }
       }catch(e){}
     }
