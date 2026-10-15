@@ -1054,7 +1054,7 @@
         <div class="afield" id="af_name" style="display:none"><label>Họ tên <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_name" placeholder="Nguyễn Văn A"></div>
         <div class="afield"><label id="lab_email">Email hoặc tên đăng nhập <em style="color:var(--cinnabar)">*</em></label><input type="text" id="au_email" placeholder="you@example.com"></div>
         <div class="afield" id="af_phone" style="display:none"><label>Số điện thoại <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="au_phone" placeholder="09xx xxx xxx"></div>
-        <div class="afield"><label>Mật khẩu <a id="forgot" class="afw" href="#" onclick="toast('Gửi link đặt lại mật khẩu cần bản thật (Supabase)');return false">Quên mật khẩu?</a></label><input type="password" id="authPass" placeholder="Nhập mật khẩu"></div>
+        <div class="afield"><label>Mật khẩu <a id="forgot" class="afw" href="#" onclick="forgotPassword();return false">Quên mật khẩu?</a></label><input type="password" id="authPass" placeholder="Nhập mật khẩu"></div>
         <div class="afield" id="af_confirm" style="display:none"><label>Xác nhận mật khẩu <em style="color:var(--cinnabar)">*</em></label><input type="password" id="au_confirm" placeholder="Nhập lại mật khẩu"></div>
         <label class="afield afterms" id="af_terms" style="display:none"><input type="checkbox" id="au_terms"> <span>Tôi đồng ý với <a href="#" onclick="toast('Điều khoản dịch vụ');return false">Điều khoản</a> &amp; <a href="#" onclick="toast('Chính sách bảo mật');return false">Bảo mật</a></span></label>
         <div id="authErr" class="auth-err"></div>
@@ -1758,9 +1758,53 @@
       // không lỗi → trình duyệt tự chuyển sang Google
     }catch(e){ authErr('Đăng nhập Google chưa sẵn sàng.'); }
   }
+  /* ==== Quên / đặt lại mật khẩu (Supabase thật) ==== */
+  async function forgotPassword(){
+    const email=(document.getElementById('au_email').value||'').trim().toLowerCase();
+    if(!/^\S+@\S+\.\S+$/.test(email)){ authErr('Nhập email của bạn vào ô phía trên rồi bấm "Quên mật khẩu?".'); document.getElementById('au_email').focus(); return; }
+    const sb=getSB(); if(!sb){ authErr('Chưa kết nối máy chủ.'); return; }
+    authErr('');
+    try{
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+      if(error){ authErr('Không gửi được: '+error.message); return; }
+    }catch(e){ authErr('Lỗi kết nối, thử lại.'); return; }
+    document.getElementById('authForm').style.display='none';
+    const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
+    const o=document.getElementById('otpPanel'); o.style.display='block';
+    o.innerHTML='<div style="text-align:center;padding:6px 0"><div style="font-size:2.2rem">🔑</div>'
+      +'<h3 style="margin:.4rem 0">Kiểm tra email</h3>'
+      +'<p class="sub">Link đặt lại mật khẩu đã gửi tới <b>'+esc(email)+'</b>. Mở email, bấm link rồi đặt mật khẩu mới.</p>'
+      +'<p class="sub" style="font-size:.8rem;color:var(--ink-60)">Không thấy? Kiểm tra mục Quảng cáo/Spam.</p>'
+      +'<button class="btn btn-jade" style="width:100%;justify-content:center" onclick="openAuth(\'login\')">Về đăng nhập</button></div>';
+  }
+  function showResetPassword(){
+    go('auth');
+    document.getElementById('authForm').style.display='none';
+    const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
+    const o=document.getElementById('otpPanel'); o.style.display='block';
+    o.innerHTML='<div style="padding:4px 0"><h3 style="margin:.2rem 0 .7rem">Đặt mật khẩu mới</h3>'
+      +'<div class="afield"><label>Mật khẩu mới</label><input type="password" id="rp_pass" placeholder="Tối thiểu 8 ký tự"></div>'
+      +'<div class="afield"><label>Nhập lại mật khẩu</label><input type="password" id="rp_pass2" placeholder="Nhập lại"></div>'
+      +'<div id="rpErr" class="auth-err"></div>'
+      +'<button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitNewPassword()">Lưu mật khẩu</button></div>';
+  }
+  async function submitNewPassword(){
+    const p=(document.getElementById('rp_pass').value||''), p2=(document.getElementById('rp_pass2').value||'');
+    const e=document.getElementById('rpErr');
+    if(p.length<8){ e.textContent='Mật khẩu cần tối thiểu 8 ký tự.'; return; }
+    if(p!==p2){ e.textContent='Hai mật khẩu không khớp.'; return; }
+    const sb=getSB(); if(!sb){ e.textContent='Chưa kết nối máy chủ.'; return; }
+    try{
+      const {data,error}=await sb.auth.updateUser({password:p});
+      if(error){ e.textContent='Lỗi: '+error.message; return; }
+      const nm=(data&&data.user&&data.user.user_metadata&&data.user.user_metadata.full_name)||'học viên';
+      loggedIn=true; setLearnerName(nm); updateAuthUI(); backToForm(); authErr(''); toast('Đổi mật khẩu thành công!'); go('learn');
+    }catch(err){ e.textContent='Lỗi kết nối, thử lại.'; }
+  }
   async function restoreSession(){
     const sb=getSB();
     if(sb){
+      try{ sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY'){ showResetPassword(); } }); }catch(e){}
       try{
         const {data}=await sb.auth.getSession();
         if(data && data.session && data.session.user){
@@ -1783,24 +1827,47 @@
   }
   function saveOwned(o){ try{localStorage.setItem('zizi_owned',JSON.stringify(o));}catch(_){} }
   function addOwned(id){ const o=getOwned(); if(!o.some(x=>x.id===id)){ o.push({id,done:0}); saveOwned(o);} }
-  function renderLearn(){
+  // Đọc quyền sở hữu THẬT từ Supabase (bảng enrollments của học viên đang đăng nhập)
+  async function fetchOwned(){
+    const sb=getSB(); if(!sb) return getOwned();
+    try{
+      const {data:sess}=await sb.auth.getSession();
+      const uid=sess&&sess.session&&sess.session.user&&sess.session.user.id;
+      if(!uid) return [];
+      const {data,error}=await sb.from('enrollments').select('product_id').eq('user_id',uid);
+      if(error||!data) return [];
+      const prog=getOwned();
+      return data.map(r=>{ const pr=prog.find(x=>String(x.id)===String(r.product_id)); return {id:r.product_id,done:pr?pr.done:0}; });
+    }catch(e){ return []; }
+  }
+  async function renderLearn(){
     const grid=document.getElementById('ownedGrid'); if(!grid)return;
-    const owned=getOwned();
+    grid.innerHTML='<div class="dash-empty">Đang tải khóa học của bạn…</div>';
+    const owned=await fetchOwned();
     if(!owned.length){ grid.innerHTML='<div class="dash-empty">Bạn chưa sở hữu khóa học nào.<br><a onclick="go(\'home\')">Khám phá khóa học →</a></div>'; return; }
     grid.innerHTML=owned.map(o=>{
-      const p=products.find(x=>x.id===o.id); if(!p)return '';
+      const p=products.find(x=>String(x.id)===String(o.id)); if(!p)return '';
       const isDoc=p.type==='doc';
       const thumb=p.cover?`<img src="${p.cover}">`:`<img class="thumb-mascot" src="assets/zizi-face.png"><span class="thumb-char hz">${p.char}</span>`;
       const badge=isDoc?'Tài liệu':(p.type==='live'?'Trực tiếp':'Khóa học');
       if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">Tài liệu đã sở hữu · tải về không giới hạn.</p>
-        <button class="btn btn-jade btn-sm" onclick="toast('Đang tải tài liệu (demo)…')">⬇ Tải tài liệu</button></div></div>`;
+        <button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">⬇ Tải tài liệu</button></div></div>`;
       const total=getLessons(p.id).length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
       return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3>
         <div class="oc-prog"><div class="oc-bar"><i style="width:${pct}%"></i></div><small>${done}/${total} buổi · ${pct}%</small></div>
         <button class="btn btn-primary btn-sm" onclick="openCourse('${p.id}')">${done?'Tiếp tục học →':'Bắt đầu học →'}</button></div></div>`;
     }).join('');
+  }
+  // Tải tài liệu thật từ bảng product_files (admin upload). Chưa có file → báo nhẹ nhàng.
+  async function downloadDoc(pid){
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ.'); return; }
+    try{
+      const {data}=await sb.from('product_files').select('name,file_url').eq('product_id',pid).order('sort_order',{ascending:true});
+      if(data&&data.length){ data.forEach(f=>{ if(f.file_url) window.open(f.file_url,'_blank'); }); toast('Đang mở '+data.length+' tài liệu…'); }
+      else toast('Tài liệu đang được cập nhật — bọn mình sẽ bổ sung file tải sớm nhé.');
+    }catch(e){ toast('Không tải được, thử lại sau.'); }
   }
   function openCourse(id){
     const p=products.find(x=>String(x.id)===String(id)); if(!p)return;
