@@ -956,7 +956,7 @@
             </div>
             <div class="field"><label>Họ và tên</label><input type="text" id="co_name" placeholder="Nguyễn Văn A"></div>
             <div class="field"><label>Email <em style="color:var(--cinnabar)">*</em></label><input type="email" id="co_email" placeholder="ban@email.com"></div>
-            <div class="field"><label>Số điện thoại / Zalo</label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
+            <div class="field"><label>Số điện thoại / Zalo <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
             <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" id="co_addr" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
             <button class="btn btn-primary" id="createOrderBtn" style="width:100%;justify-content:center;margin-top:10px;font-size:1.05rem" onclick="createOrder()">Tạo đơn &amp; lấy mã thanh toán →</button>
           </div>
@@ -2049,6 +2049,7 @@
     const phone=(document.getElementById('co_phone')?.value||'').trim();
     const address=(document.getElementById('co_addr')?.value||'').trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Vui lòng nhập email hợp lệ để nhận tài khoản.'); document.getElementById('co_email')?.focus(); return; }
+    if(!/^0\d{8,10}$/.test(phone.replace(/\s/g,''))){ toast('Vui lòng nhập số điện thoại (VD: 09xxxxxxxx).'); document.getElementById('co_phone')?.focus(); return; }
     const variant = p.type==='doc' ? (p._hard?'hard':'soft') : 'course';
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
@@ -2610,18 +2611,28 @@
       <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
       <button class="btn btn-jade" onclick="saveOrder('${o.code}')">Lưu</button></div></div>`);
   }
-  function saveOrder(code){
+  async function saveOrder(code){
     if(!val('o_cust')){toast('Nhập tên khách hàng');return;}
-    const status=document.getElementById('o_status').value;
-    const b={cust:val('o_cust'),course:document.getElementById('o_course').value,amount:+val('o_amount')||0,channel:val('o_channel'),status};
-    const i=orders.findIndex(x=>x.code===code);
-    let fired=false;
-    if(i>=0){const was=orders[i].status;orders[i]={...orders[i],...b};if(was!=='paid'&&status==='paid')fired=true;}
-    else{orders.unshift({...b,code:'ZIZI-'+Math.random().toString(36).slice(2,6).toUpperCase(),time:'vừa xong'});if(status==='paid')fired=true;}
-    renderOrders();closeModal();
-    toast(fired?'Đã lưu · đã bắn sự kiện Purchase 🎯':'Đã lưu đơn hàng');
+    const status=document.getElementById('o_status').value;               // paid/pending/refund
+    const stDb={paid:'paid',pending:'pending',refund:'refunded'}[status]||'pending';
+    const sb=getSB();
+    if(code){ // sửa đơn có sẵn → cập nhật trạng thái trong Supabase
+      if(sb){ const {error}=await sb.from('orders').update({status:stDb}).eq('code',code); if(error){toast('Lỗi: '+error.message);return;} }
+      closeModal(); await loadAdminData(); toast('Đã cập nhật đơn'); return;
+    }
+    const courseName=document.getElementById('o_course').value;
+    const p=products.find(x=>x.name===courseName);
+    if(!p){toast('Không tìm thấy sản phẩm');return;}
+    const r=await _insertManualOrder({name:val('o_cust'),product_id:p.id,amount:+val('o_amount')||0,channel:val('o_channel')||'Thủ công',status:stDb});
+    closeModal();
+    if(!r.ok){toast('Lỗi: '+r.msg);return;}
+    await loadAdminData(); toast('Đã thêm đơn — lưu vào Supabase ✅');
   }
-  function delOrder(code){if(confirm('Xóa đơn này?')){orders=orders.filter(x=>x.code!==code);renderOrders();closeModal();toast('Đã xóa đơn hàng');}}
+  async function delOrder(code){
+    if(!confirm('Xóa đơn này?'))return;
+    const sb=getSB(); if(sb){ const {error}=await sb.from('orders').delete().eq('code',code); if(error){toast('Lỗi: '+error.message);return;} }
+    closeModal(); await loadAdminData(); toast('Đã xóa đơn hàng');
+  }
 
   /* ===== TRACKING ===== */
   async function saveTracking(){
@@ -2696,14 +2707,40 @@
     const opts=products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${fmtVND(p.price)}</option>`).join('');
     document.getElementById('mn_prod').innerHTML=opts;
   }
-  function submitManual(){
-    if(!val('mn_cust')){toast('Nhập học viên');return;}
-    const pid=+document.getElementById('mn_prod').value, p=products.find(x=>x.id===pid);
+  // Ghi đơn thủ công THẬT vào Supabase (admin có quyền). Cấp quyền học nếu email đã có tài khoản.
+  async function _insertManualOrder({email,name,phone,product_id,amount,channel,status}){
+    const sb=getSB(); if(!sb) return {ok:false,msg:'Chưa kết nối máy chủ'};
+    status=status||'paid';
+    const code='ZIZI'+Math.random().toString(36).slice(2,8).toUpperCase();
+    const p=products.find(x=>String(x.id)===String(product_id));
+    const variant=(p&&p.type==='doc')?'soft':'course';
+    const {error}=await sb.from('orders').insert({
+      code,product_id,customer_name:name||null,customer_email:email||null,customer_phone:phone||null,
+      variant,amount:amount||0,status,paid_at:status==='paid'?new Date().toISOString():null,
+      source:'manual',channel:channel||'manual'
+    });
+    if(error) return {ok:false,msg:error.message};
+    let enrolled=false, accountMissing=false;
+    if(email && status==='paid'){
+      try{
+        const {data:prof}=await sb.from('profiles').select('id').eq('email',email.toLowerCase()).maybeSingle();
+        if(prof&&prof.id){ await sb.from('enrollments').upsert({user_id:prof.id,product_id,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true}); enrolled=true; }
+        else accountMissing=true;
+      }catch(e){ accountMissing=true; }
+    }
+    return {ok:true,code,enrolled,accountMissing};
+  }
+  async function submitManual(){
+    const cust=(val('mn_cust')||'').trim(); if(!cust){toast('Nhập học viên (email hoặc tên)');return;}
+    const pid=document.getElementById('mn_prod').value, p=products.find(x=>String(x.id)===String(pid));
+    if(!p){toast('Chọn sản phẩm');return;}
     const amount=+val('mn_amount')||p.price;
-    orders.unshift({code:'ZIZI-'+Math.random().toString(36).slice(2,6).toUpperCase(),cust:val('mn_cust'),course:p.name,amount,channel:val('mn_channel')||'Thủ công',status:'paid',time:'vừa xong'});
-    enrollments.unshift({user:val('mn_cust'),prod:p.name,src:'manual',date:new Date().toLocaleDateString('vi-VN')});
-    ['mn_cust','mn_amount','mn_note'].forEach(id=>document.getElementById(id).value='');
-    renderOrders();toast('Đã ghi nhận đơn + cấp quyền + bắn Purchase 🎯');
+    const isEmail=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cust);
+    const r=await _insertManualOrder({email:isEmail?cust.toLowerCase():'',name:isEmail?'':cust,phone:'',product_id:p.id,amount,channel:val('mn_channel')||'Tiền mặt',status:'paid'});
+    if(!r.ok){toast('Lỗi: '+r.msg);return;}
+    ['mn_cust','mn_amount','mn_note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+    await loadAdminData();
+    toast(r.enrolled?'Đã ghi doanh thu + cấp quyền học ✅':(r.accountMissing?'Đã ghi doanh thu ✅ — học viên chưa có TK, nhờ họ đăng ký bằng email này để vào học':'Đã ghi nhận đơn ✅'));
   }
 
   /* --- Hoàn tiền --- */
