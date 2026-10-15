@@ -548,6 +548,14 @@
   .pmbox input:disabled{background:var(--paper-2);color:var(--ink-60)}
   .pmact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
   @media(max-width:560px){ .umenu-btn .um-info{display:none} }
+  .pf-head{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  .pf-av{width:52px;height:52px;flex:none;border-radius:50%;background:linear-gradient(145deg,#44cdb3,var(--jade));color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.3rem}
+  .pf-nm{font-weight:800;font-size:1.05rem;color:var(--ink)}
+  .pf-em{font-size:.84rem;color:var(--ink-60)}
+  .pf-stats{display:flex;gap:12px;margin:4px 0 6px}
+  .pf-st{flex:1;background:var(--paper-2);border-radius:12px;padding:10px 14px}
+  .pf-st span{display:block;font-size:.72rem;color:var(--ink-60)}
+  .pf-st b{font-size:.95rem;color:var(--jade-dark)}
   .learn-wrap{max-width:1140px;margin:0 auto;padding:26px 22px 60px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
   .player{aspect-ratio:16/9;background:linear-gradient(135deg,var(--jade-dark),var(--ink));border-radius:14px;display:grid;place-items:center;position:relative;overflow:hidden}
   .player::after{content:"字";position:absolute;font-family:"Noto Serif SC";font-weight:900;font-size:210px;color:rgba(255,255,255,.06);line-height:1}
@@ -1046,10 +1054,10 @@
         <svg class="um-caret" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="umenu" id="umenu" onclick="event.stopPropagation()">
-        <a onclick="openProfile()"><span>👤</span> Hồ sơ cá nhân</a>
-        <a onclick="closeUserMenu();go('learn')"><span>📚</span> Khóa học của tôi</a>
-        <a onclick="closeUserMenu();showResetPassword()"><span>🔒</span> Đổi mật khẩu</a>
-        <a class="danger" onclick="logout()"><span>🚪</span> Đăng xuất</a>
+        <a onclick="openProfile()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span> Hồ sơ cá nhân</a>
+        <a onclick="closeUserMenu();go('learn')"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.6-1-4-1.5-6-1.5V18c2 0 4.4.5 6 1.5 1.6-1 4-1.5 6-1.5V4.5c-2 0-4.4.5-6 1.5z"/><path d="M12 6v13.5"/></svg></span> Khóa học của tôi</a>
+        <a onclick="closeUserMenu();showResetPassword()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span> Đổi mật khẩu</a>
+        <a class="danger" onclick="logout()"><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 12h10"/><path d="M13 15l3-3-3-3"/></svg></span> Đăng xuất</a>
       </div>
     </div>
   </div>
@@ -1766,24 +1774,38 @@
   function toggleUserMenu(e){ if(e)e.stopPropagation(); const m=document.getElementById('umenu'); if(m)m.classList.toggle('open'); }
   function closeUserMenu(){ const m=document.getElementById('umenu'); if(m)m.classList.remove('open'); }
   document.addEventListener('click',()=>closeUserMenu());
-  function openProfile(){
+  async function openProfile(){
     closeUserMenu();
     const curName=(document.getElementById('umName')?.textContent||'').trim();
     openModal('Hồ sơ cá nhân',`<div class="mform">
-      <label>Email (không đổi)<input value="${esc(_learnerEmail)}" disabled></label>
+      <div class="pf-head"><div class="pf-av" id="pfAv">${esc((curName||'H').trim().slice(0,1).toUpperCase())}</div>
+        <div><div class="pf-nm">${esc(curName||'Học viên')}</div><div class="pf-em">${esc(_learnerEmail)}</div></div></div>
+      <div class="pf-stats" id="pfStats"><div class="pf-st"><span>Tham gia</span><b id="pfJoin">—</b></div><div class="pf-st"><span>Đã sở hữu</span><b id="pfOwned">—</b></div></div>
       <label>Họ tên<input id="pf_name" value="${esc(curName)}" placeholder="Nguyễn Văn A"></label>
-      <label>Số điện thoại<input id="pf_phone" placeholder="09xxxxxxxx"></label>
+      <div class="mrow"><label>Số điện thoại<input id="pf_phone" placeholder="09xxxxxxxx"></label>
+      <label>Ngày sinh (tùy chọn)<input id="pf_dob" type="date"></label></div>
+      <label>Địa chỉ (để nhận bản cứng/quà)<input id="pf_addr" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></label>
+      <label>Email (không đổi được)<input value="${esc(_learnerEmail)}" disabled></label>
       <div class="mact"><button class="btn btn-ghost" onclick="closeModal()">Đóng</button>
       <button class="btn btn-jade" onclick="saveProfile()">Lưu hồ sơ</button></div></div>`);
-    const sb=getSB();
-    if(sb){ sb.auth.getUser().then(({data})=>{ const ph=data&&data.user&&data.user.user_metadata&&data.user.user_metadata.phone; const el=document.getElementById('pf_phone'); if(el&&ph)el.value=ph; }).catch(()=>{}); }
+    const sb=getSB(); if(!sb) return;
+    try{
+      const {data}=await sb.auth.getUser();
+      const u=data&&data.user, m=(u&&u.user_metadata)||{};
+      const set=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.value=v;};
+      set('pf_phone',m.phone); set('pf_addr',m.address); set('pf_dob',m.dob);
+      const j=document.getElementById('pfJoin'); if(j&&u&&u.created_at)j.textContent=new Date(u.created_at).toLocaleDateString('vi-VN');
+    }catch(e){}
+    try{ const owned=await fetchOwned(); const o=document.getElementById('pfOwned'); if(o)o.textContent=owned.length+' khóa/tài liệu'; }catch(e){}
   }
   async function saveProfile(){
     const name=(document.getElementById('pf_name').value||'').trim();
     const phone=(document.getElementById('pf_phone').value||'').trim();
+    const address=(document.getElementById('pf_addr').value||'').trim();
+    const dob=(document.getElementById('pf_dob').value||'').trim();
     const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ'); return; }
     try{
-      const {error}=await sb.auth.updateUser({data:{full_name:name,phone}});
+      const {error}=await sb.auth.updateUser({data:{full_name:name,phone,address,dob}});
       if(error){ toast('Lỗi: '+error.message); return; }
       try{ const {data:u}=await sb.auth.getUser(); if(u&&u.user) await sb.from('profiles').update({full_name:name,phone}).eq('id',u.user.id); }catch(e){}
       setLearnerName(name); closeModal(); toast('Đã lưu hồ sơ ✅');
