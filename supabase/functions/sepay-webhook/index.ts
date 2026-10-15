@@ -98,11 +98,13 @@ Deno.serve(async (req) => {
     }
 
     payload = await req.json().catch(() => ({}));
-    // SePay: { transferType:'in', transferAmount, content, code, referenceCode, id, gateway, ... }
+    // SePay: { id, transferType:'in', transferAmount, content, code, referenceCode, gateway, ... }
     const type = payload.transferType || payload.transfer_type;
     const amount = Number(payload.transferAmount ?? payload.amount ?? 0);
     const content = String(payload.content ?? payload.description ?? "");
-    const txnId = String(payload.referenceCode ?? payload.id ?? "") || null;
+    // Chống xử lý trùng: dùng id giao dịch SePay (ổn định qua các lần gửi lại;
+    // referenceCode có thể rỗng nên KHÔNG dùng làm khoá chính).
+    const txnId = String(payload.id ?? payload.referenceCode ?? "") || null;
 
     if (type && type !== "in") { log("skip:not_incoming"); throw { soft: true }; }
 

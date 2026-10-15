@@ -97,14 +97,20 @@ where key = 'bank_info';
 2. **Kết nối ngân hàng**: Dashboard SePay → thêm tài khoản ngân hàng (đúng TK đã điền
    ở 2C) và làm theo hướng dẫn để SePay đọc được biến động số dư.
    - Ngân hàng hợp nhất: **MB, ACB, OCB, VPBank, BIDV, TPBank, KienLongBank**…
-3. **Tạo Webhook**: menu **Tích hợp → Webhooks → Thêm Webhook**:
-   - **URL**: `https://xchteoujpstqistejips.supabase.co/functions/v1/sepay-webhook`
-   - **Kiểu xác thực**: chọn **API Key** → ô key **dán đúng SEPAY_WEBHOOK_API_KEY**
-     (phải GIỐNG hệt chuỗi đã set ở 2B).
-   - **Sự kiện**: giao dịch **tiền vào (money in)**.
-   - **Lưu** và **bật**.
-4. Bấm **Gửi thử / Test** (nếu SePay có) → vào Supabase → **Table Editor → webhook_logs**
-   sẽ thấy 1 dòng log mới → tức kết nối OK.
+3. **Tạo Webhook**: menu **Tích hợp (Integrations) → Webhooks → Thêm Webhook**:
+   - **URL / Endpoint**: `https://xchteoujpstqistejips.supabase.co/functions/v1/sepay-webhook`
+   - **Kiểu xác thực (Authentication)**: chọn **API Key**. SePay sẽ gửi header
+     `Authorization: Apikey <khoá>`. Ô nhập key **dán đúng SEPAY_WEBHOOK_API_KEY**
+     (phải GIỐNG HỆT chuỗi đã set ở 2B — sai 1 ký tự là webhook báo 401).
+   - **Sự kiện (Event)**: chỉ giao dịch **tiền vào (money in / incoming)**.
+   - **Lưu** và **bật (enabled)**.
+4. Bấm **Gửi thử / Test webhook** → vào Supabase → **Table Editor → webhook_logs**
+   sẽ thấy 1 dòng log mới → kết nối OK.
+
+> Webhook tự chống xử lý trùng theo **id giao dịch SePay**, nên dù SePay gửi lại
+> nhiều lần cũng chỉ kích hoạt học viên **một lần**. Khách phải giữ **nguyên nội dung
+> chuyển khoản** (mã `ZIZI…` mà QR đã nhúng) — nếu khách tự xoá/sửa nội dung thì
+> không khớp được đơn (log ghi `order_not_found`).
 
 ---
 
