@@ -2544,7 +2544,7 @@
     const r=await dbUpsertProduct(saved,isNew);
     if(r&&r.ok){ toast(isNew?'Đã thêm — đã lưu vào Supabase':'Đã lưu — đồng bộ Supabase'); await loadProductsFromDB(); renderCourses(); }
     else if(r&&r.skipped){ toast('Đã lưu tạm (chưa kết nối Supabase)'); }
-    else { toast('⚠ Lưu lên Supabase lỗi — kiểm tra quyền admin/kết nối'); }
+    else { const em=(r&&r.error&&(r.error.message||r.error.hint||r.error.details))||'không rõ'; console.error('saveCourse upsert error:',r&&r.error); toast('⚠ Lưu lỗi: '+em); }
   }
   async function delCourse(id){
     if(!confirm('Xóa sản phẩm này?'))return;
