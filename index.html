@@ -770,6 +770,84 @@
     .co-grid{gap:20px}
     .steps{font-size:.72rem}
   }
+
+  /* @MAP-VOCAB · Học từ vựng HSK trên web (gói tai-lieu-5000-tu) */
+  body.in-vocab{background:var(--paper)}
+  body.in-vocab header,body.in-vocab footer,body.in-vocab .popup,body.in-vocab .flag-plane{display:none!important}
+  .vz-top{background:var(--ink);color:#eafaf3;padding:10px max(16px,env(safe-area-inset-left));display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+  .vz-top .brand{color:#fff;display:flex;align-items:center;gap:.55rem;font-weight:800;min-width:0}
+  .vz-top .brand img{width:34px;height:34px;border-radius:10px}
+  .vz-top .brand small{display:block;font-size:.68rem;font-weight:600;color:var(--gold-soft);letter-spacing:.04em}
+  .vz-top .sp{flex:1}
+  .vz-top .vz-back{color:#bcd9cd;font-size:.85rem;font-weight:600;white-space:nowrap}.vz-top .vz-back:hover{color:#fff}
+  .vz-today{background:rgba(255,255,255,.1);border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:600;white-space:nowrap}
+  .vz-today b{color:var(--gold)}
+  .vz{max-width:880px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
+  .vz-trial{background:var(--gold-soft);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:.9rem}
+  .vz-trial p{flex:1 1 220px;margin:0}
+  .vz-levels{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .vz-lv{background:#fff;border:1.5px solid var(--line-2);border-radius:14px;padding:8px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink)}
+  .vz-lv[aria-pressed="true"]{border-color:var(--jade);background:var(--jade-tint)}
+  .vz-lv[disabled]{opacity:.45;cursor:not-allowed}
+  .vz-lv .n{font-weight:800;font-size:.95rem;line-height:1}
+  .vz-lv .bar{width:78%;height:5px;border-radius:9px;background:var(--paper-3);overflow:hidden}
+  .vz-lv .bar i{display:block;height:100%;background:var(--jade)}
+  .vz-lv .pc{font-size:.68rem;color:var(--ink-60);font-variant-numeric:tabular-nums}
+  .vz-sum{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .vz-sum h1{font-size:1.6rem;margin:0}
+  .vz-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .vz-chip{font-size:.74rem;font-weight:600;border-radius:999px;padding:3px 10px;background:#fff;border:1px solid var(--line-2);font-variant-numeric:tabular-nums}
+  .vz-chip.due{background:var(--gold-soft);border-color:transparent}.vz-chip.new{background:var(--jade-tint);border-color:transparent}.vz-chip.done{background:#DDF5E8;border-color:transparent}
+  .vz-tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line-2);border-radius:14px;padding:5px}
+  .vz-tab{flex:1;border-radius:10px;padding:9px 6px;font-weight:700;font-size:.9rem;color:var(--ink-60)}
+  .vz-tab[aria-selected="true"]{background:var(--jade-dark);color:#fff}
+  .vz-stage{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:start}
+  .vz-buddy{position:sticky;top:70px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .vz-mascot{width:140px;height:auto;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+  .vz-mascot.hop{transform:translateY(-12px) rotate(-6deg)}.vz-mascot.sad{transform:rotate(8deg) scale(.95)}
+  .vz-bubble{position:relative;background:#fff;border:1px solid var(--line-2);border-radius:14px;padding:8px 12px;font-size:.82rem;text-align:center}
+  .vz-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:12px;min-height:320px}
+  .vz-meta{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:var(--ink-60);gap:8px}
+  .vz-stamp{font-weight:700;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;border-radius:6px;padding:1px 7px;color:var(--cinnabar-dark);transform:rotate(-3deg)}
+  .vz-stamp.s0{color:var(--jade-dark)}.vz-stamp.s3{color:#1E9E61}
+  .vz-word{font-family:"Noto Serif SC",serif;font-weight:600;font-size:clamp(56px,13vw,92px);line-height:1.1;text-align:center}
+  .vz-py{text-align:center;font-size:1.35rem;font-weight:700;color:var(--jade-dark)}
+  .vz-mean{text-align:center;font-size:1.15rem;font-weight:700}
+  .vz-note{text-align:center;font-size:.76rem;color:var(--ink-60)}
+  .vz-ex{border-top:1px dashed var(--line-2);padding-top:12px;display:flex;flex-direction:column;gap:2px}
+  .vz-ex .zh{font-family:"Noto Serif SC",serif;font-size:1.15rem}.vz-ex .ep{color:var(--jade-dark);font-size:.88rem}.vz-ex .tr{color:var(--ink-60);font-size:.88rem}
+  .vz-hint{text-align:center;color:var(--ink-60);font-size:.84rem}
+  .vz-icon{border:1px solid var(--line-2);background:#fff;border-radius:999px;width:38px;height:38px;display:inline-grid;place-items:center;font-size:1rem}
+  .vz-row{display:flex;gap:10px;flex-wrap:wrap}.vz-row>*{flex:1 1 130px}
+  .vz-btn{border-radius:14px;padding:13px 14px;font-weight:700;font-size:.95rem;text-align:center}
+  .vz-btn.primary{background:var(--jade-dark);color:#fff}.vz-btn.again{background:#FDE6E2;color:var(--cinnabar-dark)}
+  .vz-btn.good{background:#DDF5E8;color:#1E7F4E}.vz-btn.ghost{background:#fff;border:1px solid var(--line-2)}
+  .vz-kbd{font-size:.68rem;opacity:.6;margin-left:4px}
+  .vz-in{width:100%;font-size:1.5rem;text-align:center;padding:12px;border-radius:14px;border:2px solid var(--line-2);background:var(--paper);color:var(--ink);font-family:inherit}
+  .vz-in.ok{border-color:#1E9E61;background:#DDF5E8}.vz-in.bad{border-color:var(--cinnabar);background:#FDE6E2}
+  .vz-verdict{text-align:center;font-weight:700;min-height:22px}.vz-verdict.ok{color:#1E9E61}.vz-verdict.bad{color:var(--cinnabar-dark)}
+  .vz-empty{align-items:center;justify-content:center;text-align:center}
+  .vz-empty .big{font-size:1.6rem;font-weight:800;color:var(--jade-dark)}
+  .vz-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .vz-tools input,.vz-tools select{flex:1 1 180px;padding:10px 12px;border-radius:12px;border:1px solid var(--line-2);background:#fff;font:inherit;font-size:16px}
+  .vz-list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .vz-li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+  .vz-li:first-child{border-top:0}
+  .vz-li .h{font-family:"Noto Serif SC",serif;font-size:1.45rem;min-width:60px}
+  .vz-li .d b{color:var(--jade-dark);margin-right:6px}
+  .vz-li select{border:1px solid var(--line-2);border-radius:10px;padding:5px 6px;background:var(--paper);font:inherit;font-size:.76rem}
+  .vz-more{display:block;width:100%;border-top:1px solid var(--line);padding:12px;font-weight:700;color:var(--jade-dark)}
+  .vz-foot{font-size:.76rem;color:var(--ink-60);text-align:center}
+  .vz-loading{padding:40px 10px;text-align:center;color:var(--ink-60)}
+  @media (max-width:640px){
+    .vz-stage{grid-template-columns:1fr}
+    .vz-buddy{position:static;flex-direction:row;justify-content:center}
+    .vz-mascot{width:72px}
+    .vz-levels{grid-template-columns:repeat(3,1fr)}
+    .vz-card{padding:18px;min-height:280px}
+    .vz-top .brand small,.vz-today span{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){.vz-mascot{transition:none}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -968,6 +1046,7 @@
         </div>
 
         <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="buyNow()">Đăng ký học ngay →</button>
+        <button class="btn" id="tryVocabBtn" style="display:none;width:100%;justify-content:center;font-size:.98rem;margin-top:10px;background:var(--gold-soft);color:var(--ink)" onclick="openVocab('product')">✨ Học thử 20 từ miễn phí</button>
         <button class="btn add-cart-btn" id="addCartBtn" style="width:100%;justify-content:center;gap:.5rem;font-size:.98rem;margin-top:10px" onclick="addCurrentToCart()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.2 12.3a2 2 0 0 0 2 1.7h8.3a2 2 0 0 0 2-1.6L22 7H6"/></svg> Thêm vào giỏ</button>
 
         <div class="guarantee">
@@ -1132,6 +1211,36 @@
         <div id="lessonListLearn"></div>
       </aside>
     </div>
+  </div>
+</div>
+
+
+<!-- ================= HỌC TỪ VỰNG HSK (gói 5000 từ) ================= -->
+<!-- @MAP-VOCAB ===================================================== -->
+<div id="view-vocab">
+  <div class="vz-top">
+    <a class="brand" href="#" onclick="go('home');return false"><img src="assets/zizi-logo.png" alt=""><span>ZiZi<small>5000 từ vựng HSK</small></span></a>
+    <span class="sp"></span>
+    <span class="vz-today"><span>Hôm nay </span><b id="vzToday">0</b> từ</span>
+    <a class="vz-back" href="#" id="vzBack" onclick="vzLeave();return false">← Quay lại</a>
+  </div>
+  <div class="vz">
+    <div class="vz-trial" id="vzTrial" style="display:none">
+      <p><b>Bạn đang học thử 20 từ đầu của HSK1.</b> Mua trọn bộ để mở khóa 5000 từ HSK1–6 và lưu tiến độ theo tài khoản.</p>
+      <button class="btn btn-primary btn-sm" onclick="vzBuy()">Mở khóa trọn bộ →</button>
+    </div>
+    <nav class="vz-levels" id="vzLevels" aria-label="Chọn cấp HSK"></nav>
+    <section class="vz-sum"><h1 id="vzTitle">HSK1</h1><div class="vz-chips" id="vzChips"></div></section>
+    <div class="vz-tabs" role="tablist">
+      <button class="vz-tab" role="tab" data-mode="card" aria-selected="true">Thẻ nhớ</button>
+      <button class="vz-tab" role="tab" data-mode="type" aria-selected="false">Luyện gõ</button>
+      <button class="vz-tab" role="tab" data-mode="list" aria-selected="false">Danh sách</button>
+    </div>
+    <section class="vz-stage">
+      <aside class="vz-buddy"><img class="vz-mascot" id="vzMascot" src="assets/zizi-mascot.png" alt="Bé sâu ZiZi"><div class="vz-bubble" id="vzBubble">Chào bạn! Cùng học vài từ nhé.</div></aside>
+      <div id="vzPanel" style="min-width:0"><div class="vz-loading">Đang tải từ vựng…</div></div>
+    </section>
+    <p class="vz-foot">Mỗi lần bấm "Nhớ rồi", từ sẽ quay lại sau 1 → 3 → 7 → 14 ngày. Bấm "Chưa nhớ" thì từ được ôn lại ngay.</p>
   </div>
 </div>
 
@@ -1602,10 +1711,10 @@
      desc:'Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề cùng giáo viên.',
      bullets:[],price:1700000,priceLabel:'1.700.000đ',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
      live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000đ/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
-    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (App học + Excel + PDF)',level:'Tài liệu · tự học',
-     desc:'App học thẻ nhớ & luyện gõ chữ Hán có lịch ôn tự động, kèm Excel theo dõi tiến độ và PDF tra cứu 236 trang. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
-     bullets:['App học: thẻ nhớ, luyện gõ, nghe phát âm','Excel tự chấm đúng/sai + lịch ôn','PDF tra cứu in được, có ví dụ & dịch'],
-     price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:true,hardPrice:189000,shipFee:30000,lessons:0,res:8,students:340,revenue:'34tr'},
+    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (Excel + Học online)',level:'Tài liệu · tự học',
+     desc:'Học 5000 từ HSK1–6 ngay trên web: thẻ nhớ, luyện gõ chữ Hán, nghe phát âm, lịch ôn tự động. Kèm file Excel tải về để tự theo dõi tiến độ.',
+     bullets:['Học online: thẻ nhớ, luyện gõ, nghe phát âm','Lịch ôn tự động, lưu tiến độ theo tài khoản','Excel tải về: tự chấm đúng/sai + lịch ôn'],
+     price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:false,lessons:0,res:2,students:340,revenue:'34tr'},
     {id:5,type:'video',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
      desc:'600 từ vựng và ngữ pháp trung cấp, đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
      bullets:[],price:1000000,priceLabel:'1.000.000đ',wasLabel:'1.450.000đ',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
@@ -1749,7 +1858,7 @@
     }catch(e){}
   }
 
-  const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri'};
+  const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri',vocab:'tu-vung'};
   let _supHash=false;
   function _applyHash(h){
     _supHash=true;
@@ -1761,7 +1870,7 @@
   }
 
   function go(view){
-    ['home','product','checkout','admin','learn','auth'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    ['home','product','checkout','admin','learn','auth','vocab'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+view).style.display='block';
     if(view!=='checkout'){ try{stopPoll();}catch(e){} }
     if(view==='checkout'){buildCheckout();}
@@ -1773,6 +1882,8 @@
     document.body.classList.toggle('in-admin', view==='admin');
     document.body.classList.toggle('in-learn', view==='learn');
     document.body.classList.toggle('in-auth', view==='auth');
+    document.body.classList.toggle('in-vocab', view==='vocab');
+    if(view==='vocab'){ vzInit(); }
     window.scrollTo({top:0,behavior:'auto'});
     if(view!=='product' && VIEW_HASH[view]!==undefined){ _applyHash(VIEW_HASH[view]); }
   }
@@ -2057,7 +2168,7 @@
       const badge=isDoc?'Tài liệu':(p.type==='live'?'Trực tiếp':'Khóa học');
       if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">Tài liệu đã sở hữu · tải về không giới hạn.</p>
-        <button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">⬇ Tải tài liệu</button></div></div>`;
+        ${p.slug===VZ_SLUG?`<button class="btn btn-primary btn-sm" onclick="openVocab('learn')">▶ Học trên web</button> `:''}<button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">⬇ Tải ${p.slug===VZ_SLUG?'Excel':'tài liệu'}</button></div></div>`;
       const total=getLessons(p.id).length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
       return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3>
@@ -2127,7 +2238,9 @@
     document.getElementById('mCtaPrice').textContent=p.priceLabel;
     const isDoc=p.type==='doc', isLive=p.type==='live';
     document.getElementById('pNote').innerHTML = isDoc
-      ? '<b>📄 Tài liệu</b>, bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
+      ? (p.slug===VZ_SLUG ? '<b>📱 Học online + Excel</b>, mở khóa ngay sau thanh toán: học trên web ở Khu vực học viên (điện thoại hay máy tính đều được) và tải file Excel về máy.'
+         : p.hasHard ? '<b>📄 Tài liệu</b>, bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
+         : '<b>📄 Tài liệu</b>, bản mềm tải về ngay sau thanh toán.')
       : isLive
       ? '<b>🎥 Lớp trực tiếp</b>, học cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, có ghi hình xem lại. Nhận lịch &amp; link phòng học sau khi thanh toán.'
       : '<b>🎬 Khóa học qua video quay sẵn</b>, bạn <b>tự học</b> theo lộ trình, kích hoạt ngay sau thanh toán, xem lại trọn đời trên mọi thiết bị.<br><span style="color:var(--cinnabar);font-weight:600">Lưu ý: đây KHÔNG phải lớp trực tiếp với giáo viên.</span>';
@@ -2136,6 +2249,7 @@
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
     renderWhatsIn(p);
+    { const tb=document.getElementById('tryVocabBtn'); if(tb) tb.style.display=p.slug===VZ_SLUG?'flex':'none'; }
     const li=document.getElementById('liveInfo');
     if(isLive && p.live){
       li.style.display='block';
@@ -2153,10 +2267,10 @@
   /* @DATA-WHATSIN Mục "Bên trong có gì?" theo từng sản phẩm (slug), không có thì dùng mặc định theo loại */
   const WHATSIN={
     'tai-lieu-5000-tu':[
-      '<b>App học từ vựng ZiZi</b>: thẻ nhớ lật mặt, luyện gõ chữ Hán hoặc pinyin được chấm ngay, nghe phát âm. Chạy trên điện thoại và máy tính, không cần mạng.',
-      '<b>Lịch ôn tự động</b>: từ đã nhớ sẽ quay lại sau 1 → 3 → 7 → 14 ngày, mỗi ngày chỉ ôn đúng những từ sắp quên.',
-      '<b>File Excel 6 cấp HSK</b>: gõ lại từ và câu ví dụ, tự tô xanh/đỏ đúng sai; sheet Tổng quan theo dõi % tiến độ. Dùng được trên Google Sheets.',
-      '<b>PDF tra cứu 236 trang</b>: 5000 từ HSK1–6 kèm pinyin, nghĩa tiếng Việt và câu ví dụ có dịch. In ra học được.'
+      '<b>Học online trên zizichinese.com</b>: thẻ nhớ lật mặt, luyện gõ chữ Hán hoặc pinyin được chấm ngay, nghe phát âm. Dùng trên điện thoại và máy tính.',
+      '<b>Lịch ôn tự động</b>: từ đã nhớ sẽ quay lại sau 1 → 3 → 7 → 14 ngày. Tiến độ lưu theo tài khoản, đổi máy vẫn còn.',
+      '<b>5000 từ HSK1–6</b>: mỗi từ có pinyin, nghĩa tiếng Việt và câu ví dụ có dịch.',
+      '<b>File Excel tải về</b>: gõ lại từ và câu ví dụ, tự chấm ✓/✗; sheet Tổng quan theo dõi % tiến độ. Mở được bằng Excel và Google Sheets.'
     ],
     _doc:['Bản mềm (PDF/Excel) tải về ngay sau khi thanh toán.','Có thể chọn thêm bản cứng in màu, giao tận nơi.','Cập nhật miễn phí khi tài liệu có bản mới.'],
     _live:['Học trực tiếp cùng giáo viên qua Zoom theo lịch cố định.','Lớp nhỏ, được chữa phát âm 1-1.','Có ghi hình để xem lại buổi đã học.','Nhóm kín hỏi đáp cùng giáo viên và các bạn cùng lớp.']
@@ -2509,13 +2623,209 @@
   }
   function chip(el){el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
 
+
+  /* ================= @MAP-VOCAB · HỌC TỪ VỰNG HSK TRÊN WEB =================
+     Dữ liệu: bảng vocab_words trên Supabase (RLS: chỉ người mua gói 'tai-lieu-5000-tu' đọc được,
+     20 từ is_preview ai cũng đọc được). Tiến độ: localStorage + bảng vocab_progress theo tài khoản. */
+  const VZ_SLUG='tai-lieu-5000-tu';
+  const VZ_LEVELS=[['HSK1',149],['HSK2',150],['HSK3',295],['HSK4',600],['HSK5',1295],['HSK6',2513]];
+  const VZ_STATUS=['Chưa học','Học lần 1','Học lần 2','Hoàn thành'];
+  const VZ_GAP=[0,1,3,7,14], VZ_NEW=15;
+  const vz={ready:false,full:false,uid:null,lv:0,mode:'card',p:{},log:{},cache:{},from:'learn',queue:[],qi:0,flipped:false,typed:null,lq:'',lf:'all',ln:60,syncT:null};
+  const vzEsc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const vzDay=(d=new Date())=>Math.floor((d.getTime()-d.getTimezoneOffset()*60000)/864e5);
+  const vzEl=id=>document.getElementById(id);
+  const vzLvName=()=>VZ_LEVELS[vz.lv][0];
+  const vzWords=()=>vz.cache[vzLvName()]||[];
+  const vzProg=(lv=vzLvName())=>(vz.p[lv]=vz.p[lv]||{});
+  const vzKey=()=>'zizi_vocab_'+(vz.uid||'guest');
+
+  function openVocab(from){ vz.from=from||'learn'; go('vocab'); }
+  function vzLeave(){ if(vz.from==='product'){ const p=products.find(x=>x.slug===VZ_SLUG); if(p){ openProduct(p.id); return; } } go(vz.from==='home'?'home':'learn'); }
+  function vzBuy(){ const p=products.find(x=>x.slug===VZ_SLUG); if(p) openProduct(p.id); else go('home'); }
+
+  function vzLoadLocal(){
+    try{ const s=JSON.parse(localStorage.getItem(vzKey())||'{}'); vz.p=s.p||{}; vz.log=s.log||{}; if(typeof s.lv==='number')vz.lv=s.lv; if(s.mode)vz.mode=s.mode; }catch(_){ vz.p={}; vz.log={}; }
+  }
+  function vzSave(){
+    try{ localStorage.setItem(vzKey(),JSON.stringify({p:vz.p,log:vz.log,lv:vz.lv,mode:vz.mode})); }catch(_){}
+    const sb=getSB(); if(!sb||!vz.uid||!vz.full) return;
+    clearTimeout(vz.syncT);
+    vz.syncT=setTimeout(async()=>{ try{ await sb.from('vocab_progress').upsert({user_id:vz.uid,data:{p:vz.p,log:vz.log},updated_at:new Date().toISOString()}); }catch(_){} },1500);
+  }
+  async function vzInit(){
+    vzEl('vzPanel').innerHTML='<div class="vz-loading">Đang tải từ vựng…</div>';
+    const sb=getSB(); vz.uid=null; vz.full=false;
+    if(sb){
+      try{ const {data}=await sb.auth.getSession(); vz.uid=data&&data.session&&data.session.user?data.session.user.id:null; }catch(_){}
+    }
+    vzLoadLocal();
+    if(sb){
+      try{ const {data}=await sb.from('vocab_words').select('id').eq('is_preview',false).limit(1); vz.full=!!(data&&data.length); }catch(_){ vz.full=false; }
+      if(vz.full&&vz.uid){
+        try{
+          const {data}=await sb.from('vocab_progress').select('data').eq('user_id',vz.uid).maybeSingle();
+          const r=data&&data.data;
+          if(r&&r.p){ for(const lv in r.p){ vz.p[lv]=Object.assign({},r.p[lv],vz.p[lv]||{}); } vz.log=Object.assign({},r.log||{},vz.log); }
+        }catch(_){}
+      }
+    }
+    if(!vz.full) vz.lv=0;
+    vzEl('vzTrial').style.display=vz.full?'none':'flex';
+    vzEl('vzBack').textContent=vz.from==='product'?'← Trang sản phẩm':(vz.from==='home'?'← Trang chủ':'← Khu vực học');
+    vz.ready=true;
+    await vzOpenLevel(vz.lv);
+  }
+  async function vzFetchLevel(lv){
+    if(vz.cache[lv]) return vz.cache[lv];
+    const sb=getSB(); if(!sb) return [];
+    const out=[];
+    for(let from=0;from<3000;from+=1000){
+      let q=sb.from('vocab_words').select('idx,word,pinyin,meaning,example,example_py,example_vi,note').eq('level',lv);
+      if(!vz.full) q=q.eq('is_preview',true);
+      const {data,error}=await q.order('idx',{ascending:true}).range(from,from+999);
+      if(error||!data) break;
+      data.forEach(r=>out.push({w:r.word,p:r.pinyin||'',m:r.meaning||'',e:r.example||'',ep:r.example_py||'',t:r.example_vi||'',n:r.note||''}));
+      if(data.length<1000) break;
+    }
+    vz.cache[lv]=out; return out;
+  }
+  async function vzOpenLevel(i){
+    vz.lv=i; vz.typed=null; vz.ln=60;
+    vzEl('vzPanel').innerHTML='<div class="vz-loading">Đang tải '+VZ_LEVELS[i][0]+'…</div>';
+    vzRenderLevels(); vzRenderSummary();
+    await vzFetchLevel(VZ_LEVELS[i][0]);
+    vzBuildQueue(); vzRender();
+  }
+  function vzCounts(i){
+    const lv=VZ_LEVELS[i][0], words=vz.cache[lv], P=vz.p[lv]||{}, t=vzDay();
+    const total=words?words.length:VZ_LEVELS[i][1]; let c=[0,0,0,0], due=0, seen=0;
+    for(const w in P){ const e=P[w]; if(!e) continue; seen++; c[e[0]]++; if(e[1]<=t) due++; }
+    c[0]=Math.max(0,total-seen+c[0]);
+    return {c,due,total};
+  }
+  function vzGrade(it,good){
+    const P=vzProg(), b=(P[it.w]&&P[it.w][0])||0, nb=good?Math.min(b+1,3):1;
+    P[it.w]=[nb, vzDay()+(good?VZ_GAP[nb+(b===3?1:0)]:0)];
+    const t=vzDay(); vz.log[t]=(vz.log[t]||0)+1;
+    for(const k in vz.log) if(+k<t-60) delete vz.log[k];
+    vzSave();
+  }
+  function vzBuildQueue(){
+    const t=vzDay(), P=vzProg(), W=vzWords();
+    const due=W.filter(it=>P[it.w]&&P[it.w][1]<=t).sort((a,b)=>P[a.w][1]-P[b.w][1]);
+    const fresh=W.filter(it=>!P[it.w]).slice(0,vz.full?VZ_NEW:W.length);
+    vz.queue=[...due,...fresh]; vz.qi=0; vz.flipped=false; vz.typed=null;
+  }
+  const VZ_LINES={hi:['Chào bạn! Cùng học vài từ nhé.','Sẵn sàng chưa? Bắt đầu thôi!'],good:['Giỏi quá!','Chuẩn luôn!','Nhớ dai ghê!','Đúng rồi đó!'],bad:['Không sao, lát gặp lại từ này nha.','Sai chút xíu thôi, thử lại nhé!'],done:['Xong hết rồi! Nghỉ chút nhé.','Hết bài hôm nay. Mai gặp lại!']};
+  function vzSay(k){ const a=VZ_LINES[k]; vzEl('vzBubble').textContent=a[Math.floor(Math.random()*a.length)];
+    const m=vzEl('vzMascot'); m.classList.remove('hop','sad'); void m.offsetWidth; if(k==='good'||k==='done')m.classList.add('hop'); if(k==='bad')m.classList.add('sad'); setTimeout(()=>m.classList.remove('hop','sad'),600); }
+  function vzSpeak(text){ try{ const u=new SpeechSynthesisUtterance(text); u.lang='zh-CN'; u.rate=.85; const v=speechSynthesis.getVoices().find(x=>/zh[-_]CN/i.test(x.lang))||speechSynthesis.getVoices().find(x=>/^zh/i.test(x.lang)); if(v)u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(_){} }
+  const vzStrip=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ü/g,'v').toLowerCase().replace(/[^a-zv]/g,'');
+  function vzMatch(v,it){ v=v.trim(); if(!v) return false; if(v===it.w) return true; return /[a-zA-Z]/.test(v)&&it.p.split('/').map(vzStrip).includes(vzStrip(v)); }
+
+  function vzRenderLevels(){
+    vzEl('vzLevels').innerHTML=VZ_LEVELS.map((L,i)=>{ const {c,total}=vzCounts(i); const pc=total?Math.round(c[3]/total*100):0; const lock=!vz.full&&i>0;
+      return `<button class="vz-lv" data-lv="${i}" aria-pressed="${i===vz.lv}" ${lock?'disabled title="Mua trọn bộ để mở khóa"':''}><span class="n">${lock?'🔒 ':''}${L[0]}</span><span class="bar"><i style="width:${pc}%"></i></span><span class="pc">${pc}%</span></button>`; }).join('');
+  }
+  function vzRenderSummary(){
+    const {c,due,total}=vzCounts(vz.lv);
+    vzEl('vzTitle').textContent=vzLvName()+(vz.full?'':' · học thử');
+    vzEl('vzChips').innerHTML=`<span class="vz-chip">${total} từ</span><span class="vz-chip due">Cần ôn: ${due}</span><span class="vz-chip new">Chưa học: ${c[0]}</span><span class="vz-chip done">Đã thuộc: ${c[3]}</span>`;
+    vzEl('vzToday').textContent=vz.log[vzDay()]||0;
+    document.querySelectorAll('.vz-tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.mode===vz.mode));
+  }
+  function vzMetaRow(it){ const P=vzProg(), b=(P[it.w]&&P[it.w][0])||0;
+    return `<div class="vz-meta"><span>${vz.qi+1} / ${vz.queue.length}</span><span class="vz-stamp s${b}">${VZ_STATUS[b]}</span><button class="vz-icon" data-act="say" aria-label="Nghe phát âm">🔊</button></div>`; }
+  const vzExample=it=>`<div class="vz-ex"><div class="zh">${vzEsc(it.e)}</div><div class="ep">${vzEsc(it.ep)}</div><div class="tr">${vzEsc(it.t)}</div></div>`;
+  function vzDone(){
+    vzSay('done'); const {c}=vzCounts(vz.lv);
+    if(!vzWords().length) return `<div class="vz-card vz-empty"><div class="big">Chưa có dữ liệu</div><p>Không tải được từ vựng. Kiểm tra kết nối mạng rồi thử lại.</p><button class="vz-btn primary" data-act="reload">Thử lại</button></div>`;
+    if(!vz.full) return `<div class="vz-card vz-empty"><div class="big">Hết 20 từ học thử!</div><p>Mua trọn bộ để học tiếp 5000 từ HSK1–6, có lịch ôn và lưu tiến độ theo tài khoản.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="buy">Mở khóa trọn bộ →</button><button class="vz-btn ghost" data-act="tolist">Xem lại danh sách</button></div></div>`;
+    return `<div class="vz-card vz-empty"><div class="big">Hết bài rồi!</div><p>Bạn đã ôn hết các từ đến hạn của ${vzLvName()}. Còn ${c[0]} từ chưa học.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="more-new">Học thêm ${VZ_NEW} từ mới</button><button class="vz-btn ghost" data-act="tolist">Xem danh sách</button></div></div>`;
+  }
+  function vzRenderCard(){
+    if(vz.qi>=vz.queue.length){ vzEl('vzPanel').innerHTML=vzDone(); return; }
+    const it=vz.queue[vz.qi];
+    vzEl('vzPanel').innerHTML=`<article class="vz-card">${vzMetaRow(it)}<div class="vz-word">${vzEsc(it.w)}</div>
+      ${vz.flipped?`<div class="vz-py">${vzEsc(it.p)}</div><div class="vz-mean">${vzEsc(it.m)}</div>${it.n?`<div class="vz-note">${vzEsc(it.n)}</div>`:''}${vzExample(it)}
+        <div class="vz-row"><button class="vz-btn again" data-act="again">Chưa nhớ<span class="vz-kbd">1</span></button><button class="vz-btn good" data-act="good">Nhớ rồi<span class="vz-kbd">2</span></button></div>`
+      :`<p class="vz-hint">Nhớ nghĩa và cách đọc của từ này không?</p><button class="vz-btn primary" data-act="flip">Lật thẻ<span class="vz-kbd">Space</span></button>`}</article>`;
+  }
+  function vzRenderType(){
+    if(vz.qi>=vz.queue.length){ vzEl('vzPanel').innerHTML=vzDone(); return; }
+    const it=vz.queue[vz.qi], t=vz.typed;
+    vzEl('vzPanel').innerHTML=`<article class="vz-card">${vzMetaRow(it)}
+      <div class="vz-mean" style="font-size:1.4rem;margin-top:10px">${vzEsc(it.m)}</div><div class="vz-py">${t?vzEsc(it.p):'· · ·'}</div>
+      <input class="vz-in ${t?(t.ok?'ok':'bad'):''}" id="vzIn" placeholder="Gõ chữ Hán hoặc pinyin" autocomplete="off" autocapitalize="off" spellcheck="false" lang="zh-CN" value="${t?vzEsc(t.v):''}" ${t?'readonly':''}>
+      <div class="vz-verdict ${t?(t.ok?'ok':'bad'):''}">${t?(t.ok?'Chính xác!':`Đáp án: <span class="hz" style="font-size:1.3rem">${vzEsc(it.w)}</span>`):''}</div>
+      ${t?vzExample(it)+`<button class="vz-btn primary" data-act="next">Tiếp theo<span class="vz-kbd">Enter</span></button>`:`<div class="vz-row"><button class="vz-btn ghost" data-act="skip">Không biết</button><button class="vz-btn primary" data-act="check">Kiểm tra<span class="vz-kbd">Enter</span></button></div>`}</article>`;
+    if(!t) setTimeout(()=>{ const i=vzEl('vzIn'); if(i&&matchMedia('(pointer:fine)').matches) i.focus(); },30);
+  }
+  function vzRenderList(){
+    const P=vzProg(), t=vzDay(), q=vz.lq.trim().toLowerCase(), qs=vzStrip(q);
+    const rows=vzWords().filter(it=>{ const e=P[it.w], b=e?e[0]:0;
+      if(vz.lf==='due'&&!(e&&e[1]<=t)) return false;
+      if(vz.lf!=='all'&&vz.lf!=='due'&&b!==+vz.lf) return false;
+      return !q||it.w.includes(q)||it.m.toLowerCase().includes(q)||(qs&&vzStrip(it.p).includes(qs)); });
+    const opts=b=>VZ_STATUS.map((s,i)=>`<option value="${i}" ${i===b?'selected':''}>${s}</option>`).join('');
+    const body=(rows.slice(0,vz.ln).map(it=>{ const b=(P[it.w]&&P[it.w][0])||0;
+      return `<div class="vz-li"><div class="h">${vzEsc(it.w)}</div><div class="d"><b>${vzEsc(it.p)}</b>${vzEsc(it.m)}</div><select data-w="${vzEsc(it.w)}" aria-label="Trạng thái ${vzEsc(it.w)}">${opts(b)}</select></div>`; }).join('')
+      ||'<div class="vz-li"><div></div><div class="d">Không có từ nào khớp.</div><div></div></div>')
+      +(rows.length>vz.ln?`<button class="vz-more" data-act="more">Xem thêm (${rows.length-vz.ln} từ)</button>`:'');
+    const box=vzEl('vzListBox'); if(box){ box.innerHTML=body; return; }
+    vzEl('vzPanel').innerHTML=`<div class="vz-tools"><input id="vzQ" type="search" placeholder="Tìm chữ Hán, pinyin hoặc nghĩa…" value="${vzEsc(vz.lq)}"><select id="vzF" aria-label="Lọc"><option value="all">Tất cả</option><option value="due">Cần ôn hôm nay</option>${VZ_STATUS.map((s,i)=>`<option value="${i}">${s}</option>`).join('')}</select></div><div class="vz-list" id="vzListBox">${body}</div>`;
+    vzEl('vzF').value=vz.lf;
+  }
+  function vzRender(){ vzRenderLevels(); vzRenderSummary(); if(vz.mode==='list')vzRenderList(); else if(vz.mode==='type')vzRenderType(); else vzRenderCard(); }
+  function vzAdvance(good){ const it=vz.queue[vz.qi]; vzGrade(it,good); vzSay(good?'good':'bad'); if(!good)vz.queue.push(it); vz.qi++; vz.flipped=false; vz.typed=null; vzRender(); }
+  function vzCheck(){ const it=vz.queue[vz.qi], v=(vzEl('vzIn')||{}).value||''; const ok=vzMatch(v,it); vz.typed={v,ok}; if(ok)vzSpeak(it.w); vzRender(); }
+
+  document.addEventListener('click',e=>{
+    const root=vzEl('view-vocab'); if(!root||!root.contains(e.target)) return;
+    const lvb=e.target.closest('.vz-lv'); if(lvb&&!lvb.disabled){ vzSay('hi'); vzOpenLevel(+lvb.dataset.lv); vzSave(); return; }
+    const tab=e.target.closest('.vz-tab'); if(tab){ vz.mode=tab.dataset.mode; vz.flipped=false; vz.typed=null; if(vz.mode!=='list'&&vz.qi>=vz.queue.length)vzBuildQueue(); vzEl('vzPanel').innerHTML=''; vzSave(); vzRender(); return; }
+    const b=e.target.closest('[data-act]'); if(!b) return;
+    const it=vz.queue[vz.qi];
+    switch(b.dataset.act){
+      case 'flip': vz.flipped=true; vzRenderCard(); if(it)vzSpeak(it.w); break;
+      case 'again': vzAdvance(false); break;
+      case 'good': vzAdvance(true); break;
+      case 'say': if(it)vzSpeak(it.w); break;
+      case 'check': vzCheck(); break;
+      case 'skip': vz.typed={v:'',ok:false}; vzRender(); break;
+      case 'next': { const ok=vz.typed&&vz.typed.ok; vz.typed=null; vzAdvance(!!ok); break; }
+      case 'more-new': vzBuildQueue(); vzRender(); break;
+      case 'tolist': vz.mode='list'; vzEl('vzPanel').innerHTML=''; vzRender(); break;
+      case 'more': vz.ln+=120; vzRenderList(); break;
+      case 'buy': vzBuy(); break;
+      case 'reload': delete vz.cache[vzLvName()]; vzOpenLevel(vz.lv); break;
+    }
+  });
+  document.addEventListener('input',e=>{ if(e.target.id==='vzQ'){ vz.lq=e.target.value; vz.ln=60; vzRenderList(); } });
+  document.addEventListener('change',e=>{
+    if(e.target.id==='vzF'){ vz.lf=e.target.value; vz.ln=60; vzRenderList(); return; }
+    const w=e.target.dataset&&e.target.dataset.w; if(!w||!vzEl('view-vocab').contains(e.target)) return;
+    const b=+e.target.value, P=vzProg(); if(b===0) delete P[w]; else P[w]=[b,vzDay()+VZ_GAP[b]]; vzSave(); vzRenderLevels(); vzRenderSummary();
+  });
+  document.addEventListener('keydown',e=>{
+    const root=vzEl('view-vocab'); if(!root||root.style.display==='none'||e.isComposing) return;
+    const inInput=/INPUT|SELECT|TEXTAREA/.test(e.target.tagName);
+    if(vz.mode==='card'&&vz.qi<vz.queue.length&&!inInput){
+      if(e.code==='Space'&&!vz.flipped){ e.preventDefault(); vz.flipped=true; vzRenderCard(); vzSpeak(vz.queue[vz.qi].w); }
+      else if(vz.flipped&&e.key==='1') vzAdvance(false);
+      else if(vz.flipped&&e.key==='2') vzAdvance(true);
+    }
+    if(vz.mode==='type'&&e.key==='Enter'&&vz.qi<vz.queue.length){ e.preventDefault(); if(vz.typed){ const ok=vz.typed.ok; vz.typed=null; vzAdvance(ok); } else if(e.target.id==='vzIn') vzCheck(); }
+  });
+
   /* ===== URL admin riêng (không lộ trên web): chỉ vào bằng #quantri ===== */
   function route(){
     if(_supHash) return;
     const h=(location.hash||'').replace(/^#/,'');
     if(h==='quantri'||h==='admin'){ go('admin'); return; }
     if(h.indexOf('sp/')===0){ const slug=decodeURIComponent(h.slice(3)); const p=products.find(x=>x.slug===slug); if(p){ openProduct(p.id); } else { go('home'); } return; }
-    const REV={'':'home','home':'home','thanh-toan':'checkout','hoc':'learn','dang-nhap':'auth'};
+    const REV={'':'home','home':'home','thanh-toan':'checkout','hoc':'learn','dang-nhap':'auth','tu-vung':'vocab'};
     go(REV[h]!==undefined?REV[h]:'home');
   }
   function checkAdminRoute(){ route(); }
