@@ -979,7 +979,7 @@
 
     <div class="whatsin">
       <h3>Bên trong khóa học có gì?</h3>
-      <ul>
+      <ul id="wiList">
         <li><span class="n">1</span><div>Video bài giảng chia nhỏ theo chủ đề, xem trên điện thoại hay máy tính đều được.</div></li>
         <li><span class="n">2</span><div>File luyện tập &amp; flashcard tải về, kèm audio phát âm chuẩn người bản xứ.</div></li>
         <li><span class="n">3</span><div>Bộ đề thi thử bám sát cấu trúc HSK, có video chữa chi tiết.</div></li>
@@ -1602,9 +1602,9 @@
      desc:'Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề cùng giáo viên.',
      bullets:[],price:1700000,priceLabel:'1.700.000đ',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
      live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000đ/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
-    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (PDF + Excel)',level:'Tài liệu · tra cứu',
-     desc:'File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
-     bullets:['5000 từ kèm pinyin & ví dụ','Excel lọc theo cấp/độ khó','Bản in màu đóng gáy đẹp'],
+    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (App học + Excel + PDF)',level:'Tài liệu · tự học',
+     desc:'App học thẻ nhớ & luyện gõ chữ Hán có lịch ôn tự động, kèm Excel theo dõi tiến độ và PDF tra cứu 236 trang. Bản mềm tải ngay sau thanh toán, bản cứng in màu giao tận nơi.',
+     bullets:['App học: thẻ nhớ, luyện gõ, nghe phát âm','Excel tự chấm đúng/sai + lịch ôn','PDF tra cứu in được, có ví dụ & dịch'],
      price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:true,hardPrice:189000,shipFee:30000,lessons:0,res:8,students:340,revenue:'34tr'},
     {id:5,type:'video',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
      desc:'600 từ vựng và ngữ pháp trung cấp, đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
@@ -2135,6 +2135,7 @@
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
+    renderWhatsIn(p);
     const li=document.getElementById('liveInfo');
     if(isLive && p.live){
       li.style.display='block';
@@ -2148,6 +2149,23 @@
     go('product');
     _applyHash('sp/'+p.slug);
     track('ViewContent',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
+  }
+  /* @DATA-WHATSIN Mục "Bên trong có gì?" theo từng sản phẩm (slug), không có thì dùng mặc định theo loại */
+  const WHATSIN={
+    'tai-lieu-5000-tu':[
+      '<b>App học từ vựng ZiZi</b>: thẻ nhớ lật mặt, luyện gõ chữ Hán hoặc pinyin được chấm ngay, nghe phát âm. Chạy trên điện thoại và máy tính, không cần mạng.',
+      '<b>Lịch ôn tự động</b>: từ đã nhớ sẽ quay lại sau 1 → 3 → 7 → 14 ngày, mỗi ngày chỉ ôn đúng những từ sắp quên.',
+      '<b>File Excel 6 cấp HSK</b>: gõ lại từ và câu ví dụ, tự tô xanh/đỏ đúng sai; sheet Tổng quan theo dõi % tiến độ. Dùng được trên Google Sheets.',
+      '<b>PDF tra cứu 236 trang</b>: 5000 từ HSK1–6 kèm pinyin, nghĩa tiếng Việt và câu ví dụ có dịch. In ra học được.'
+    ],
+    _doc:['Bản mềm (PDF/Excel) tải về ngay sau khi thanh toán.','Có thể chọn thêm bản cứng in màu, giao tận nơi.','Cập nhật miễn phí khi tài liệu có bản mới.'],
+    _live:['Học trực tiếp cùng giáo viên qua Zoom theo lịch cố định.','Lớp nhỏ, được chữa phát âm 1-1.','Có ghi hình để xem lại buổi đã học.','Nhóm kín hỏi đáp cùng giáo viên và các bạn cùng lớp.']
+  };
+  const _WI_DEFAULT=(document.getElementById('wiList')||{}).innerHTML||'';
+  function renderWhatsIn(p){
+    const ul=document.getElementById('wiList'); if(!ul) return;
+    const items=WHATSIN[p.slug]||(p.type==='doc'?WHATSIN._doc:p.type==='live'?WHATSIN._live:null);
+    ul.innerHTML = items ? items.map((x,i)=>'<li><span class="n">'+(i+1)+'</span><div>'+x+'</div></li>').join('') : _WI_DEFAULT;
   }
   // ================= GIỎ HÀNG =================
   let _cartMode=false, _checkoutItems=[];
