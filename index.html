@@ -68,7 +68,7 @@
   .nav-links{display:flex;gap:1.9rem;margin:0 auto;font-size:.95rem;font-weight:600}
   .nav-links a{color:var(--ink-60);padding:.3rem 0;transition:color .15s}
   .nav-links a:hover,.nav-links a.on{color:var(--jade-dark)}
-  .nav-cta{display:flex;gap:.7rem;align-items:center}
+  .nav-cta{display:flex;gap:.7rem;align-items:center;margin-left:auto}
   .nav-login{font-weight:700;font-size:.92rem;color:var(--ink);padding:.4rem}
   .nav-login:hover{color:var(--jade-dark)}
   .burger{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line-2);background:#fff;font-size:20px;align-items:center;justify-content:center}
@@ -960,6 +960,11 @@
           <div class="li-row"><span>Lịch học</span><b id="li_schedule">—</b></div>
           <div class="li-row"><span>Thời lượng</span><b id="li_session">—</b></div>
           <div class="li-row"><span>Khung giờ</span><b id="li_slot">—</b></div>
+        </div>
+
+        <div class="fmt" id="liveSched" style="display:none;margin:4px 0 16px">
+          <label><input type="radio" name="sched" value="Thứ 2-4-6" checked><b>📅 Lịch Thứ 2-4-6</b><span>Chọn lịch học phù hợp với bạn</span></label>
+          <label><input type="radio" name="sched" value="Thứ 3-5-7"><b>📅 Lịch Thứ 3-5-7</b><span>Có thể đổi lịch bằng cách nhắn Zalo</span></label>
         </div>
 
         <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="buyNow()">Đăng ký học ngay →</button>
@@ -2138,6 +2143,7 @@
       document.getElementById('li_session').textContent=p.live.session||'—';
       document.getElementById('li_slot').textContent=p.live.slot||'—';
     } else { li.style.display='none'; }
+    const ls=document.getElementById('liveSched'); if(ls){ ls.style.display=isLive?'grid':'none'; const d=ls.querySelector('input[value="Thứ 2-4-6"]'); if(d)d.checked=true; }
     go('product');
     _applyHash('sp/'+p.slug);
     track('ViewContent',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
@@ -2147,20 +2153,21 @@
   function getCart(){ try{ const c=JSON.parse(localStorage.getItem('zizi_cart')||'[]'); return Array.isArray(c)?c:[]; }catch(_){ return []; } }
   function saveCart(c){ try{ localStorage.setItem('zizi_cart',JSON.stringify(c)); }catch(_){} updateCartBadge(); }
   function updateCartBadge(){ const n=getCart().length; const b=document.getElementById('cartBadge'); if(b){ b.textContent=n; b.style.display=n?'grid':'none'; } }
-  function addToCart(slug,variant){
+  function getLiveSchedule(){ const el=document.querySelector('#liveSched input[name=sched]:checked'); return el?el.value:'Thứ 2-4-6'; }
+  function addToCart(slug,variant,schedule){
     const c=getCart();
     if(c.some(x=>x.slug===slug)){ toast('Sản phẩm đã có trong giỏ'); openCart(); return; }
-    c.push({slug,variant:variant||'course'}); saveCart(c);
+    c.push({slug,variant:variant||'course',schedule:schedule||''}); saveCart(c);
     toast('🛒 Đã thêm vào giỏ'); openCart();
   }
-  function addCurrentToCart(){ if(!current)return; addToCart(current.slug, current.type==='doc'?'soft':'course'); }
+  function addCurrentToCart(){ if(!current)return; addToCart(current.slug, current.type==='doc'?'soft':'course', current.type==='live'?getLiveSchedule():''); }
   function removeCartItem(slug){ saveCart(getCart().filter(x=>x.slug!==slug)); renderCart(); }
   function _cartResolved(){
     return getCart().map(it=>{
       const p=products.find(x=>x.slug===it.slug); if(!p)return null;
       let price=p.price;
       if(p.type==='doc'&&it.variant==='hard'){ price=(p.hardPrice||p.price)+(p.shipFee||0); }
-      return {slug:p.slug,name:p.name,variant:it.variant,price,type:p.type,cover:p.cover,char:p.char};
+      return {slug:p.slug,name:p.name,variant:it.variant,price,type:p.type,cover:p.cover,char:p.char,schedule:it.schedule||''};
     }).filter(Boolean);
   }
   function renderCart(){
@@ -2170,7 +2177,7 @@
     if(foot)foot.style.display='block';
     box.innerHTML=items.map(it=>`<div class="cart-it">
       <img src="${it.cover||'assets/zizi-mascot.png'}" onerror="this.src='assets/zizi-mascot.png'">
-      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?'Lớp trực tiếp':'Khóa video')}</div></div>
+      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?('Lớp trực tiếp'+(it.schedule?' · '+esc(it.schedule):'')):'Khóa video')}</div></div>
       <div style="text-align:right"><div class="ci-p">${fmtVND(it.price)}</div><button class="ci-rm" onclick="removeCartItem('${it.slug}')" aria-label="Xóa">×</button></div>
     </div>`).join('');
     document.getElementById('cartTotal').textContent=fmtVND(items.reduce((s,i)=>s+i.price,0));
@@ -2255,12 +2262,13 @@
     let total=0, hard=false, rows=[];
     const vlabel=(t,v)=> t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'';
     if(_cartMode){
-      _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; rows.push({name:it.name+vlabel(it.type,it.variant),price:it.price}); });
+      _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; const sc=it.type==='live'&&it.schedule?(' · '+it.schedule):''; rows.push({name:it.name+sc+vlabel(it.type,it.variant),price:it.price}); });
     } else {
       const p=current; let price=p.price;
       if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); hard=sel&&sel.value==='hard'; price=hard?(p.hardPrice+(p.shipFee||0)):p.price; }
       total=price; current._hard=hard;
-      rows.push({name:p.name+vlabel(p.type,hard?'hard':'soft'),price:price});
+      const sc=p.type==='live'?(' · '+getLiveSchedule()):'';
+      rows.push({name:p.name+sc+vlabel(p.type,hard?'hard':'soft'),price:price});
     }
     const si=document.getElementById('sumItems');
     if(si) si.innerHTML=rows.map(r=>`<div class="sum-line"><span>${esc(r.name)}</span><b>${fmtVND(r.price)}</b></div>`).join('');
@@ -2298,8 +2306,8 @@
     if(!/^0\d{8,10}$/.test(phone.replace(/\s/g,''))){ toast('Vui lòng nhập số điện thoại (VD: 09xxxxxxxx).'); document.getElementById('co_phone')?.focus(); return; }
     const coupon=(document.getElementById('co_coupon')?.value||'').trim().toUpperCase();
     let bodyProd;
-    if(_cartMode){ bodyProd={items:_checkoutItems.map(it=>({slug:it.slug,variant:it.variant}))}; }
-    else { const p=current; bodyProd={slug:p.slug,variant:(p.type==='doc'?(p._hard?'hard':'soft'):'course')}; }
+    if(_cartMode){ bodyProd={items:_checkoutItems.map(it=>({slug:it.slug,variant:it.variant,schedule:it.schedule||''}))}; }
+    else { const p=current; bodyProd={slug:p.slug,variant:(p.type==='doc'?(p._hard?'hard':'soft'):'course'),schedule:(p.type==='live'?getLiveSchedule():'')}; }
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
     try{

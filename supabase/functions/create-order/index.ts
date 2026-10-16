@@ -45,11 +45,11 @@ Deno.serve(async (req) => {
     const sb = createClient(SUPABASE_URL, SERVICE_ROLE);
 
     // 1) Chuẩn hoá danh sách món: ưu tiên body.items (giỏ hàng), nếu không có → 1 món
-    let reqItems: Array<{ slug?: string; product_id?: string; variant?: string }> = [];
+    let reqItems: Array<{ slug?: string; product_id?: string; variant?: string; schedule?: string }> = [];
     if (Array.isArray(body.items) && body.items.length) {
-      reqItems = body.items.map((it: any) => ({ slug: it.slug, product_id: it.product_id, variant: it.variant || "course" }));
+      reqItems = body.items.map((it: any) => ({ slug: it.slug, product_id: it.product_id, variant: it.variant || "course", schedule: String(it.schedule || "").slice(0, 40) }));
     } else {
-      reqItems = [{ slug: body.slug, product_id: body.product_id, variant: body.variant || "course" }];
+      reqItems = [{ slug: body.slug, product_id: body.product_id, variant: body.variant || "course", schedule: String(body.schedule || "").slice(0, 40) }];
     }
     if (reqItems.length > 20) reqItems = reqItems.slice(0, 20);
 
@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
         else { vr = "soft"; amt = prod.price || 0; }
       }
       baseAmount += amt;
-      itemsOut.push({ product_id: prod.id, name: prod.name, variant: vr, price: amt, type: prod.type });
+      itemsOut.push({ product_id: prod.id, name: prod.name, variant: vr, price: amt, type: prod.type, schedule: prod.type === "live" ? (it.schedule || "") : "" });
     }
     if (!itemsOut.length) return json({ error: "product_not_found", message: "Không có sản phẩm hợp lệ." }, 404);
     const hasHard = itemsOut.some((i) => i.variant === "hard");
