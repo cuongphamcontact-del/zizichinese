@@ -28,6 +28,9 @@ zizichinese.com
 │   ├── ② Quét VietQR → hệ thống tự đối soát
 │   └── ③ Thành công → vào học / tải tài liệu
 │
+├── /#tu-vung ....................... HỌC 5000 TỪ VỰNG HSK (người mua gói tai-lieu-5000-tu; khách: 20 từ học thử)
+│   └── Thẻ nhớ · Luyện gõ · Danh sách · lịch ôn 1/3/7/14 ngày
+│
 ├── /hoc ............................. KHU VỰC HỌC VIÊN  (cần đăng nhập)
 │   ├── Trình phát video + tiến độ %
 │   ├── Tài nguyên buổi học (PDF/audio/flashcard)
@@ -59,6 +62,8 @@ zizichinese.com
 | Ẩn tạm 1 sản phẩm | Sửa → bỏ tick **Xuất bản** | — |
 | Tên buổi học, gắn video, file bài tập | **Sửa khóa → 🎬 Quản lý bài học** | `@DATA-LESSONS` |
 | Giáo trình HSK1 hiện trong khu vực học | Sửa trực tiếp trong file | `@MAP-LEARN` |
+| Trang học 5000 từ vựng (giao diện, số từ học thử) | Sửa trong file; dữ liệu từ ở bảng `vocab_words` (Supabase) | `@MAP-VOCAB` |
+| Mục "Bên trong có gì?" từng sản phẩm | Sửa trong file | `@DATA-WHATSIN` |
 
 ### Giao diện & thương hiệu
 
