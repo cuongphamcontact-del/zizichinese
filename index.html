@@ -2644,6 +2644,8 @@
   const VZ_LEVELS=[['HSK1',149],['HSK2',150],['HSK3',295],['HSK4',600],['HSK5',1295],['HSK6',2513]];
   const VZ_STATUS=['Chưa học','Học lần 1','Học lần 2','Hoàn thành'];
   const VZ_GAP=[0,1,3,7,14], VZ_NEW=15;
+  /* 20 từ học thử (miễn phí, công khai) — dùng khi chưa đọc được bảng vocab_words */
+  const VZ_PREVIEW=[{"w":"爱","p":"ài","m":"Yêu","e":"我爱你。","ep":"Wǒ ài nǐ.","t":"Tôi yêu bạn.","n":""},{"w":"八","p":"bā","m":"Tám","e":"他有八个苹果。","ep":"Tā yǒu bā ge píngguǒ.","t":"Anh ấy có tám quả táo.","n":""},{"w":"爸爸","p":"bàba","m":"Bố","e":"我的爸爸很高。","ep":"Wǒ de bàba hěn gāo.","t":"Bố của tôi rất cao.","n":""},{"w":"杯子","p":"bēizi","m":"Cốc","e":"这是我的杯子。","ep":"Zhè shì wǒ de bēizi.","t":"Đây là cốc của tôi.","n":""},{"w":"北京","p":"Běijīng","m":"Bắc Kinh","e":"北京很大。","ep":"Běijīng hěn dà.","t":"Bắc Kinh thì lớn.","n":""},{"w":"本","p":"běn","m":"Cuốn (dùng cho sách)","e":"这本书很有趣。","ep":"Zhè běn shū hěn yǒuqù.","t":"Quyển sách này rất thú vị.","n":""},{"w":"不客气","p":"búkèqì","m":"Không có gì (đáp lại lời cảm ơn)","e":"不客气。","ep":"Bú kèqì.","t":"Không có gì.","n":""},{"w":"不","p":"bù","m":"Không","e":"他不喜欢吃鱼。","ep":"Tā bù xǐhuān chī yú.","t":"Anh ấy không thích ăn cá.","n":""},{"w":"菜","p":"cài","m":"Món ăn, rau củ","e":"我喜欢吃菜。","ep":"Wǒ xǐhuān chī cài.","t":"Tôi thích ăn rau.","n":""},{"w":"茶","p":"chá","m":"Trà","e":"我喝茶。","ep":"Wǒ hē chá.","t":"Tôi uống trà.","n":""},{"w":"吃","p":"chī","m":"Ăn","e":"我吃苹果。","ep":"Wǒ chī píngguǒ.","t":"Tôi ăn táo.","n":""},{"w":"出租车","p":"chūzūchē","m":"Taxi","e":"我坐出租车。","ep":"Wǒ zuò chūzūchē.","t":"Tôi đi taxi.","n":""},{"w":"打电话","p":"dǎdiànhuà","m":"Gọi điện thoại","e":"她给我打电话。","ep":"Tā gěi wǒ dǎ diànhuà.","t":"Cô ấy gọi điện cho tôi.","n":""},{"w":"大","p":"dà","m":"Lớn, to","e":"这件衣服很大。","ep":"Zhè jiàn yīfú hěn dà.","t":"Cái áo này rất to.","n":""},{"w":"的","p":"de","m":"Của (thuộc tính)","e":"这是我的书。","ep":"Zhè shì wǒ de shū.","t":"Đây là sách của tôi.","n":""},{"w":"点","p":"diǎn","m":"Giờ (trong thời gian)","e":"现在是三点。","ep":"Xiànzài shì sān diǎn?","t":"Bây giờ là mấy giờ?","n":""},{"w":"电脑","p":"diànnǎo","m":"Máy tính","e":"我用电脑。","ep":"Wǒ yòng diànnǎo.","t":"Tôi dùng máy tính.","n":""},{"w":"电视","p":"diànshì","m":"Ti vi","e":"电视很大。","ep":"Diànshì hěn dà.","t":"Tivi thì lớn.","n":""},{"w":"电影","p":"diànyǐng","m":"Phim","e":"我喜欢看电影。","ep":"Wǒ xǐhuān kàn diànyǐng.","t":"Tôi thích xem phim.","n":""},{"w":"东西","p":"dōngxī","m":"Đồ vật, thứ","e":"这是什么东西？","ep":"Zhè shì shénme dōngxī?","t":"Đây là cái gì?","n":""}];
   const vz={ready:false,full:false,uid:null,lv:0,mode:'card',p:{},log:{},cache:{},from:'learn',queue:[],qi:0,flipped:false,typed:null,lq:'',lf:'all',ln:60,syncT:null};
   const vzEsc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const vzDay=(d=new Date())=>Math.floor((d.getTime()-d.getTimezoneOffset()*60000)/864e5);
@@ -2691,8 +2693,8 @@
   }
   async function vzFetchLevel(lv){
     if(vz.cache[lv]) return vz.cache[lv];
-    const sb=getSB(); if(!sb) return [];
-    const out=[];
+    const sb=getSB(); const out=[];
+    if(!sb){ if(!vz.full&&lv==='HSK1') out.push(...VZ_PREVIEW); vz.cache[lv]=out; return out; }
     for(let from=0;from<3000;from+=1000){
       let q=sb.from('vocab_words').select('idx,word,pinyin,meaning,example,example_py,example_vi,note').eq('level',lv);
       if(!vz.full) q=q.eq('is_preview',true);
@@ -2701,6 +2703,7 @@
       data.forEach(r=>out.push({w:r.word,p:r.pinyin||'',m:r.meaning||'',e:r.example||'',ep:r.example_py||'',t:r.example_vi||'',n:r.note||''}));
       if(data.length<1000) break;
     }
+    if(!out.length && !vz.full && lv==='HSK1') out.push(...VZ_PREVIEW);
     vz.cache[lv]=out; return out;
   }
   async function vzOpenLevel(i){
@@ -2753,7 +2756,7 @@
   const vzExample=it=>`<div class="vz-ex"><div class="zh">${vzEsc(it.e)}</div><div class="ep">${vzEsc(it.ep)}</div><div class="tr">${vzEsc(it.t)}</div></div>`;
   function vzDone(){
     vzSay('done'); const {c}=vzCounts(vz.lv);
-    if(!vzWords().length) return `<div class="vz-card vz-empty"><div class="big">Chưa có dữ liệu</div><p>Không tải được từ vựng. Kiểm tra kết nối mạng rồi thử lại.</p><button class="vz-btn primary" data-act="reload">Thử lại</button></div>`;
+    if(!vzWords().length) return `<div class="vz-card vz-empty"><div class="big">Chưa tải được từ vựng</div><p>Kiểm tra kết nối mạng rồi thử lại. Nếu vẫn lỗi, nhắn ZiZi qua Zalo để được hỗ trợ.</p><button class="vz-btn primary" data-act="reload">Thử lại</button></div>`;
     if(!vz.full) return `<div class="vz-card vz-empty"><div class="big">Hết 20 từ học thử!</div><p>Mua trọn bộ để học tiếp 5000 từ HSK1–6, có lịch ôn và lưu tiến độ theo tài khoản.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="buy">Mở khóa trọn bộ →</button><button class="vz-btn ghost" data-act="tolist">Xem lại danh sách</button></div></div>`;
     return `<div class="vz-card vz-empty"><div class="big">Hết bài rồi!</div><p>Bạn đã ôn hết các từ đến hạn của ${vzLvName()}. Còn ${c[0]} từ chưa học.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="more-new">Học thêm ${VZ_NEW} từ mới</button><button class="vz-btn ghost" data-act="tolist">Xem danh sách</button></div></div>`;
   }
