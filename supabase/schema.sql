@@ -191,6 +191,8 @@ create trigger trg_orders_updated before update on orders
   for each row execute function set_updated_at();
 create index if not exists idx_orders_status on orders(status);
 create index if not exists idx_orders_created on orders(created_at desc);
+-- Giỏ hàng: 1 đơn có thể gồm nhiều sản phẩm. items = [{product_id, name, variant, price}]
+alter table orders add column if not exists items jsonb default '[]'::jsonb;
 
 -- ---------- ENROLLMENTS (ai được học gì) ----------
 create table if not exists enrollments (

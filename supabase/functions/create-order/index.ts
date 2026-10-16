@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json().catch(() => ({}));
-    const { slug, product_id, variant = "course", name = "", email = "", phone = "", address = "", source = "" } = body;
+    const { name = "", email = "", phone = "", address = "", source = "" } = body;
     const channel = (String(source || "web").trim() || "web").slice(0, 120);
 
     const mail = String(email).trim().toLowerCase();
@@ -44,31 +44,37 @@ Deno.serve(async (req) => {
 
     const sb = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-    // 1) Lấy sản phẩm + GIÁ THẬT từ DB (không tin số tiền gửi từ trình duyệt)
-    let q = sb.from("products").select("id,slug,name,type,price,hard_price,ship_fee,published").limit(1);
-    q = product_id ? q.eq("id", product_id) : q.eq("slug", slug);
-    const { data: prod, error: pErr } = await q.maybeSingle();
-    if (pErr || !prod || prod.published === false) {
-      return json({ error: "product_not_found", message: "Không tìm thấy sản phẩm." }, 404);
+    // 1) Chuẩn hoá danh sách món: ưu tiên body.items (giỏ hàng), nếu không có → 1 món
+    let reqItems: Array<{ slug?: string; product_id?: string; variant?: string }> = [];
+    if (Array.isArray(body.items) && body.items.length) {
+      reqItems = body.items.map((it: any) => ({ slug: it.slug, product_id: it.product_id, variant: it.variant || "course" }));
+    } else {
+      reqItems = [{ slug: body.slug, product_id: body.product_id, variant: body.variant || "course" }];
     }
+    if (reqItems.length > 20) reqItems = reqItems.slice(0, 20);
 
-    // 2) Tính số tiền + loại biến thể
-    let amount = prod.price || 0;
+    // 2) Lấy GIÁ THẬT từ DB cho từng món (không tin số tiền gửi từ trình duyệt)
+    let baseAmount = 0;
     let ship = 0;
-    let vr: "course" | "soft" | "hard" = "course";
-    if (prod.type === "doc") {
-      if (variant === "hard") {
-        vr = "hard";
-        amount = (prod.hard_price || prod.price || 0) + (prod.ship_fee || 0);
-        ship = prod.ship_fee || 0;
-      } else {
-        vr = "soft";
-        amount = prod.price || 0;
+    const itemsOut: any[] = [];
+    for (const it of reqItems) {
+      let q = sb.from("products").select("id,slug,name,type,price,hard_price,ship_fee,published").limit(1);
+      q = it.product_id ? q.eq("id", it.product_id) : q.eq("slug", it.slug);
+      const { data: prod } = await q.maybeSingle();
+      if (!prod || prod.published === false) continue;
+      let vr = "course", amt = prod.price || 0;
+      if (prod.type === "doc") {
+        if (it.variant === "hard") { vr = "hard"; amt = (prod.hard_price || prod.price || 0) + (prod.ship_fee || 0); ship += prod.ship_fee || 0; }
+        else { vr = "soft"; amt = prod.price || 0; }
       }
+      baseAmount += amt;
+      itemsOut.push({ product_id: prod.id, name: prod.name, variant: vr, price: amt, type: prod.type });
     }
+    if (!itemsOut.length) return json({ error: "product_not_found", message: "Không có sản phẩm hợp lệ." }, 404);
+    const hasHard = itemsOut.some((i) => i.variant === "hard");
 
     // 2b) Áp mã giảm giá (kiểm tra phía máy chủ)
-    const baseAmount = amount;
+    let amount = baseAmount;
     let discount = 0;
     let appliedCoupon: any = null;
     const couponCode = String(body.coupon || "").trim().toUpperCase();
@@ -100,14 +106,15 @@ Deno.serve(async (req) => {
       const code = code6();
       const { data, error } = await sb.from("orders").insert({
         code,
-        product_id: prod.id,
+        product_id: itemsOut[0].product_id,
         customer_name: name || null,
         customer_email: mail,
         customer_phone: phone || null,
-        shipping_address: vr === "hard" ? (address || null) : null,
-        variant: vr,
+        shipping_address: hasHard ? (address || null) : null,
+        variant: itemsOut[0].variant,
         amount,
         ship_fee: ship,
+        items: itemsOut,
         status: "pending",
         source: "auto",
         channel,
@@ -135,7 +142,8 @@ Deno.serve(async (req) => {
       amount: order.amount,
       qr_url,
       bank: { bank: bank.bank, account_no: bank.account_no, account_name: bank.account_name || "ZIZI CHINESE" },
-      product: { name: prod.name, type: prod.type },
+      product: { name: itemsOut.length > 1 ? (itemsOut[0].name + " +" + (itemsOut.length - 1) + " món") : itemsOut[0].name, type: itemsOut[0].type },
+      items: itemsOut.map((i) => ({ name: i.name, price: i.price, variant: i.variant })),
       base_amount: baseAmount,
       discount,
       coupon: appliedCoupon ? { code: appliedCoupon.code, kind: appliedCoupon.kind, value: appliedCoupon.value } : null,

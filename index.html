@@ -397,6 +397,33 @@
   .online-note{background:var(--jade-tint);border-radius:12px;padding:12px 14px;font-size:.9rem;margin:18px 0;color:var(--jade-dark)}
   .mcta{display:none}
 
+  /* ---------- GIỎ HÀNG ---------- */
+  .cart-btn{position:relative;width:42px;height:42px;flex:none;border-radius:12px;border:1px solid var(--line-2);background:#fff;display:grid;place-items:center;color:var(--ink);cursor:pointer}
+  .cart-btn:hover{color:var(--jade-dark);border-color:var(--jade)}
+  .cart-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:var(--cinnabar);color:#fff;font-size:.66rem;font-weight:800;display:grid;place-items:center;line-height:1}
+  .cart-ov{position:fixed;inset:0;background:rgba(20,40,34,.42);z-index:70;display:none;justify-content:flex-end}
+  .cart-ov.open{display:flex}
+  .cart-panel{width:min(420px,92vw);height:100%;background:var(--paper);display:flex;flex-direction:column;box-shadow:-10px 0 40px -10px rgba(0,0,0,.4);animation:slideIn .22s ease both}
+  @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+  .cart-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .cart-head h3{font-size:1.15rem}
+  .cart-x{font-size:1.5rem;color:var(--ink-60);width:36px;height:36px;border-radius:10px}
+  .cart-x:hover{background:var(--paper-2)}
+  .cart-items{flex:1;overflow-y:auto;padding:14px 20px}
+  .cart-it{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .cart-it img{width:56px;height:42px;flex:none;border-radius:8px;object-fit:cover;background:var(--jade-tint)}
+  .cart-it .ci-b{flex:1;min-width:0}
+  .cart-it .ci-n{font-weight:600;font-size:.9rem;line-height:1.25}
+  .cart-it .ci-v{font-size:.74rem;color:var(--ink-60)}
+  .cart-it .ci-p{font-weight:700;color:var(--jade-dark);font-size:.9rem;white-space:nowrap}
+  .cart-it .ci-rm{color:var(--cinnabar);font-size:1.2rem;line-height:1;background:none;padding:2px 6px}
+  .cart-empty{text-align:center;color:var(--ink-60);padding:48px 10px}
+  .cart-foot{padding:16px 20px;border-top:1px solid var(--line);background:#fff}
+  .cart-total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .cart-total b{font-size:1.3rem;color:var(--ink)}
+  .add-cart-btn{background:#fff;color:var(--jade-dark);border:1.5px solid var(--jade)}
+  .add-cart-btn:hover{background:var(--jade-tint)}
+
   /* ---------- ADMIN ---------- */
   body.in-admin{background:var(--paper-2)}
   body.in-admin header,body.in-admin footer,body.in-admin .popup{display:none!important}
@@ -797,6 +824,7 @@
       <a class="nav-learn" href="#" style="display:none" onclick="go('learn');return false">Khu vực học</a>
     </nav>
     <div class="nav-cta">
+      <button class="cart-btn" onclick="openCart()" aria-label="Giỏ hàng"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.2 12.3a2 2 0 0 0 2 1.7h8.3a2 2 0 0 0 2-1.6L22 7H6"/></svg><span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
       <a class="nav-login" href="#" onclick="login();return false">Đăng nhập</a>
       <button class="btn btn-primary btn-sm nav-register" onclick="register()">Tạo tài khoản</button>
       <button class="burger" aria-label="Menu" onclick="toggleNav()">☰</button>
@@ -934,7 +962,8 @@
           <div class="li-row"><span>Khung giờ</span><b id="li_slot">—</b></div>
         </div>
 
-        <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="go('checkout')">Đăng ký học ngay →</button>
+        <button class="btn btn-primary buy-btn" id="buyBtn" style="width:100%;justify-content:center;font-size:1.05rem" onclick="buyNow()">Đăng ký học ngay →</button>
+        <button class="btn add-cart-btn" id="addCartBtn" style="width:100%;justify-content:center;font-size:.98rem;margin-top:10px" onclick="addCurrentToCart()">🛒 Thêm vào giỏ</button>
 
         <div class="guarantee">
           <span class="g-ic">🛡️</span>
@@ -955,7 +984,8 @@
   </div>
   <div class="mcta">
     <div><small>Ưu đãi hôm nay</small><b id="mCtaPrice">199k</b></div>
-    <button class="btn btn-primary" id="mCtaBtn" onclick="go('checkout')">Đăng ký học ngay →</button>
+    <button class="btn add-cart-btn" style="flex:none;width:46px;max-width:none;padding:0;font-size:1.1rem" onclick="addCurrentToCart()" aria-label="Thêm vào giỏ">🛒</button>
+    <button class="btn btn-primary" id="mCtaBtn" onclick="buyNow()">Đăng ký →</button>
   </div>
 </div>
 
@@ -1027,7 +1057,7 @@
 
         <div class="summary">
           <h4>Đơn hàng của bạn</h4>
-          <div class="sum-line"><span id="sumName">Khóa HSK1</span><b id="sumPrice">199.000đ</b></div>
+          <div id="sumItems"></div>
           <div class="sum-line" id="sumShipLine" style="display:none"><span>Phí ship bản cứng</span><b id="sumShip">30.000đ</b></div>
           <div class="sum-line" id="sumCouponLine" style="display:none"><span id="sumCouponName" style="color:var(--jade-dark)">Mã giảm giá</span><b id="sumCoupon" style="color:var(--jade-dark)">-0đ</b></div>
           <div class="sum-total"><span>Thành tiền</span><b id="sumTotal">199.000đ</b></div>
@@ -1491,6 +1521,18 @@
     <button class="modal-x" onclick="closeModal()" aria-label="Đóng">×</button>
     <h3 id="modalTitle"></h3>
     <div id="modalBody"></div>
+  </div>
+</div>
+<!-- ================= GIỎ HÀNG ================= -->
+<div class="cart-ov" id="cartOv" onclick="if(event.target===this)closeCart()">
+  <div class="cart-panel">
+    <div class="cart-head"><h3>Giỏ hàng của bạn</h3><button class="cart-x" onclick="closeCart()" aria-label="Đóng">×</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot" id="cartFoot">
+      <div class="cart-total"><span>Tạm tính</span><b id="cartTotal">0đ</b></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1.02rem" onclick="checkoutCart()">Thanh toán →</button>
+      <button class="lnk" style="display:block;margin:8px auto 0" onclick="closeCart()">Tiếp tục xem khóa học</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -2100,21 +2142,75 @@
     _applyHash('sp/'+p.slug);
     track('ViewContent',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
   }
+  // ================= GIỎ HÀNG =================
+  let _cartMode=false, _checkoutItems=[];
+  function getCart(){ try{ const c=JSON.parse(localStorage.getItem('zizi_cart')||'[]'); return Array.isArray(c)?c:[]; }catch(_){ return []; } }
+  function saveCart(c){ try{ localStorage.setItem('zizi_cart',JSON.stringify(c)); }catch(_){} updateCartBadge(); }
+  function updateCartBadge(){ const n=getCart().length; const b=document.getElementById('cartBadge'); if(b){ b.textContent=n; b.style.display=n?'grid':'none'; } }
+  function addToCart(slug,variant){
+    const c=getCart();
+    if(c.some(x=>x.slug===slug)){ toast('Sản phẩm đã có trong giỏ'); openCart(); return; }
+    c.push({slug,variant:variant||'course'}); saveCart(c);
+    toast('🛒 Đã thêm vào giỏ'); openCart();
+  }
+  function addCurrentToCart(){ if(!current)return; addToCart(current.slug, current.type==='doc'?'soft':'course'); }
+  function removeCartItem(slug){ saveCart(getCart().filter(x=>x.slug!==slug)); renderCart(); }
+  function _cartResolved(){
+    return getCart().map(it=>{
+      const p=products.find(x=>x.slug===it.slug); if(!p)return null;
+      let price=p.price;
+      if(p.type==='doc'&&it.variant==='hard'){ price=(p.hardPrice||p.price)+(p.shipFee||0); }
+      return {slug:p.slug,name:p.name,variant:it.variant,price,type:p.type,cover:p.cover,char:p.char};
+    }).filter(Boolean);
+  }
+  function renderCart(){
+    const box=document.getElementById('cartItems'), foot=document.getElementById('cartFoot');
+    const items=_cartResolved();
+    if(!items.length){ box.innerHTML='<div class="cart-empty">Giỏ hàng trống.<br><a class="lnk" onclick="closeCart();go(\'home\')">Xem khóa học →</a></div>'; if(foot)foot.style.display='none'; return; }
+    if(foot)foot.style.display='block';
+    box.innerHTML=items.map(it=>`<div class="cart-it">
+      <img src="${it.cover||'assets/zizi-mascot.png'}" onerror="this.src='assets/zizi-mascot.png'">
+      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?'Lớp trực tiếp':'Khóa video')}</div></div>
+      <div style="text-align:right"><div class="ci-p">${fmtVND(it.price)}</div><button class="ci-rm" onclick="removeCartItem('${it.slug}')" aria-label="Xóa">×</button></div>
+    </div>`).join('');
+    document.getElementById('cartTotal').textContent=fmtVND(items.reduce((s,i)=>s+i.price,0));
+  }
+  function openCart(){ renderCart(); document.getElementById('cartOv').classList.add('open'); }
+  function closeCart(){ document.getElementById('cartOv').classList.remove('open'); }
+  function buyNow(){ _cartMode=false; go('checkout'); }
+  function checkoutCart(){
+    const items=_cartResolved();
+    if(!items.length){ toast('Giỏ hàng trống'); return; }
+    _checkoutItems=items; _cartMode=true; closeCart(); go('checkout');
+  }
+  function _checkoutBase(){
+    if(_cartMode) return _checkoutItems.reduce((s,i)=>s+i.price,0);
+    const p=current; if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); if(sel&&sel.value==='hard') return (p.hardPrice||p.price)+(p.shipFee||0); }
+    return p.price;
+  }
+
   let orderCodeVal='ZIZIA1B2', payTimer;
   function setStep(n){document.querySelectorAll('#view-checkout .steps .st').forEach((s,i)=>s.classList.toggle('on', i<n));}
   function buildCheckout(){
-    const p=current, isDoc=p.type==='doc'&&p.hasHard;
     _appliedCoupon=null;
     const cc=document.getElementById('co_coupon'); if(cc)cc.value='';
     const cm=document.getElementById('couponMsg'); if(cm)cm.style.display='none';
-    track('InitiateCheckout',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
-    document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
-    document.getElementById('coSub').textContent = p.type==='doc'?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Tài khoản đăng nhập sẽ được gửi về email này.';
-    document.getElementById('fmtChooser').style.display = isDoc?'grid':'none';
-    if(isDoc){
-      document.querySelector('input[name=fmt][value=soft]').checked=true;
-      document.getElementById('fmtSoftP').textContent='Tải về ngay · '+fmtVND(p.price);
-      document.getElementById('fmtHardP').textContent='In màu, giao 2–4 ngày · '+fmtVND(p.hardPrice)+' +ship';
+    if(_cartMode){
+      document.getElementById('coHeading').textContent='Thông tin nhận khóa học / tài liệu';
+      document.getElementById('coSub').textContent='Tài khoản & link sẽ được gửi về email này.';
+      document.getElementById('fmtChooser').style.display='none';
+      track('InitiateCheckout',{value:_checkoutItems.reduce((s,i)=>s+i.price,0),currency:'VND'});
+    } else {
+      const p=current, isDoc=p.type==='doc'&&p.hasHard;
+      track('InitiateCheckout',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
+      document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
+      document.getElementById('coSub').textContent = p.type==='doc'?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Tài khoản đăng nhập sẽ được gửi về email này.';
+      document.getElementById('fmtChooser').style.display = isDoc?'grid':'none';
+      if(isDoc){
+        document.querySelector('input[name=fmt][value=soft]').checked=true;
+        document.getElementById('fmtSoftP').textContent='Tải về ngay · '+fmtVND(p.price);
+        document.getElementById('fmtHardP').textContent='In màu, giao 2–4 ngày · '+fmtVND(p.hardPrice)+' +ship';
+      }
     }
     orderCodeVal='ZIZI'+Math.random().toString(36).slice(2,6).toUpperCase();
     document.getElementById('payCode').textContent=orderCodeVal;
@@ -2140,8 +2236,7 @@
     const msg=document.getElementById('couponMsg');
     const show=(t,ok)=>{ if(msg){msg.style.display='block'; msg.textContent=t; msg.style.color=ok?'var(--jade-dark)':'var(--cinnabar)';} };
     _appliedCoupon=null;
-    const p=current; let base=p.price;
-    if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); if(sel&&sel.value==='hard') base=p.hardPrice+(p.shipFee||0); }
+    const base=_checkoutBase();
     if(!code){ recalcCheckout(); show('Nhập mã rồi bấm Áp mã.',false); return; }
     const sb=getSB(); if(!sb){ show('Chưa kết nối máy chủ.',false); return; }
     try{
@@ -2157,23 +2252,25 @@
     }catch(e){ show('Lỗi kiểm mã, thử lại.',false); }
   }
   function recalcCheckout(){
-    const p=current; let total=p.price, hard=false;
-    if(p.type==='doc'&&p.hasHard){
-      const sel=document.querySelector('input[name=fmt]:checked');
-      hard = sel && sel.value==='hard';
-      total = hard ? p.hardPrice + (p.shipFee||0) : p.price;
+    let total=0, hard=false, rows=[];
+    const vlabel=(t,v)=> t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'';
+    if(_cartMode){
+      _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; rows.push({name:it.name+vlabel(it.type,it.variant),price:it.price}); });
+    } else {
+      const p=current; let price=p.price;
+      if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); hard=sel&&sel.value==='hard'; price=hard?(p.hardPrice+(p.shipFee||0)):p.price; }
+      total=price; current._hard=hard;
+      rows.push({name:p.name+vlabel(p.type,hard?'hard':'soft'),price:price});
     }
+    const si=document.getElementById('sumItems');
+    if(si) si.innerHTML=rows.map(r=>`<div class="sum-line"><span>${esc(r.name)}</span><b>${fmtVND(r.price)}</b></div>`).join('');
     const disc=_calcDiscount(total), finalT=Math.max(0,total-disc);
     const cl=document.getElementById('sumCouponLine');
     if(cl){ if(_appliedCoupon&&disc>0){ cl.style.display='flex'; document.getElementById('sumCouponName').textContent='Mã '+_appliedCoupon.code; document.getElementById('sumCoupon').textContent='-'+fmtVND(disc); } else { cl.style.display='none'; } }
     document.getElementById('addrField').style.display = hard?'block':'none';
-    document.getElementById('sumShipLine').style.display = hard?'flex':'none';
-    document.getElementById('sumShip').textContent = fmtVND(p.shipFee||0);
-    document.getElementById('sumPrice').textContent = fmtVND(hard?p.hardPrice:p.price);
-    document.getElementById('sumName').textContent = p.name + (p.type==='doc'?(hard?' · bản cứng':' · bản mềm'):'');
+    document.getElementById('sumShipLine').style.display='none';
     document.getElementById('sumTotal').textContent = fmtVND(finalT);
     document.getElementById('payAmount').textContent = fmtVND(finalT);
-    current._hard=hard;
   }
   // ---- Gọi Edge Function (server-side) ----
   function _fnBase(){ return SUPABASE_URL + '/functions/v1'; }
@@ -2193,19 +2290,20 @@
   function stopPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} pollTries=0; }
 
   async function createOrder(){
-    const p=current;
     const name=(document.getElementById('co_name')?.value||'').trim();
     const email=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
     const phone=(document.getElementById('co_phone')?.value||'').trim();
     const address=(document.getElementById('co_addr')?.value||'').trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Vui lòng nhập email hợp lệ để nhận tài khoản.'); document.getElementById('co_email')?.focus(); return; }
     if(!/^0\d{8,10}$/.test(phone.replace(/\s/g,''))){ toast('Vui lòng nhập số điện thoại (VD: 09xxxxxxxx).'); document.getElementById('co_phone')?.focus(); return; }
-    const variant = p.type==='doc' ? (p._hard?'hard':'soft') : 'course';
     const coupon=(document.getElementById('co_coupon')?.value||'').trim().toUpperCase();
+    let bodyProd;
+    if(_cartMode){ bodyProd={items:_checkoutItems.map(it=>({slug:it.slug,variant:it.variant}))}; }
+    else { const p=current; bodyProd={slug:p.slug,variant:(p.type==='doc'?(p._hard?'hard':'soft'):'course')}; }
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
     try{
-      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{slug:p.slug,variant,name,email,phone,address,source:getSource(),coupon}});
+      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{...bodyProd,name,email,phone,address,source:getSource(),coupon}});
       if(httpok && data && data.ok){
         // ---- Đơn thật + VietQR động ----
         document.getElementById('qrImg').src=data.qr_url;
@@ -2277,17 +2375,31 @@
   }
 
   function showSuccess(){
-    const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
-    track('Purchase',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
     const coEmail=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
     document.getElementById('checkoutForm').style.display='none';
     document.getElementById('successBox').style.display='block';
+    const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
+    if(_cartMode){
+      const n=_checkoutItems.length;
+      track('Purchase',{value:_checkoutItems.reduce((s,i)=>s+i.price,0),currency:'VND',num_items:n});
+      document.getElementById('learnCourse').textContent=n+' sản phẩm';
+      const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=n+' sản phẩm';
+      document.getElementById('credLabel').textContent='Đã mua';
+      document.getElementById('credLabel2').textContent='Email nhận tài khoản';
+      document.getElementById('credVal2').textContent=coEmail||'email của bạn';
+      msg.innerHTML='Thanh toán thành công <b>'+n+' sản phẩm</b>! <b>Email và mật khẩu đăng nhập</b> (kèm link tải nếu có tài liệu) vừa gửi tới email của bạn — nhớ kiểm tra cả mục Quảng cáo/Spam, rồi đăng nhập để vào học.';
+      btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
+      saveCart([]); _cartMode=false;
+      setStep(3); window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+    const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
+    track('Purchase',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
     document.getElementById('learnCourse').textContent=p.name;
     const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=p.name;
     document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':(isLive?'Lớp đã đăng ký':'Khóa đã mở');
     document.getElementById('credLabel2').textContent = 'Email nhận tài khoản';
     document.getElementById('credVal2').textContent = coEmail||'email của bạn';
-    const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
     if(isDoc && hard){
       msg.innerHTML='Đã nhận đơn! <b>Link tải bản mềm</b> và thông tin đơn đã gửi tới email của bạn, bản cứng sẽ được <b>giao trong 2–4 ngày</b>. Nhớ kiểm tra cả mục Quảng cáo/Spam.';
       btn.textContent='Đăng nhập để tải lại →'; btn.onclick=()=>go('auth');
@@ -3168,6 +3280,7 @@
   loadProductsFromDB();   // đọc sản phẩm từ Supabase (nếu có), lỗi thì giữ mặc định
   restoreAdminSession();  // giữ đăng nhập admin sau khi tải lại trang
   loadPixelConfig();      // nạp & chạy pixel FB/TikTok/GA4 từ cấu hình đã lưu
+  updateCartBadge();      // số lượng giỏ hàng
 
   /* Con trỏ chuột hình bé sâu đã TẮT theo yêu cầu. */
 </script>

@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
 
     // --- Lấy đơn 'pending' theo mã ---
     const { data: order } = await sb.from("orders")
-      .select("id,code,status,amount,customer_email,customer_name,product_id,variant")
+      .select("id,code,status,amount,customer_email,customer_name,product_id,variant,items")
       .eq("code", orderCode).maybeSingle();
     if (!order) { log("order_not_found:" + orderCode); throw { soft: true }; }
     matched = order.id;
@@ -166,18 +166,33 @@ Deno.serve(async (req) => {
     }).eq("id", order.id);
     log("order_paid");
 
-    // --- Cấp quyền học (enrollment) ---
-    if (userId && order.product_id && order.variant !== "hard") {
-      const { error: eErr } = await sb.from("enrollments").upsert(
-        { user_id: userId, product_id: order.product_id, order_id: order.id, granted_by: "purchase" },
-        { onConflict: "user_id,product_id", ignoreDuplicates: true },
-      );
-      log(eErr ? "enroll_err:" + eErr.message.slice(0, 60) : "enrolled");
+    // --- Danh sách món trong đơn (giỏ hàng) ---
+    const items = (Array.isArray(order.items) && order.items.length)
+      ? order.items
+      : [{ product_id: order.product_id, variant: order.variant, name: null }];
+
+    // --- Cấp quyền học cho TẤT CẢ món (trừ bản cứng = chỉ giao hàng) ---
+    let enrolledCount = 0;
+    if (userId) {
+      for (const it of items) {
+        if (!it.product_id || it.variant === "hard") continue;
+        const { error: eErr } = await sb.from("enrollments").upsert(
+          { user_id: userId, product_id: it.product_id, order_id: order.id, granted_by: "purchase" },
+          { onConflict: "user_id,product_id", ignoreDuplicates: true },
+        );
+        if (!eErr) enrolledCount++;
+      }
+      log("enrolled:" + enrolledCount);
     }
 
-    // --- Gửi email thông tin đăng nhập / mở khoá ---
-    const { data: prod } = await sb.from("products").select("name").eq("id", order.product_id).maybeSingle();
-    const course = prod?.name || "khoá học ZiZi";
+    // --- Tên khoá cho email ---
+    let course = "khoá học ZiZi";
+    const names = items.map((i: any) => i.name).filter(Boolean);
+    if (names.length) course = names.length > 1 ? (names[0] + ` +${names.length - 1} khoá khác`) : names[0];
+    else {
+      const { data: prod } = await sb.from("products").select("name").eq("id", order.product_id).maybeSingle();
+      if (prod?.name) course = prod.name;
+    }
     if (email) {
       if (newPass) await sendMail(email, `✅ Tài khoản học "${course}" đã sẵn sàng`, credEmail(fullName, email, newPass, course), log);
       else await sendMail(email, `✅ Đã mở khoá "${course}" cho tài khoản của bạn`, unlockEmail(fullName, email, course), log);
