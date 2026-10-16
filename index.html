@@ -1745,6 +1745,16 @@
   const SUPABASE_KEY='sb_publishable_q1lv-nm0nAvtcDVkDcVGKg_xshROd1l';
   let sbClient=null;
   function getSB(){ try{ if(!sbClient && window.supabase && window.supabase.createClient) sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){} return sbClient; }
+  /* Gói 5000 từ vựng: chỉ bán Excel + Học online (không còn PDF, không bản cứng), kể cả khi dữ liệu trên Supabase chưa cập nhật */
+  function fixVocabPack(p){
+    if(!p||p.slug!=='tai-lieu-5000-tu') return p;
+    p.hasHard=false; p.hardPrice=null; p.shipFee=null;
+    if(/pdf|cứng/i.test((p.name||'')+' '+(p.desc||''))){
+      p.name='Trọn bộ 5000 từ vựng HSK (Excel + Học online)'; p.level='Tài liệu · tự học';
+      p.desc=p.description='Học 5000 từ HSK1–6 ngay trên web: thẻ nhớ, luyện gõ chữ Hán, nghe phát âm, lịch ôn tự động. Kèm file Excel tải về để tự theo dõi tiến độ.';
+    }
+    return p;
+  }
   function mapRow(r){
     const off=(r.original_price&&r.price&&r.original_price>r.price)?('-'+Math.round((1-r.price/r.original_price)*100)+'%'):'';
     return {id:r.id,slug:r.slug,type:r.type,name:r.name,char:r.char_icon||'字',level:r.level_label||'',
@@ -1760,7 +1770,7 @@
     try{
       const {data,error}=await sb.from('products').select('*').order('sort_order',{ascending:true});
       if(error||!data||!data.length) return;         // lỗi/không có dữ liệu → giữ mặc định
-      products=data.map(mapRow);
+      products=data.map(r=>fixVocabPack(mapRow(r)));
       current=products[0]||current;
       renderPublic();
       route();                                        // vẽ lại đúng trang đang mở
@@ -1903,7 +1913,7 @@
     const rating = (4.7 + (rseed%3)*0.1).toFixed(1).replace('.',',');
     const cnt = p.students ? `(${p.students>999?(p.students/1000).toFixed(1).replace('.',',')+'k':p.students})` : '';
     const meta = p.type==='doc'
-      ? `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`
+      ? (p.slug==='tai-lieu-5000-tu' ? `<span>5000 từ</span><span>Excel · Học online</span>` : `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`)
       : p.type==='live'
       ? `<span>${p.lessons||0} buổi trực tiếp</span><span>${p.live?p.live.duration:'Học qua Zoom'}</span><span>${p.live?p.live.slot:'Zoom'}</span>`
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
@@ -2310,7 +2320,7 @@
     if(foot)foot.style.display='block';
     box.innerHTML=items.map(it=>`<div class="cart-it">
       <img src="${it.cover||'assets/zizi-mascot.png'}" onerror="this.src='assets/zizi-mascot.png'">
-      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?('Lớp trực tiếp'+(it.schedule?' · '+esc(it.schedule):'')):'Khóa video')}</div></div>
+      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.slug==='tai-lieu-5000-tu'?'Excel + Học online':it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?('Lớp trực tiếp'+(it.schedule?' · '+esc(it.schedule):'')):'Khóa video')}</div></div>
       <div style="text-align:right"><div class="ci-p">${fmtVND(it.price)}</div><button class="ci-rm" onclick="removeCartItem('${it.slug}')" aria-label="Xóa">×</button></div>
     </div>`).join('');
     document.getElementById('cartTotal').textContent=fmtVND(items.reduce((s,i)=>s+i.price,0));
@@ -2344,7 +2354,7 @@
       const p=current, isDoc=p.type==='doc'&&p.hasHard;
       track('InitiateCheckout',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
       document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
-      document.getElementById('coSub').textContent = p.type==='doc'?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Tài khoản đăng nhập sẽ được gửi về email này.';
+      document.getElementById('coSub').textContent = p.slug==='tai-lieu-5000-tu'?'Tài khoản học online và link tải Excel sẽ gửi về email này.':(p.type==='doc'?(p.hasHard?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Link tải sẽ gửi về email này.'):'Tài khoản đăng nhập sẽ được gửi về email này.');
       document.getElementById('fmtChooser').style.display = isDoc?'grid':'none';
       if(isDoc){
         document.querySelector('input[name=fmt][value=soft]').checked=true;
@@ -2393,15 +2403,15 @@
   }
   function recalcCheckout(){
     let total=0, hard=false, rows=[];
-    const vlabel=(t,v)=> t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'';
+    const vlabel=(t,v,s)=> s==='tai-lieu-5000-tu'?'':(t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'');
     if(_cartMode){
-      _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; const sc=it.type==='live'&&it.schedule?(' · '+it.schedule):''; rows.push({name:it.name+sc+vlabel(it.type,it.variant),price:it.price}); });
+      _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; const sc=it.type==='live'&&it.schedule?(' · '+it.schedule):''; rows.push({name:it.name+sc+vlabel(it.type,it.variant,it.slug),price:it.price}); });
     } else {
       const p=current; let price=p.price;
       if(p.type==='doc'&&p.hasHard){ const sel=document.querySelector('input[name=fmt]:checked'); hard=sel&&sel.value==='hard'; price=hard?(p.hardPrice+(p.shipFee||0)):p.price; }
       total=price; current._hard=hard;
       const sc=p.type==='live'?(' · '+getLiveSchedule()):'';
-      rows.push({name:p.name+sc+vlabel(p.type,hard?'hard':'soft'),price:price});
+      rows.push({name:p.name+sc+vlabel(p.type,hard?'hard':'soft',p.slug),price:price});
     }
     const si=document.getElementById('sumItems');
     if(si) si.innerHTML=rows.map(r=>`<div class="sum-line"><span>${esc(r.name)}</span><b>${fmtVND(r.price)}</b></div>`).join('');
@@ -2544,6 +2554,9 @@
     if(isDoc && hard){
       msg.innerHTML='Đã nhận đơn! <b>Link tải bản mềm</b> và thông tin đơn đã gửi tới email của bạn, bản cứng sẽ được <b>giao trong 2–4 ngày</b>. Nhớ kiểm tra cả mục Quảng cáo/Spam.';
       btn.textContent='Đăng nhập để tải lại →'; btn.onclick=()=>go('auth');
+    }else if(isDoc && p.slug==='tai-lieu-5000-tu'){
+      msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập</b> vừa gửi tới email của bạn (nhớ kiểm tra cả mục Quảng cáo/Spam). Đăng nhập rồi vào <b>Khu vực học viên</b> để <b>học online</b> và <b>tải Excel</b>.';
+      btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
     }else if(isDoc){
       msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập và link tải</b> vừa gửi tới email của bạn, nhớ kiểm tra cả mục Quảng cáo/Spam, rồi đăng nhập để tải tài liệu.';
       btn.textContent='Đăng nhập để vào tải →'; btn.onclick=()=>go('auth');
