@@ -1,5 +1,5 @@
 -- =====================================================================
--- ZiZi Chinese — Cấu trúc kho dữ liệu (Supabase / PostgreSQL)
+-- ZiZi Chinese, Cấu trúc kho dữ liệu (Supabase / PostgreSQL)
 -- GIAI ĐOẠN 1: bảng + bảo mật RLS + dữ liệu khởi tạo
 --
 -- CÁCH CHẠY:
@@ -366,26 +366,26 @@ create policy p_weblogs_admin on webhook_logs
   for all using (is_admin()) with check (is_admin());
 
 -- =====================================================================
--- DỮ LIỆU KHỞI TẠO — 11 sản phẩm hiện có
+-- DỮ LIỆU KHỞI TẠO, 11 sản phẩm hiện có
 -- =====================================================================
 insert into products (slug,type,name,char_icon,level_label,description,price,original_price,status,preorder_enabled,featured,sort_order,lessons_count,res_count,students_count,has_soft,has_hard,hard_price,ship_fee,live_info) values
 ('hsk1','video','Khóa HSK1','一','HSK 1 · mất gốc','Đặt nền phát âm pinyin chuẩn và 150 từ vựng đầu tiên để nghe – nói được câu cơ bản.',199000,399000,'sale',false,false,10,30,86,1204,false,false,null,null,null),
 ('hsk2','video','Khóa HSK2','二','HSK 2 · nền tảng','Mở rộng lên 300 từ và ngữ pháp nền tảng để nói câu dài, tự tin giao tiếp hằng ngày.',249000,449000,'sale',false,false,20,30,102,642,false,false,null,null,null),
 ('combo','video','Combo HSK1+2','中','Trọn lộ trình 0 → HSK2','Cả hai khóa gộp thành một lộ trình liền mạch, kèm quà tặng luyện thi.',399000,848000,'sale',false,true,30,60,188,512,false,false,null,null,null),
 ('bo-thu','video','Bộ thủ & Công thức tiếng Trung','部','Nền gốc · học kèm mọi cấp','214 bộ thủ + công thức chiết tự giúp đoán nghĩa, nhớ mặt chữ mà không cần học thuộc lòng.',149000,299000,'sale',false,false,40,18,60,918,false,false,null,null,null),
-('hsk1-truc-tiep','live','HSK1 trực tiếp với giáo viên — Tiếng Trung cho người mới bắt đầu','一','Trực tiếp · HSK1 · người mới','Lớp học online trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, chữa phát âm 1-1, có ghi hình xem lại.',1200000,null,'sale',false,false,50,30,20,86,false,false,null,null,'{"duration":"~2,5 tháng","perMonth":"480.000₫/tháng","schedule":"Thứ 2-4-6 hoặc 3-5-7","session":"60 phút/buổi","slot":"Buổi tối 21h–22h"}'),
-('hsk2-truc-tiep','live','HSK2 trực tiếp — Nâng cao nền tảng tiếng Trung','二','Trực tiếp · HSK2 · nâng cao','Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề.',1700000,null,'sale',false,false,60,30,20,42,false,false,null,null,'{"duration":"2,5 tháng (tạm tính)","perMonth":"680.000₫/tháng","schedule":"Thứ 2-4-6 hoặc 3-5-7","session":"60 phút/buổi","slot":"Buổi tối 21h–22h"}'),
+('hsk1-truc-tiep','live','HSK1 trực tiếp với giáo viên, Tiếng Trung cho người mới bắt đầu','一','Trực tiếp · HSK1 · người mới','Lớp học online trực tiếp cùng giáo viên qua Zoom, lớp nhỏ, chữa phát âm 1-1, có ghi hình xem lại.',1200000,null,'sale',false,false,50,30,20,86,false,false,null,null,'{"duration":"~2,5 tháng","perMonth":"480.000₫/tháng","schedule":"Thứ 2-4-6 hoặc 3-5-7","session":"60 phút/buổi","slot":"Buổi tối 21h–22h"}'),
+('hsk2-truc-tiep','live','HSK2 trực tiếp, Nâng cao nền tảng tiếng Trung','二','Trực tiếp · HSK2 · nâng cao','Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề.',1700000,null,'sale',false,false,60,30,20,42,false,false,null,null,'{"duration":"2,5 tháng (tạm tính)","perMonth":"680.000₫/tháng","schedule":"Thứ 2-4-6 hoặc 3-5-7","session":"60 phút/buổi","slot":"Buổi tối 21h–22h"}'),
 ('tai-lieu-5000-tu','doc','Trọn bộ 5000 từ vựng HSK (PDF + Excel)','册','Tài liệu · tra cứu','File PDF tra cứu nhanh + Excel lọc theo cấp HSK. Bản mềm tải ngay, bản cứng in màu giao tận nơi.',99000,199000,'sale',false,false,70,0,8,340,true,true,189000,30000,null),
-('hsk3','video','Khóa HSK3','三','HSK 3 · trung cấp','600 từ vựng và ngữ pháp trung cấp — đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',1000000,1450000,'preorder',true,false,80,36,120,128,false,false,null,null,null),
+('hsk3','video','Khóa HSK3','三','HSK 3 · trung cấp','600 từ vựng và ngữ pháp trung cấp, đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',1000000,1450000,'preorder',true,false,80,36,120,128,false,false,null,null,null),
 ('hsk4','video','Khóa HSK4','四','HSK 4 · trung–cao','1.200 từ, xử lý văn bản dài và diễn đạt quan điểm. Bước đệm vững vào trình độ cao cấp.',1500000,2175000,'preorder',true,false,90,40,134,74,false,false,null,null,null),
-('hsk5','video','Khóa HSK5','五','HSK 5 · cao cấp','2.500 từ — đọc báo, xem phim không phụ đề, viết luận. Trình độ cao cấp thực thụ.',2500000,3625000,'preorder',true,false,100,44,150,41,false,false,null,null,null),
+('hsk5','video','Khóa HSK5','五','HSK 5 · cao cấp','2.500 từ, đọc báo, xem phim không phụ đề, viết luận. Trình độ cao cấp thực thụ.',2500000,3625000,'preorder',true,false,100,44,150,41,false,false,null,null,null),
 ('hsk6','video','Khóa HSK6','六','HSK 6 · thành thạo','5.000+ từ, thành thạo gần như bản ngữ. Chinh phục mốc HSK cao nhất và tấm bằng danh giá.',3500000,5075000,'preorder',true,false,110,48,168,33,false,false,null,null,null)
 on conflict (slug) do nothing;
 
 -- Cấu hình mặc định (sửa lại trong admin / SQL khi có số thật)
 insert into settings (key,value) values
 ('bank_info','{"bank":"","account_no":"","account_name":"ZIZI CHINESE"}'),
-('site_meta','{"title":"ZiZi Chinese — Tự học tiếng Trung từ 0 đến HSK6","description":"Học tiếng Trung dễ hiểu, lên trình từ con số 0","og_image":"/assets/zizi-logo.png"}'),
+('site_meta','{"title":"ZiZi Chinese, Tự học tiếng Trung từ 0 đến HSK6","description":"Học tiếng Trung dễ hiểu, lên trình từ con số 0","og_image":"/assets/zizi-logo.png"}'),
 ('pixels','{"fb_pixel_id":"","tiktok_pixel_id":"","ga4_id":""}'),
 ('events_enabled','{"pageview":true,"viewcontent":true,"initiatecheckout":true,"lead":true,"purchase":true}'),
 ('shipping_default_fee','30000')
@@ -425,7 +425,7 @@ create policy "covers admin delete" on storage.objects
   for delete to authenticated using (bucket_id = 'covers' and is_admin());
 
 -- =====================================================================
--- MÃ GIẢM GIÁ (coupons) — chạy khối này để bật tính năng giảm giá
+-- MÃ GIẢM GIÁ (coupons), chạy khối này để bật tính năng giảm giá
 -- =====================================================================
 create table if not exists discounts (
   id          uuid primary key default gen_random_uuid(),
