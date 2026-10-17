@@ -647,8 +647,9 @@
   .mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
   .mact .del{color:var(--cinnabar);border-color:var(--cinnabar);margin-right:auto}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:999px;font-size:.9rem;font-weight:600;z-index:210;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.4)}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:14px;font-size:.9rem;font-weight:600;line-height:1.45;max-width:min(380px,calc(100% - 32px));text-align:center;z-index:210;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.4)}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.success{background:var(--jade,#1aa88e)}
   .px-grid{display:grid;gap:14px}
   .px-grid label{font-size:.82rem;font-weight:600}
   .px-grid input{width:100%;padding:10px 12px;border:1.5px solid var(--line-2);border-radius:9px;font-family:inherit;font-size:.9rem;margin-top:5px}
@@ -2053,7 +2054,7 @@
         if(btn)btn.textContent=old;
         if(error){ authErr(/already|registered|exists/i.test(error.message)?'Email này đã có tài khoản. Hãy đăng nhập.':('Lỗi: '+error.message)); return; }
         pending={name,email,phone};
-        if(data && data.session){ setLearnerEmail(email); finishAuth(name,'Tạo tài khoản thành công!'); }   // nếu tắt xác nhận email
+        if(data && data.session){ setLearnerEmail(email); finishAuth(name,'Tạo tài khoản thành công! Chào mừng bạn đến với ZiZi Chinese, cùng bắt đầu học nhé.'); }   // nếu tắt xác nhận email
         else showConfirmNotice(email);                                              // cần xác nhận email
       }catch(err){ if(btn)btn.textContent=old; authErr('Lỗi kết nối, vui lòng thử lại.'); }
     }else{
@@ -2087,7 +2088,7 @@
     const o=document.getElementById('otpPanel'); if(o)o.style.display='none';
   }
   function finishAuth(name,msg){
-    loggedIn=true; updateAuthUI(); setLearnerName(name); toast(msg);
+    loggedIn=true; updateAuthUI(); setLearnerName(name); toast(msg,4000,'success');
     ['au_name','au_email','au_phone','authPass','au_confirm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     const t=document.getElementById('au_terms'); if(t)t.checked=false;
     backToForm(); authErr(''); pending=null; go('learn');
@@ -2576,6 +2577,7 @@
       btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
       saveCart([]); _cartMode=false;
       setStep(3); window.scrollTo({top:0,behavior:'smooth'});
+      toast('Thanh toán thành công! Tài khoản và mật khẩu đã gửi về email của bạn.',5000,'success');
       return;
     }
     const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
@@ -2603,6 +2605,10 @@
     }
     setStep(3);
     window.scrollTo({top:0,behavior:'smooth'});
+    const noti = (isDoc && hard) ? 'Đã nhận đơn! Link tải bản mềm đã gửi về email, bản cứng sẽ được giao tận nơi.'
+      : isLive ? 'Đăng ký lớp thành công! Tài khoản, lịch học và link Zoom đã gửi về email của bạn.'
+      : 'Thanh toán thành công! Tài khoản và mật khẩu đã gửi về email của bạn.';
+    toast(noti,5000,'success');
   }
 
   // admin
@@ -2886,7 +2892,7 @@
   const val=id=>document.getElementById(id).value.trim();
   function openModal(title,html,wide){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=html;document.querySelector('#modalBg .modal').classList.toggle('wide',!!wide);document.getElementById('modalBg').classList.add('show');}
   function closeModal(){document.getElementById('modalBg').classList.remove('show');}
-  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+  function toast(msg,ms,type){const t=document.getElementById('toast');t.textContent=msg;t.classList.toggle('success',type==='success');t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>{t.classList.remove('show');t.classList.remove('success');},ms||2200);}
   const courseNames=()=>products.map(c=>c.name);
 
   /* ===== dữ liệu demo học viên/đơn (in-memory) ===== */
