@@ -1805,6 +1805,14 @@
     }catch(e){ /* giữ dữ liệu mặc định nếu có trục trặc */ }
   }
   const isUuid=v=>typeof v==='string'&&v.length>=32&&v.indexOf('-')>0;
+  // Đổi 1 sản phẩm về đúng UUID trong Supabase (id mặc định là số -> tra theo slug).
+  async function resolveProductUuid(p){
+    if(!p) return null;
+    if(isUuid(p.id)) return p.id;
+    const sb=getSB(); if(!sb) return null;
+    try{ const {data}=await sb.from('products').select('id').eq('slug',p.slug).maybeSingle(); return (data&&data.id)?data.id:null; }
+    catch(e){ return null; }
+  }
   function toDBRow(p,isNew){
     const row={
       type:p.type,name:p.name,slug:p.slug,char_icon:p.char||'字',level_label:p.level||'',
@@ -1880,7 +1888,7 @@
   function updatePxState(px){
     const el=document.getElementById('pxState'); if(!el) return;
     const on=[]; if(px.fb_pixel_id)on.push('Facebook'); if(px.tiktok_pixel_id)on.push('TikTok'); if(px.ga4_id)on.push('GA4');
-    el.innerHTML = on.length ? ('✅ Pixel đang bật: <b>'+on.join(', ')+'</b>. Pixel chạy trên website khi khách truy cập, kiểm tra dữ liệu đổ về trong Events Manager / GA4.') : 'Chưa cấu hình pixel. Nhập ID ở trên rồi bấm <b>Lưu cấu hình</b>, pixel sẽ tự chạy trên website.';
+    el.innerHTML = on.length ? ('Pixel đang bật: <b>'+on.join(', ')+'</b>. Pixel chạy trên website khi khách truy cập, kiểm tra dữ liệu đổ về trong Events Manager / GA4.') : 'Chưa cấu hình pixel. Nhập ID ở trên rồi bấm <b>Lưu cấu hình</b>, pixel sẽ tự chạy trên website.';
   }
   async function loadTrackingSettings(){
     const sb=getSB(); if(!sb) return;
@@ -2036,7 +2044,7 @@
       const {error}=await sb.auth.updateUser({data:{full_name:name,phone,address,dob}});
       if(error){ toast('Lỗi: '+error.message); return; }
       try{ const {data:u}=await sb.auth.getUser(); if(u&&u.user) await sb.from('profiles').update({full_name:name,phone}).eq('id',u.user.id); }catch(e){}
-      setLearnerName(name); closeModal(); toast('Đã lưu hồ sơ ✅');
+      setLearnerName(name); closeModal(); toast('Đã lưu hồ sơ',3000,'success');
     }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
   function authErr(msg){ const e=document.getElementById('authErr'); if(e)e.textContent=msg||''; }
@@ -2984,7 +2992,7 @@
         await sb.from('products').update({sort_order:a.sort}).eq('id',a.id);
         await sb.from('products').update({sort_order:b.sort}).eq('id',b.id);
         toast('Đã đổi vị trí, đồng bộ Supabase');
-      }catch(e){ toast('⚠ Đổi vị trí lỗi trên Supabase'); }
+      }catch(e){ toast('Đổi vị trí lỗi trên Supabase'); }
     } else { toast('Đã đổi vị trí'); }
   }
   /* ===== helpers cho editor mở rộng ===== */
@@ -3125,11 +3133,11 @@
       const ext=(file.name.split('.').pop()||'png').toLowerCase();
       const path='product-'+Date.now()+'.'+ext;
       const {error}=await sb.storage.from('covers').upload(path,file,{upsert:true,contentType:file.type||'image/'+ext});
-      if(error){ editCover=''; renderCover(); urlField.value=''; toast('⚠ Tải ảnh lên lỗi, kiểm tra bucket "covers". Tạm thời dán URL ảnh.'); return; }
+      if(error){ editCover=''; renderCover(); urlField.value=''; toast('Tải ảnh lên lỗi, kiểm tra bucket "covers". Tạm thời dán URL ảnh.'); return; }
       const {data}=sb.storage.from('covers').getPublicUrl(path);
       editCover=data.publicUrl; renderCover(); urlField.value=data.publicUrl;
       toast('Đã tải ảnh bìa lên kho ✓');
-    }catch(e){ editCover=''; renderCover(); urlField.value=''; toast('⚠ Tải ảnh lên lỗi'); }
+    }catch(e){ editCover=''; renderCover(); urlField.value=''; toast('Tải ảnh lên lỗi'); }
   }
   function addGallery(){const el=document.getElementById('f_galIn');if(el.value.trim()){editGallery.push(el.value.trim());el.value='';renderGallery();}}
   function rmGallery(i){editGallery.splice(i,1);renderGallery();}
@@ -3175,8 +3183,8 @@
     const sb=getSB();
     if(sb&&p&&isUuid(p.id)){
       try{ const {error}=await sb.from('products').delete().eq('id',p.id);
-        toast(error?'⚠ Xóa trên Supabase lỗi':'Đã xóa, đồng bộ Supabase'); }
-      catch(e){ toast('⚠ Xóa trên Supabase lỗi'); }
+        toast(error?'Xóa trên Supabase lỗi':'Đã xóa, đồng bộ Supabase'); }
+      catch(e){ toast('Xóa trên Supabase lỗi'); }
     } else { toast('Đã xóa'); }
   }
 
@@ -3331,7 +3339,7 @@
     const r=await _insertManualOrder({name:val('o_cust'),product_id:p.id,amount:+val('o_amount')||0,channel:val('o_channel')||'Thủ công',status:stDb});
     closeModal();
     if(!r.ok){toast('Lỗi: '+r.msg);return;}
-    await loadAdminData(); toast('Đã thêm đơn, lưu vào Supabase ✅');
+    await loadAdminData(); toast('Đã thêm đơn, lưu vào Supabase');
   }
   async function delOrder(code){
     if(!confirm('Xóa đơn này?'))return;
@@ -3348,11 +3356,11 @@
     try{
       const r1=await sb.from('settings').upsert({key:'pixels',value:px},{onConflict:'key'});
       const r2=await sb.from('settings').upsert({key:'events_enabled',value:ev},{onConflict:'key'});
-      if(r1.error||r2.error){ toast('⚠ Lưu lỗi, kiểm tra quyền admin'); return; }
+      if(r1.error||r2.error){ toast('Lưu lỗi, kiểm tra quyền admin'); return; }
       ZIZI_EVENTS={...ZIZI_EVENTS,...ev};
       updatePxState(px);
       toast('Đã lưu Pixel vào Supabase. Tải lại website để pixel bắt đầu chạy.');
-    }catch(e){ toast('⚠ Lưu lỗi'); }
+    }catch(e){ toast('Lưu lỗi'); }
   }
   // Lưu ý: CAPI token là BÍ MẬT, không lưu ở đây (trang công khai), để dành cho Edge Function (Giai đoạn sau).
 
@@ -3418,9 +3426,11 @@
     status=status||'paid';
     const code='ZIZI'+Math.random().toString(36).slice(2,8).toUpperCase();
     const p=products.find(x=>String(x.id)===String(product_id));
+    const puid=await resolveProductUuid(p);
+    if(!puid) return {ok:false,msg:'Sản phẩm chưa có trên Supabase. Vào Sản phẩm, mở sản phẩm và bấm Lưu để đồng bộ trước.'};
     const variant=(p&&p.type==='doc')?'soft':'course';
     const {error}=await sb.from('orders').insert({
-      code,product_id,customer_name:name||null,customer_email:email||null,customer_phone:phone||null,
+      code,product_id:puid,customer_name:name||null,customer_email:email||null,customer_phone:phone||null,
       variant,amount:amount||0,status,paid_at:status==='paid'?new Date().toISOString():null,
       source:'manual',channel:channel||'manual'
     });
@@ -3429,7 +3439,7 @@
     if(email && status==='paid'){
       try{
         const {data:prof}=await sb.from('profiles').select('id').eq('email',email.toLowerCase()).maybeSingle();
-        if(prof&&prof.id){ await sb.from('enrollments').upsert({user_id:prof.id,product_id,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true}); enrolled=true; }
+        if(prof&&prof.id){ await sb.from('enrollments').upsert({user_id:prof.id,product_id:puid,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true}); enrolled=true; }
         else accountMissing=true;
       }catch(e){ accountMissing=true; }
     }
@@ -3445,7 +3455,7 @@
     if(!r.ok){toast('Lỗi: '+r.msg);return;}
     ['mn_cust','mn_amount','mn_note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
     await loadAdminData();
-    toast(r.enrolled?'Đã ghi doanh thu + cấp quyền học ✅':(r.accountMissing?'Đã ghi doanh thu ✅, học viên chưa có TK, nhờ họ đăng ký bằng email này để vào học':'Đã ghi nhận đơn ✅'));
+    toast(r.enrolled?'Đã ghi doanh thu + cấp quyền học':(r.accountMissing?'Đã ghi doanh thu, học viên chưa có TK, nhờ họ đăng ký bằng email này để vào học':'Đã ghi nhận đơn'));
   }
 
   /* --- Hoàn tiền --- */
@@ -3543,14 +3553,17 @@
     const email=(document.getElementById('en_user').value||'').trim().toLowerCase();
     const pid=document.getElementById('en_prod').value;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Nhập email học viên hợp lệ'); return; }
+    const prod=products.find(x=>String(x.id)===String(pid));
     const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ'); return; }
     try{
+      const puid=await resolveProductUuid(prod);
+      if(!puid){ toast('Sản phẩm này chưa có trên Supabase. Vào Sản phẩm, mở sản phẩm và bấm Lưu để đồng bộ trước đã.',5000); return; }
       const {data:prof}=await sb.from('profiles').select('id').eq('email',email).maybeSingle();
-      if(!prof||!prof.id){ toast('Email này chưa có tài khoản, nhờ học viên đăng ký trước.'); return; }
-      const {error}=await sb.from('enrollments').upsert({user_id:prof.id,product_id:pid,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true});
-      if(error){ toast('Lỗi: '+error.message); return; }
+      if(!prof||!prof.id){ toast('Email này chưa có tài khoản, nhờ học viên đăng ký trước.',5000); return; }
+      const {error}=await sb.from('enrollments').upsert({user_id:prof.id,product_id:puid,granted_by:'manual'},{onConflict:'user_id,product_id',ignoreDuplicates:true});
+      if(error){ toast('Lỗi: '+error.message,6000); return; }
       document.getElementById('en_user').value='';
-      renderEnroll(); toast('Đã cấp quyền học cho '+email+' ✅');
+      renderEnroll(); toast('Đã cấp quyền học cho '+email,4000,'success');
     }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
 
@@ -3613,7 +3626,7 @@
       const {error}=await sb.from('discounts').insert({code,kind,value,min_amount:min,max_uses:max,expires_at:exp?new Date(exp+'T23:59:59').toISOString():null,active:true});
       if(error){ toast(/duplicate/i.test(error.message)?'Mã này đã tồn tại':('Lỗi: '+error.message)); return; }
       ['dc_code','dc_value','dc_min','dc_max','dc_exp'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-      renderDiscounts(); toast('Đã tạo mã '+code+' ✅');
+      renderDiscounts(); toast('Đã tạo mã '+code,3000,'success');
     }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
   async function toggleDiscount(id,to){
