@@ -2075,7 +2075,6 @@
     const o=document.getElementById('otpPanel');
     o.style.display='block';
     o.innerHTML='<div style="text-align:center;padding:6px 0">'
-      +'<div style="font-size:2.2rem">📩</div>'
       +'<h3 style="margin:.4rem 0">Kiểm tra email của bạn</h3>'
       +'<p class="sub">Tụi mình vừa gửi <b>link xác nhận</b> tới <b>'+esc(email)+'</b>. Mở email, bấm link để kích hoạt tài khoản, rồi quay lại đăng nhập.</p>'
       +'<p class="sub" style="font-size:.8rem;color:var(--ink-60)">Không thấy? Kiểm tra mục Quảng cáo/Spam.</p>'
@@ -2107,13 +2106,18 @@
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ authErr('Nhập đúng email của bạn vào ô "Email" phía trên rồi bấm "Quên mật khẩu?".'); document.getElementById('au_email').focus(); return; }
     authErr('');
     try{
-      const {httpok,data}=await _callFn('forgot-password',{method:'POST',body:{email}});
-      if(!(httpok&&data&&data.ok)){ authErr('Không gửi được: '+((data&&data.message)||'thử lại sau.')); return; }
+      const {httpok,status,data}=await _callFn('forgot-password',{method:'POST',body:{email}});
+      if(!(httpok&&data&&data.ok)){
+        let m=(data&&data.message)||'';
+        if(status===404) m='Máy chủ gửi mail chưa sẵn sàng (chưa deploy forgot-password).';
+        authErr('Không gửi được. '+(m||'Vui lòng thử lại sau.'));
+        return;
+      }
     }catch(e){ authErr('Lỗi kết nối, thử lại.'); return; }
     document.getElementById('authForm').style.display='none';
     const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
     const o=document.getElementById('otpPanel'); o.style.display='block';
-    o.innerHTML='<div style="text-align:center;padding:6px 0"><div style="font-size:2.2rem">🔑</div>'
+    o.innerHTML='<div style="text-align:center;padding:6px 0">'
       +'<h3 style="margin:.4rem 0">Kiểm tra email</h3>'
       +'<p class="sub">Link đặt lại mật khẩu đã gửi tới <b>'+esc(email)+'</b>. Mở email, bấm link rồi đặt mật khẩu mới.</p>'
       +'<p class="sub" style="font-size:.8rem;color:var(--ink-60)">Không thấy? Kiểm tra mục Quảng cáo/Spam.</p>'
@@ -2158,6 +2162,36 @@
       }catch(e){}
     }
     loggedIn=false; updateAuthUI();
+  }
+  // Bắt link đặt lại mật khẩu từ URL (chắc chắn hơn sự kiện PASSWORD_RECOVERY,
+  // vì supabase-js hay tự xoá hash trước khi listener kịp chạy). Hỗ trợ cả 2 kiểu:
+  //  - implicit: trả về #access_token=...&type=recovery
+  //  - pkce:     trả về ?code=...  (cần exchangeCodeForSession)
+  async function handleRecoveryLink(mark){
+    try{
+      mark=mark||{recovery:false,code:'',err:''};
+      if(mark.err){
+        go('auth');
+        document.getElementById('authForm').style.display='none';
+        const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
+        const o=document.getElementById('otpPanel'); o.style.display='block';
+        o.innerHTML='<div style="text-align:center;padding:6px 0"><h3 style="margin:.2rem 0 .6rem">Link đã hết hạn</h3>'
+          +'<p class="sub">Link đặt lại mật khẩu đã hết hạn hoặc đã dùng rồi. Bấm "Quên mật khẩu?" để nhận link mới nhé.</p>'
+          +'<button class="btn btn-jade" style="width:100%;justify-content:center" onclick="openAuth(\'login\')">Về đăng nhập</button></div>';
+        try{ history.replaceState(null,'',location.pathname); }catch(e){}
+        return true;
+      }
+      if(!(mark.recovery||mark.code)) return false;
+      const sb=getSB();
+      if(sb && mark.code && sb.auth.exchangeCodeForSession){
+        try{ await sb.auth.exchangeCodeForSession(mark.code); }catch(e){}
+      }
+      // cho detectSessionInUrl (implicit) kịp tạo phiên
+      await new Promise(r=>setTimeout(r,150));
+      showResetPassword();
+      try{ history.replaceState(null,'',location.pathname); }catch(e){}
+      return true;
+    }catch(e){ return false; }
   }
   function login(){ openAuth('login'); }
   function register(){ openAuth('register'); }
@@ -3709,9 +3743,22 @@
   }
   function getSource(){ try{ return localStorage.getItem('zizi_src')||'web'; }catch(e){ return 'web'; } }
   captureSource();
+  // Bắt dấu hiệu link đặt lại mật khẩu NGAY (trước khi supabase-js xoá hash khỏi URL)
+  const _recovMark=(function(){
+    try{
+      const h=new URLSearchParams((location.hash||'').replace(/^#/,''));
+      const q=new URLSearchParams(location.search||'');
+      return {
+        recovery: h.get('type')==='recovery' || q.get('type')==='recovery',
+        code: (q.get('code')&&(q.get('type')==='recovery'||!q.get('state')))?q.get('code'):'',
+        err: h.get('error_description')||q.get('error_description')||((h.get('error')||q.get('error'))?'error':'')
+      };
+    }catch(e){ return {recovery:false,code:'',err:''}; }
+  })();
   // init
   renderAll();
   restoreSession();
+  handleRecoveryLink(_recovMark);
   checkAdminRoute();
   loadProductsFromDB();   // đọc sản phẩm từ Supabase (nếu có), lỗi thì giữ mặc định
   restoreAdminSession();  // giữ đăng nhập admin sau khi tải lại trang
