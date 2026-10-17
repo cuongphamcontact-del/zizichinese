@@ -3104,12 +3104,15 @@
   async function saveDocFiles(id){
     const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ.'); return; }
     const ta=document.getElementById('f_docfiles'); if(!ta) return;
+    const prod=products.find(x=>String(x.id)===String(id));
+    const puid=await resolveProductUuid(prod);
+    if(!puid){ toast('Hãy bấm Lưu sản phẩm trước để đồng bộ lên Supabase, rồi mới lưu link tài liệu.',5000); return; }
     const lines=ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
-    const rows=lines.map((ln,i)=>{ const parts=ln.split('|'); let name='',url=''; if(parts.length>=2){name=parts[0].trim();url=parts.slice(1).join('|').trim();}else{url=parts[0].trim();name='Tài liệu '+(i+1);} return {product_id:id,name,file_url:url,sort_order:i}; }).filter(r=>/^https?:/i.test(r.file_url));
+    const rows=lines.map((ln,i)=>{ const parts=ln.split('|'); let name='',url=''; if(parts.length>=2){name=parts[0].trim();url=parts.slice(1).join('|').trim();}else{url=parts[0].trim();name='Tài liệu '+(i+1);} return {product_id:puid,name,file_url:url,sort_order:i}; }).filter(r=>/^https?:/i.test(r.file_url));
     try{
-      await sb.from('product_files').delete().eq('product_id',id);
-      if(rows.length){ const {error}=await sb.from('product_files').insert(rows); if(error){ toast('Lỗi lưu: '+error.message); return; } }
-      toast('Đã lưu '+rows.length+' link tài liệu');
+      await sb.from('product_files').delete().eq('product_id',puid);
+      if(rows.length){ const {error}=await sb.from('product_files').insert(rows); if(error){ toast('Lỗi lưu: '+error.message,6000); return; } }
+      toast('Đã lưu '+rows.length+' link tài liệu',3000,'success');
     }catch(e){ toast('Lỗi kết nối, thử lại.'); }
   }
   function autoSlug(){const s=document.getElementById('f_slug');if(!s.dataset.touched)s.value=slugify(val('f_name'));}
@@ -3173,7 +3176,7 @@
     const r=await dbUpsertProduct(saved,isNew);
     if(r&&r.ok){ toast(isNew?'Đã thêm, đã lưu vào Supabase':'Đã lưu, đồng bộ Supabase'); await loadProductsFromDB(); renderCourses(); }
     else if(r&&r.skipped){ toast('Đã lưu tạm (chưa kết nối Supabase)'); }
-    else { const em=(r&&r.error&&(r.error.message||r.error.hint||r.error.details))||'không rõ'; console.error('saveCourse upsert error:',r&&r.error); toast('⚠ Lưu lỗi: '+em); }
+    else { const em=(r&&r.error&&(r.error.message||r.error.hint||r.error.details))||'không rõ'; console.error('saveCourse upsert error:',r&&r.error); toast('Lưu lỗi: '+em,6000); }
   }
   async function delCourse(id){
     if(!confirm('Xóa sản phẩm này?'))return;
