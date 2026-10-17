@@ -1762,6 +1762,17 @@
   /* Gói 5000 từ vựng: chỉ bán Excel + Học online (không còn PDF, không bản cứng), kể cả khi dữ liệu trên Supabase chưa cập nhật */
   const VZ_XLS='tai-lieu-5000-tu', VZ_WEB='hoc-5000-tu-online';
   const isVocabPack=s=>s===VZ_XLS||s===VZ_WEB;
+  // Giữ bản mặc định của cặp gói 5000 từ để bù lại nếu Supabase chưa có (nhất là "Học trên web")
+  const _VOCAB_DEFAULTS={}; products.forEach(p=>{ if(isVocabPack(p.slug)) _VOCAB_DEFAULTS[p.slug]=Object.assign({},p); });
+  function ensureVocabPair(){
+    const have=slug=>products.some(p=>p.slug===slug);
+    if(!have(VZ_XLS)&&_VOCAB_DEFAULTS[VZ_XLS]) products.push(Object.assign({},_VOCAB_DEFAULTS[VZ_XLS]));
+    if(!have(VZ_WEB)&&_VOCAB_DEFAULTS[VZ_WEB]){
+      const web=Object.assign({},_VOCAB_DEFAULTS[VZ_WEB]);
+      const i=products.findIndex(p=>p.slug===VZ_XLS);
+      if(i>=0) products.splice(i+1,0,web); else products.push(web);
+    }
+  }
   function fixVocabPack(p){
     if(!p||p.slug!==VZ_XLS) return p;
     p.hasHard=false; p.hardPrice=null; p.shipFee=null;
@@ -1787,6 +1798,7 @@
       const {data,error}=await sb.from('products').select('*').order('sort_order',{ascending:true});
       if(error||!data||!data.length) return;         // lỗi/không có dữ liệu → giữ mặc định
       products=data.map(r=>fixVocabPack(mapRow(r)));
+      ensureVocabPair();   // bù "Học trên web"/Excel nếu Supabase chưa có
       current=products[0]||current;
       renderPublic();
       route();                                        // vẽ lại đúng trang đang mở
