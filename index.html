@@ -771,6 +771,14 @@
     .steps{font-size:.72rem}
   }
 
+  .pack-choose{display:grid;gap:8px;margin:14px 0 4px}
+  .pack-choose .po-h{font-size:.8rem;font-weight:700;color:var(--ink-60);letter-spacing:.02em}
+  .pack-opt{display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:2px solid var(--line-2);border-radius:14px;padding:12px 14px;color:var(--ink)}
+  .pack-opt.on{border-color:var(--cinnabar);background:#FFF6F4}
+  .pack-opt .po-ic{font-size:1.4rem}
+  .pack-opt .po-t{flex:1;min-width:0;display:flex;flex-direction:column}
+  .pack-opt .po-t small{color:var(--ink-60);font-size:.78rem}
+  .pack-opt .po-p{font-weight:800;white-space:nowrap}
   /* @MAP-VOCAB · Học từ vựng HSK trên web (gói tai-lieu-5000-tu) */
   body.in-vocab{background:var(--paper)}
   body.in-vocab header,body.in-vocab footer,body.in-vocab .popup,body.in-vocab .flag-plane{display:none!important}
@@ -1028,6 +1036,7 @@
         <div class="stars">★★★★★ <span style="color:var(--ink-60);font-size:.82rem">4.9 · 1.204 đánh giá</span></div>
         <p id="pDesc" style="color:var(--ink-60);margin:12px 0">Đặt nền phát âm và 150 từ vựng đầu tiên để nghe – nói được câu cơ bản.</p>
         <div class="sold"><div class="bar"><div class="fill"></div></div><small>Đã bán 87% suất ưu đãi đợt này</small></div>
+        <div class="pack-choose" id="packChooser" style="display:none"></div>
         <div class="price"><span class="now" id="pNow">199k</span><span class="was" id="pWas">399k</span><span class="off">Ưu đãi</span></div>
 
         <div class="online-note" id="pNote"><b>⚡ Khóa học online</b>, kích hoạt tài khoản ngay sau khi thanh toán, xem lại trọn đời trên mọi thiết bị.</div>
@@ -1226,7 +1235,7 @@
   </div>
   <div class="vz">
     <div class="vz-trial" id="vzTrial" style="display:none">
-      <p><b>Bạn đang học thử 20 từ đầu của HSK1.</b> Mua trọn bộ để mở khóa 5000 từ HSK1–6 và lưu tiến độ theo tài khoản.</p>
+      <p><b>Bạn đang học thử 20 từ đầu của HSK1.</b> Mua bản <b>Học trên web</b> để mở khóa 5000 từ HSK1–6 và lưu tiến độ theo tài khoản.</p>
       <button class="btn btn-primary btn-sm" onclick="vzBuy()">Mở khóa trọn bộ →</button>
     </div>
     <nav class="vz-levels" id="vzLevels" aria-label="Chọn cấp HSK"></nav>
@@ -1711,10 +1720,14 @@
      desc:'Lớp trực tiếp nâng cao nền tảng: mở rộng từ vựng và ngữ pháp HSK2, luyện nói theo chủ đề cùng giáo viên.',
      bullets:[],price:1700000,priceLabel:'1.700.000đ',wasLabel:'',off:'',status:'sale',lessons:30,res:20,students:42,revenue:'71tr',
      live:{duration:'2,5 tháng (tạm tính)',perMonth:'680.000đ/tháng',schedule:'Thứ 2-4-6 hoặc 3-5-7',session:'60 phút/buổi',slot:'Buổi tối 21h–22h'}},
-    {id:9,type:'doc',char:'册',name:'Trọn bộ 5000 từ vựng HSK (Excel + Học online)',level:'Tài liệu · tự học',
-     desc:'Học 5000 từ HSK1–6 ngay trên web: thẻ nhớ, luyện gõ chữ Hán, nghe phát âm, lịch ôn tự động. Kèm file Excel tải về để tự theo dõi tiến độ.',
-     bullets:['Học online: thẻ nhớ, luyện gõ, nghe phát âm','Lịch ôn tự động, lưu tiến độ theo tài khoản','Excel tải về: tự chấm đúng/sai + lịch ôn'],
-     price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:false,lessons:0,res:2,students:340,revenue:'34tr'},
+    {id:9,type:'doc',char:'册',name:'5000 từ vựng HSK – Bản Excel',level:'Tài liệu · 5000 từ HSK1–6',
+     desc:'File Excel 5000 từ HSK1–6: pinyin, nghĩa, câu ví dụ có dịch; tự gõ lại và chấm ✓/✗, lịch ôn tự tính. Tải về dùng trên máy tính và điện thoại.',
+     bullets:['5000 từ HSK1–6 kèm ví dụ','Tự chấm ✓/✗ khi gõ lại','Dùng được Excel & Google Sheets'],
+     price:49000,priceLabel:'49k',wasLabel:'99k',off:'-50%',status:'sale',hasSoft:true,hasHard:false,lessons:0,res:1,students:340,revenue:'34tr'},
+    {id:12,type:'doc',char:'词',name:'5000 từ vựng HSK – Học trên web',level:'Học online · 5000 từ HSK1–6',
+     desc:'Học 5000 từ HSK1–6 ngay trên zizichinese.com: thẻ nhớ, luyện gõ chữ Hán, nghe phát âm, lịch ôn tự động. Tiến độ lưu theo tài khoản, đổi máy vẫn còn.',
+     bullets:['Thẻ nhớ + luyện gõ + phát âm','Lịch ôn tự động 1–3–7–14 ngày','Học trên điện thoại & máy tính'],
+     price:99000,priceLabel:'99k',wasLabel:'199k',off:'-50%',status:'sale',hasSoft:true,hasHard:false,lessons:0,res:0,students:0,revenue:''},
     {id:5,type:'video',char:'三',name:'Khóa HSK3',level:'HSK 3 · trung cấp',
      desc:'600 từ vựng và ngữ pháp trung cấp, đọc hiểu đoạn văn, giao tiếp trôi chảy các chủ đề đời sống.',
      bullets:[],price:1000000,priceLabel:'1.000.000đ',wasLabel:'1.450.000đ',off:'-31%',status:'preorder',lessons:36,res:120,students:128,revenue:'128tr'},
@@ -1732,9 +1745,9 @@
   const fmtVND = n => n.toLocaleString('vi-VN')+'đ';
 
   /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
-  const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
+  const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',12:'hoc-5000-tu-online',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
   // Ảnh bìa mặc định (dùng khi sản phẩm chưa có ảnh riêng; upload trong admin sẽ ghi đè)
-  const LOCAL_COVERS={'hsk1':'assets/cover-hsk1.jpg','hsk2':'assets/cover-hsk2.jpg','combo':'assets/cover-combo.jpg','bo-thu':'assets/cover-bo-thu.jpg','hsk1-truc-tiep':'assets/cover-hsk1-truc-tiep.jpg','hsk2-truc-tiep':'assets/cover-hsk2-truc-tiep.jpg','hsk3':'assets/cover-hsk3.jpg','hsk4':'assets/cover-hsk4.jpg','hsk5':'assets/cover-hsk5.jpg','hsk6':'assets/cover-hsk6.jpg','tai-lieu-5000-tu':'assets/cover-tai-lieu-5000-tu.jpg'};
+  const LOCAL_COVERS={'hsk1':'assets/cover-hsk1.jpg','hsk2':'assets/cover-hsk2.jpg','combo':'assets/cover-combo.jpg','bo-thu':'assets/cover-bo-thu.jpg','hsk1-truc-tiep':'assets/cover-hsk1-truc-tiep.jpg','hsk2-truc-tiep':'assets/cover-hsk2-truc-tiep.jpg','hsk3':'assets/cover-hsk3.jpg','hsk4':'assets/cover-hsk4.jpg','hsk5':'assets/cover-hsk5.jpg','hsk6':'assets/cover-hsk6.jpg','tai-lieu-5000-tu':'assets/cover-tai-lieu-5000-tu.jpg','hoc-5000-tu-online':'assets/cover-tai-lieu-5000-tu.jpg'};
   const toDong=lbl=>{ if(lbl==null) return ''; lbl=(''+lbl).trim(); if(!lbl) return '';
     const km=lbl.match(/^([\d.,]+)\s*k$/i);
     if(km){ const n=Math.round(parseFloat(km[1].replace(/\./g,'').replace(',','.'))*1000); return n.toLocaleString('vi-VN')+'đ'; }
@@ -1746,12 +1759,14 @@
   let sbClient=null;
   function getSB(){ try{ if(!sbClient && window.supabase && window.supabase.createClient) sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); }catch(e){} return sbClient; }
   /* Gói 5000 từ vựng: chỉ bán Excel + Học online (không còn PDF, không bản cứng), kể cả khi dữ liệu trên Supabase chưa cập nhật */
+  const VZ_XLS='tai-lieu-5000-tu', VZ_WEB='hoc-5000-tu-online';
+  const isVocabPack=s=>s===VZ_XLS||s===VZ_WEB;
   function fixVocabPack(p){
-    if(!p||p.slug!=='tai-lieu-5000-tu') return p;
+    if(!p||p.slug!==VZ_XLS) return p;
     p.hasHard=false; p.hardPrice=null; p.shipFee=null;
-    if(/pdf|cứng/i.test((p.name||'')+' '+(p.desc||''))){
-      p.name='Trọn bộ 5000 từ vựng HSK (Excel + Học online)'; p.level='Tài liệu · tự học';
-      p.desc=p.description='Học 5000 từ HSK1–6 ngay trên web: thẻ nhớ, luyện gõ chữ Hán, nghe phát âm, lịch ôn tự động. Kèm file Excel tải về để tự theo dõi tiến độ.';
+    if(/pdf|cứng|học online/i.test((p.name||'')+' '+(p.desc||''))){
+      p.name='5000 từ vựng HSK – Bản Excel'; p.level='Tài liệu · 5000 từ HSK1–6';
+      p.desc=p.description='File Excel 5000 từ HSK1–6: pinyin, nghĩa, câu ví dụ có dịch; tự gõ lại và chấm ✓/✗, lịch ôn tự tính. Tải về dùng trên máy tính và điện thoại.';
     }
     return p;
   }
@@ -1913,7 +1928,7 @@
     const rating = (4.7 + (rseed%3)*0.1).toFixed(1).replace('.',',');
     const cnt = p.students ? `(${p.students>999?(p.students/1000).toFixed(1).replace('.',',')+'k':p.students})` : '';
     const meta = p.type==='doc'
-      ? (p.slug==='tai-lieu-5000-tu' ? `<span>5000 từ</span><span>Excel · Học online</span>` : `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`)
+      ? (isVocabPack(p.slug) ? `<span>5000 từ HSK1–6</span><span>Excel hoặc Học online</span>` : `<span>${p.res||0} file</span><span>PDF · Excel</span>${p.hasHard?'<span>Có bản cứng</span>':''}`)
       : p.type==='live'
       ? `<span>${p.lessons||0} buổi trực tiếp</span><span>${p.live?p.live.duration:'Học qua Zoom'}</span><span>${p.live?p.live.slot:'Zoom'}</span>`
       : `<span>${p.lessons||0} buổi học</span><span>${p.res||0} tài nguyên</span>${p.students?`<span>${p.students} học viên</span>`:''}`;
@@ -2177,8 +2192,8 @@
       const thumb=p.cover?`<img src="${p.cover}">`:`<img class="thumb-mascot" src="assets/zizi-face.png"><span class="thumb-char hz">${p.char}</span>`;
       const badge=isDoc?'Tài liệu':(p.type==='live'?'Trực tiếp':'Khóa học');
       if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
-        <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">Tài liệu đã sở hữu · tải về không giới hạn.</p>
-        ${p.slug===VZ_SLUG?`<button class="btn btn-primary btn-sm" onclick="openVocab('learn')">▶ Học trên web</button> `:''}<button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">⬇ Tải ${p.slug===VZ_SLUG?'Excel':'tài liệu'}</button></div></div>`;
+        <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">${p.slug===VZ_WEB?'Học online không giới hạn · tiến độ lưu theo tài khoản.':'Tài liệu đã sở hữu · tải về không giới hạn.'}</p>
+        ${p.slug===VZ_WEB?`<button class="btn btn-primary btn-sm" onclick="openVocab('learn')">▶ Học trên web</button>`:`<button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">⬇ Tải ${p.slug===VZ_XLS?'Excel':'tài liệu'}</button>`}</div></div>`;
       const total=getLessons(p.id).length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
       return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3>
@@ -2225,7 +2240,7 @@
   }
   function backToDash(){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); window.scrollTo(0,0); }
   function renderPublic(){
-    const pub=products.filter(p=>p.published!==false);
+    const pub=products.filter(p=>p.published!==false && !(p.slug===VZ_WEB && products.some(x=>x.slug===VZ_XLS&&x.published!==false)));
     const sale=pub.filter(p=>p.status==='sale'), pre=pub.filter(p=>p.status==='preorder');
     document.getElementById('saleGrid').innerHTML=sale.map(cardHTML).join('');
     document.getElementById('preGrid').innerHTML=pre.map(cardHTML).join('');
@@ -2248,7 +2263,8 @@
     document.getElementById('mCtaPrice').textContent=p.priceLabel;
     const isDoc=p.type==='doc', isLive=p.type==='live';
     document.getElementById('pNote').innerHTML = isDoc
-      ? (p.slug===VZ_SLUG ? '<b>📱 Học online + Excel</b>, mở khóa ngay sau thanh toán: học trên web ở Khu vực học viên (điện thoại hay máy tính đều được) và tải file Excel về máy.'
+      ? (p.slug===VZ_WEB ? '<b>📱 Học trên web</b>, mở khóa ngay sau thanh toán: đăng nhập rồi vào <b>Khu vực học viên → Học trên web</b>, dùng được trên điện thoại và máy tính.'
+         : p.slug===VZ_XLS ? '<b>📊 Bản Excel</b>, tải file về ngay sau thanh toán (Khu vực học viên → Tải Excel). Mở bằng Excel hoặc Google Sheets.'
          : p.hasHard ? '<b>📄 Tài liệu</b>, bản mềm tải về ngay sau thanh toán; có thể chọn thêm bản cứng in màu giao tận nơi.'
          : '<b>📄 Tài liệu</b>, bản mềm tải về ngay sau thanh toán.')
       : isLive
@@ -2259,7 +2275,8 @@
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
     renderWhatsIn(p);
-    { const tb=document.getElementById('tryVocabBtn'); if(tb) tb.style.display=p.slug===VZ_SLUG?'flex':'none'; }
+    { const tb=document.getElementById('tryVocabBtn'); if(tb) tb.style.display=isVocabPack(p.slug)?'flex':'none'; }
+    renderPackChooser(p);
     const li=document.getElementById('liveInfo');
     if(isLive && p.live){
       li.style.display='block';
@@ -2274,13 +2291,30 @@
     _applyHash('sp/'+p.slug);
     track('ViewContent',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
   }
+  /* Gói 5000 từ: 2 lựa chọn bán riêng (Excel / Học trên web), chọn ngay trên trang bán */
+  function renderPackChooser(p){
+    const box=document.getElementById('packChooser'); if(!box) return;
+    const xl=products.find(x=>x.slug===VZ_XLS&&x.published!==false), web=products.find(x=>x.slug===VZ_WEB&&x.published!==false);
+    if(!isVocabPack(p.slug)||!xl||!web){ box.style.display='none'; return; }
+    const opt=(x,ic,title,sub)=>`<button type="button" class="pack-opt${x.slug===p.slug?' on':''}" onclick="openProduct('${x.slug}')" aria-pressed="${x.slug===p.slug}"><span class="po-ic">${ic}</span><span class="po-t"><b>${title}</b><small>${sub}</small></span><span class="po-p">${fmtVND(x.price)}</span></button>`;
+    box.innerHTML='<div class="po-h">Chọn bản bạn muốn mua</div>'
+      +opt(web,'📱','Học trên web','Thẻ nhớ, luyện gõ, phát âm, lịch ôn tự động')
+      +opt(xl,'📊','Bản Excel','Tải file về máy, tự chấm ✓/✗');
+    box.style.display='grid';
+  }
   /* @DATA-WHATSIN Mục "Bên trong có gì?" theo từng sản phẩm (slug), không có thì dùng mặc định theo loại */
   const WHATSIN={
     'tai-lieu-5000-tu':[
-      '<b>Học online trên zizichinese.com</b>: thẻ nhớ lật mặt, luyện gõ chữ Hán hoặc pinyin được chấm ngay, nghe phát âm. Dùng trên điện thoại và máy tính.',
-      '<b>Lịch ôn tự động</b>: từ đã nhớ sẽ quay lại sau 1 → 3 → 7 → 14 ngày. Tiến độ lưu theo tài khoản, đổi máy vẫn còn.',
-      '<b>5000 từ HSK1–6</b>: mỗi từ có pinyin, nghĩa tiếng Việt và câu ví dụ có dịch.',
-      '<b>File Excel tải về</b>: gõ lại từ và câu ví dụ, tự chấm ✓/✗; sheet Tổng quan theo dõi % tiến độ. Mở được bằng Excel và Google Sheets.'
+      '<b>File Excel 5000 từ HSK1–6</b>: mỗi từ có pinyin, nghĩa tiếng Việt và câu ví dụ có dịch.',
+      '<b>Tự chấm khi gõ lại</b>: gõ lại từ và câu ví dụ, ô hiện ✓ xanh khi đúng, ✗ đỏ khi sai.',
+      '<b>Lịch ôn tự tính</b>: chọn trạng thái + ngày học, file tự báo hôm nay cần ôn từ nào; sheet Tổng quan theo dõi % tiến độ.',
+      '<b>Dùng trên mọi máy</b>: mở bằng Excel hoặc Google Sheets, cả máy tính lẫn điện thoại. Tải về ngay sau thanh toán.'
+    ],
+    'hoc-5000-tu-online':[
+      '<b>Học ngay trên zizichinese.com</b>: không cần cài đặt, dùng trên điện thoại và máy tính.',
+      '<b>Thẻ nhớ + luyện gõ</b>: lật thẻ xem pinyin, nghĩa, ví dụ; gõ chữ Hán hoặc pinyin được chấm ngay; bấm 🔊 nghe phát âm.',
+      '<b>Lịch ôn tự động</b>: từ đã nhớ sẽ quay lại sau 1 → 3 → 7 → 14 ngày, mỗi ngày chỉ ôn đúng những từ sắp quên.',
+      '<b>Lưu tiến độ theo tài khoản</b>: đổi điện thoại hay máy tính vẫn học tiếp từ chỗ cũ. 5000 từ HSK1–6 có ví dụ & dịch.'
     ],
     _doc:['Bản mềm (PDF/Excel) tải về ngay sau khi thanh toán.','Có thể chọn thêm bản cứng in màu, giao tận nơi.','Cập nhật miễn phí khi tài liệu có bản mới.'],
     _live:['Học trực tiếp cùng giáo viên qua Zoom theo lịch cố định.','Lớp nhỏ, được chữa phát âm 1-1.','Có ghi hình để xem lại buổi đã học.','Nhóm kín hỏi đáp cùng giáo viên và các bạn cùng lớp.']
@@ -2320,7 +2354,7 @@
     if(foot)foot.style.display='block';
     box.innerHTML=items.map(it=>`<div class="cart-it">
       <img src="${it.cover||'assets/zizi-mascot.png'}" onerror="this.src='assets/zizi-mascot.png'">
-      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.slug==='tai-lieu-5000-tu'?'Excel + Học online':it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?('Lớp trực tiếp'+(it.schedule?' · '+esc(it.schedule):'')):'Khóa video')}</div></div>
+      <div class="ci-b"><div class="ci-n">${esc(it.name)}</div><div class="ci-v">${it.slug===VZ_XLS?'Bản Excel':it.slug===VZ_WEB?'Học trên web':it.type==='doc'?(it.variant==='hard'?'Bản cứng':'Bản mềm'):(it.type==='live'?('Lớp trực tiếp'+(it.schedule?' · '+esc(it.schedule):'')):'Khóa video')}</div></div>
       <div style="text-align:right"><div class="ci-p">${fmtVND(it.price)}</div><button class="ci-rm" onclick="removeCartItem('${it.slug}')" aria-label="Xóa">×</button></div>
     </div>`).join('');
     document.getElementById('cartTotal').textContent=fmtVND(items.reduce((s,i)=>s+i.price,0));
@@ -2354,7 +2388,7 @@
       const p=current, isDoc=p.type==='doc'&&p.hasHard;
       track('InitiateCheckout',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
       document.getElementById('coHeading').textContent = p.type==='doc'?'Thông tin nhận tài liệu':'Thông tin nhận khóa học';
-      document.getElementById('coSub').textContent = p.slug==='tai-lieu-5000-tu'?'Tài khoản học online và link tải Excel sẽ gửi về email này.':(p.type==='doc'?(p.hasHard?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Link tải sẽ gửi về email này.'):'Tài khoản đăng nhập sẽ được gửi về email này.');
+      document.getElementById('coSub').textContent = p.slug===VZ_WEB?'Tài khoản đăng nhập để học online sẽ gửi về email này.':p.slug===VZ_XLS?'Tài khoản đăng nhập để tải Excel sẽ gửi về email này.':(p.type==='doc'?(p.hasHard?'Link tải / thông tin giao hàng sẽ gửi về email này.':'Link tải sẽ gửi về email này.'):'Tài khoản đăng nhập sẽ được gửi về email này.');
       document.getElementById('fmtChooser').style.display = isDoc?'grid':'none';
       if(isDoc){
         document.querySelector('input[name=fmt][value=soft]').checked=true;
@@ -2403,7 +2437,7 @@
   }
   function recalcCheckout(){
     let total=0, hard=false, rows=[];
-    const vlabel=(t,v,s)=> s==='tai-lieu-5000-tu'?'':(t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'');
+    const vlabel=(t,v,s)=> isVocabPack(s)?'':(t==='doc'?(v==='hard'?' · bản cứng':' · bản mềm'):'');
     if(_cartMode){
       _checkoutItems.forEach(it=>{ total+=it.price; if(it.variant==='hard')hard=true; const sc=it.type==='live'&&it.schedule?(' · '+it.schedule):''; rows.push({name:it.name+sc+vlabel(it.type,it.variant,it.slug),price:it.price}); });
     } else {
@@ -2554,8 +2588,8 @@
     if(isDoc && hard){
       msg.innerHTML='Đã nhận đơn! <b>Link tải bản mềm</b> và thông tin đơn đã gửi tới email của bạn, bản cứng sẽ được <b>giao trong 2–4 ngày</b>. Nhớ kiểm tra cả mục Quảng cáo/Spam.';
       btn.textContent='Đăng nhập để tải lại →'; btn.onclick=()=>go('auth');
-    }else if(isDoc && p.slug==='tai-lieu-5000-tu'){
-      msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập</b> vừa gửi tới email của bạn (nhớ kiểm tra cả mục Quảng cáo/Spam). Đăng nhập rồi vào <b>Khu vực học viên</b> để <b>học online</b> và <b>tải Excel</b>.';
+    }else if(isDoc && isVocabPack(p.slug)){
+      msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập</b> vừa gửi tới email của bạn (nhớ kiểm tra cả mục Quảng cáo/Spam). Đăng nhập rồi vào <b>Khu vực học viên</b> để '+(p.slug===VZ_WEB?'<b>học trên web</b>.':'<b>tải file Excel</b>.');
       btn.textContent='Đăng nhập để vào học →'; btn.onclick=()=>go('auth');
     }else if(isDoc){
       msg.innerHTML='Thanh toán thành công! <b>Thông tin đăng nhập và link tải</b> vừa gửi tới email của bạn, nhớ kiểm tra cả mục Quảng cáo/Spam, rồi đăng nhập để tải tài liệu.';
@@ -2638,9 +2672,8 @@
 
 
   /* ================= @MAP-VOCAB · HỌC TỪ VỰNG HSK TRÊN WEB =================
-     Dữ liệu: bảng vocab_words trên Supabase (RLS: chỉ người mua gói 'tai-lieu-5000-tu' đọc được,
+     Dữ liệu: bảng vocab_words trên Supabase (RLS: chỉ người mua gói 'hoc-5000-tu-online' đọc được,
      20 từ is_preview ai cũng đọc được). Tiến độ: localStorage + bảng vocab_progress theo tài khoản. */
-  const VZ_SLUG='tai-lieu-5000-tu';
   const VZ_LEVELS=[['HSK1',149],['HSK2',150],['HSK3',295],['HSK4',600],['HSK5',1295],['HSK6',2513]];
   const VZ_STATUS=['Chưa học','Học lần 1','Học lần 2','Hoàn thành'];
   const VZ_GAP=[0,1,3,7,14], VZ_NEW=15;
@@ -2656,8 +2689,8 @@
   const vzKey=()=>'zizi_vocab_'+(vz.uid||'guest');
 
   function openVocab(from){ vz.from=from||'learn'; go('vocab'); }
-  function vzLeave(){ if(vz.from==='product'){ const p=products.find(x=>x.slug===VZ_SLUG); if(p){ openProduct(p.id); return; } } go(vz.from==='home'?'home':'learn'); }
-  function vzBuy(){ const p=products.find(x=>x.slug===VZ_SLUG); if(p) openProduct(p.id); else go('home'); }
+  function vzLeave(){ if(vz.from==='product'){ const p=products.find(x=>x.slug===VZ_WEB); if(p){ openProduct(p.id); return; } } go(vz.from==='home'?'home':'learn'); }
+  function vzBuy(){ const p=products.find(x=>x.slug===VZ_WEB); if(p) openProduct(p.id); else go('home'); }
 
   function vzLoadLocal(){
     try{ const s=JSON.parse(localStorage.getItem(vzKey())||'{}'); vz.p=s.p||{}; vz.log=s.log||{}; if(typeof s.lv==='number')vz.lv=s.lv; if(s.mode)vz.mode=s.mode; }catch(_){ vz.p={}; vz.log={}; }
@@ -2757,7 +2790,7 @@
   function vzDone(){
     vzSay('done'); const {c}=vzCounts(vz.lv);
     if(!vzWords().length) return `<div class="vz-card vz-empty"><div class="big">Chưa tải được từ vựng</div><p>Kiểm tra kết nối mạng rồi thử lại. Nếu vẫn lỗi, nhắn ZiZi qua Zalo để được hỗ trợ.</p><button class="vz-btn primary" data-act="reload">Thử lại</button></div>`;
-    if(!vz.full) return `<div class="vz-card vz-empty"><div class="big">Hết 20 từ học thử!</div><p>Mua trọn bộ để học tiếp 5000 từ HSK1–6, có lịch ôn và lưu tiến độ theo tài khoản.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="buy">Mở khóa trọn bộ →</button><button class="vz-btn ghost" data-act="tolist">Xem lại danh sách</button></div></div>`;
+    if(!vz.full) return `<div class="vz-card vz-empty"><div class="big">Hết 20 từ học thử!</div><p>Mua bản Học trên web để học tiếp 5000 từ HSK1–6, có lịch ôn và lưu tiến độ theo tài khoản.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="buy">Mở khóa trọn bộ →</button><button class="vz-btn ghost" data-act="tolist">Xem lại danh sách</button></div></div>`;
     return `<div class="vz-card vz-empty"><div class="big">Hết bài rồi!</div><p>Bạn đã ôn hết các từ đến hạn của ${vzLvName()}. Còn ${c[0]} từ chưa học.</p><div class="vz-row" style="width:100%"><button class="vz-btn primary" data-act="more-new">Học thêm ${VZ_NEW} từ mới</button><button class="vz-btn ghost" data-act="tolist">Xem danh sách</button></div></div>`;
   }
   function vzRenderCard(){
