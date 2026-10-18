@@ -1254,6 +1254,38 @@
   </div>
 </div>
 
+<!-- ================= CHÍNH SÁCH ================= -->
+<style>
+  #view-policy{display:none}
+  .policy-wrap{max-width:760px;margin:0 auto;padding:36px 20px 72px}
+  .policy-back{display:inline-block;color:var(--jade-dark,#127d69);font-weight:700;font-size:.9rem;text-decoration:none;margin-bottom:18px}
+  .policy-back:hover{text-decoration:underline}
+  .policy-wrap h1{font-size:1.9rem;line-height:1.2;margin:0 0 6px;color:var(--ink,#1c2b27)}
+  .policy-updated{color:var(--ink-60,#5b726b);font-size:.86rem;margin:0 0 26px}
+  .policy-body h3{font-size:1.06rem;margin:26px 0 8px;color:var(--ink,#1c2b27)}
+  .policy-body p{margin:0 0 12px;line-height:1.7;color:var(--ink,#243b36);font-size:.97rem}
+  .policy-body b{color:var(--ink,#1c2b27)}
+  .policy-body a{color:var(--jade-dark,#127d69);font-weight:600}
+  .policy-foot{margin-top:40px;padding-top:22px;border-top:1px solid var(--line-2,#e4efe9);display:flex;flex-wrap:wrap;gap:10px 22px}
+  .policy-foot a{color:var(--ink-60,#5b726b);font-size:.9rem;text-decoration:none;font-weight:600}
+  .policy-foot a:hover{color:var(--jade-dark,#127d69)}
+  @media(max-width:560px){.policy-wrap h1{font-size:1.5rem}}
+</style>
+<div id="view-policy">
+  <div class="policy-wrap">
+    <a class="policy-back" href="#" onclick="go('home');return false">&larr; Về trang chủ</a>
+    <h1 id="policyTitle">Chính sách</h1>
+    <p class="policy-updated">Cập nhật lần cuối: 18/10/2026</p>
+    <div id="policyBody" class="policy-body"></div>
+    <div class="policy-foot">
+      <a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a>
+      <a href="#" onclick="openPolicy('refund');return false">Chính sách hoàn tiền</a>
+      <a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a>
+      <a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a>
+    </div>
+  </div>
+</div>
+
 <!-- ================= AUTH · ĐĂNG NHẬP / TẠO TÀI KHOẢN ================= -->
 <div id="view-auth">
   <div class="auth-top">
@@ -1272,7 +1304,7 @@
         <div class="afield" id="af_phone" style="display:none"><label>Số điện thoại <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="au_phone" placeholder="09xx xxx xxx"></div>
         <div class="afield"><label>Mật khẩu <a id="forgot" class="afw" href="#" onclick="forgotPassword();return false">Quên mật khẩu?</a></label><input type="password" id="authPass" placeholder="Nhập mật khẩu"></div>
         <div class="afield" id="af_confirm" style="display:none"><label>Xác nhận mật khẩu <em style="color:var(--cinnabar)">*</em></label><input type="password" id="au_confirm" placeholder="Nhập lại mật khẩu"></div>
-        <label class="afield afterms" id="af_terms" style="display:none"><input type="checkbox" id="au_terms"> <span>Tôi đồng ý với <a href="#" onclick="toast('Điều khoản dịch vụ');return false">Điều khoản</a> &amp; <a href="#" onclick="toast('Chính sách bảo mật');return false">Bảo mật</a></span></label>
+        <label class="afield afterms" id="af_terms" style="display:none"><input type="checkbox" id="au_terms"> <span>Tôi đồng ý với <a href="#" onclick="openPolicy('terms');return false">Điều khoản</a> &amp; <a href="#" onclick="openPolicy('privacy');return false">Bảo mật</a></span></label>
         <div id="authErr" class="auth-err"></div>
         <button class="btn btn-primary auth-submit" id="authSubmit">Đăng nhập</button>
       </form>
@@ -1681,15 +1713,15 @@
       <div class="foot-brand">
         <a class="brand"><img class="logo-img" src="assets/zizi-logo.png" alt="ZiZi"><span style="color:#fff">ZiZi</span></a>
         <p>Tài liệu và khóa học tự học tiếng Trung cho người Việt mất gốc, học theo nét, nhớ theo bộ thủ.</p>
-        <div class="socials"><a href="#">f</a><a href="#">▶</a><a href="#">♪</a></div>
+        <div class="socials"><a href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener" aria-label="Facebook">f</a><a href="#">▶</a><a href="#">♪</a></div>
       </div>
       <div><h5>Khóa học</h5><a href="#" onclick="openProduct('hsk1');return false">Khóa HSK1</a><a href="#" onclick="openProduct('hsk2');return false">Khóa HSK2</a><a href="#" onclick="openProduct('combo');return false">Combo HSK1+2</a><a href="#" onclick="openProduct('bo-thu');return false">Bộ thủ &amp; công thức</a></div>
-      <div><h5>Chính sách</h5><a href="#">Điều khoản dịch vụ</a><a href="#">Chính sách hoàn tiền</a><a href="#">Chính sách bảo mật</a><a href="#">Hướng dẫn thanh toán</a></div>
-      <div><h5>Hỗ trợ</h5><a href="#">Zalo: 09xx xxx xxx</a><a href="#">Email: hotro@zizichinese.com</a><a href="#">Câu hỏi thường gặp</a><a href="#">Nhóm học viên</a></div>
+      <div><h5>Chính sách</h5><a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a><a href="#" onclick="openPolicy('refund');return false">Chính sách hoàn tiền</a><a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a><a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a></div>
+      <div><h5>Hỗ trợ</h5><a href="https://zalo.me/0876414282" target="_blank" rel="noopener">Zalo: 0876 414 282</a><a href="mailto:info.zizichinese@gmail.com">Email: info.zizichinese@gmail.com</a><a href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">Fanpage ZiZi Chinese</a><a href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">Nhóm học viên</a></div>
     </div>
     <div class="foot-legal">
-      Chủ sở hữu: [Tên bạn] · Địa chỉ: [Địa chỉ đăng ký kinh doanh] · Mã số thuế/ĐKKD: [số] ·
-      © 2026 ZiZi Chinese. Đây là bản prototype demo, hãy thay nội dung, giá và thông tin pháp lý bằng dữ liệu thật của bạn.
+      CÔNG TY TNHH TRUYỀN THÔNG &amp; GIÁO DỤC TRẠM DIGITAL · Mã số thuế: 0319210523 · Email: info.zizichinese@gmail.com · Zalo: 0876 414 282 ·
+      © 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.
     </div>
   </div>
 </footer>
@@ -1904,7 +1936,7 @@
     }catch(e){}
   }
 
-  const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri',vocab:'tu-vung'};
+  const VIEW_HASH={home:'',checkout:'thanh-toan',learn:'hoc',auth:'dang-nhap',admin:'quantri',vocab:'tu-vung',policy:'chinh-sach'};
   let _supHash=false;
   function _applyHash(h){
     _supHash=true;
@@ -1916,7 +1948,7 @@
   }
 
   function go(view){
-    ['home','product','checkout','admin','learn','auth','vocab'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    ['home','product','checkout','admin','learn','auth','vocab','policy'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+view).style.display='block';
     if(view!=='checkout'){ try{stopPoll();}catch(e){} }
     if(view==='checkout'){buildCheckout();}
@@ -1932,6 +1964,41 @@
     if(view==='vocab'){ vzInit(); }
     window.scrollTo({top:0,behavior:'auto'});
     if(view!=='product' && VIEW_HASH[view]!==undefined){ _applyHash(VIEW_HASH[view]); }
+  }
+
+  /* ===== CHÍNH SÁCH (trang tĩnh) ===== */
+  const POLICIES={
+    terms:{title:'Điều khoản dịch vụ',html:
+      '<h3>1. Về chúng tôi</h3><p>ZiZi Chinese là thương hiệu dạy tiếng Trung cho người mới bắt đầu, trực thuộc <b>CÔNG TY TNHH TRUYỀN THÔNG &amp; GIÁO DỤC TRẠM DIGITAL</b> (Mã số thuế 0319210523). Mọi nội dung, hình ảnh, bài giảng và tài liệu trên website thuộc bản quyền của ZiZi Chinese.</p>'+
+      '<h3>2. Sản phẩm và dịch vụ</h3><p>Chúng tôi cung cấp khóa học video theo cấp HSK, tài liệu học (file Excel, PDF), lớp học trực tiếp qua Zoom, và chương trình học từ vựng trên web. Đây là sản phẩm số, bạn được cấp quyền truy cập hoặc tải về sau khi thanh toán thành công.</p>'+
+      '<h3>3. Tài khoản học viên</h3><p>Sau khi thanh toán, hệ thống tự tạo tài khoản và gửi thông tin đăng nhập về email của bạn. Bạn chịu trách nhiệm bảo mật mật khẩu và không chia sẻ tài khoản cho người khác. Mỗi tài khoản dành cho một người học.</p>'+
+      '<h3>4. Quyền sở hữu và sử dụng</h3><p>Nội dung bạn mua chỉ dùng cho mục đích học tập cá nhân. Nghiêm cấm sao chép, phát tán, bán lại, đăng tải công khai hoặc chia sẻ tài liệu, video dưới mọi hình thức. Vi phạm có thể dẫn đến khóa tài khoản mà không hoàn tiền.</p>'+
+      '<h3>5. Giá và thanh toán</h3><p>Giá sản phẩm hiển thị bằng VND, đã gồm các chương trình ưu đãi nếu có. Thanh toán qua chuyển khoản ngân hàng bằng mã VietQR. Quyền học được kích hoạt tự động sau khi hệ thống ghi nhận thanh toán.</p>'+
+      '<h3>6. Thay đổi dịch vụ</h3><p>Chúng tôi có thể cập nhật nội dung bài học, bổ sung tính năng hoặc điều chỉnh giá theo thời gian. Với khóa đã mua, bạn vẫn được giữ quyền truy cập theo cam kết tại thời điểm mua.</p>'+
+      '<h3>7. Liên hệ</h3><p>Email <a href="mailto:info.zizichinese@gmail.com">info.zizichinese@gmail.com</a>, Zalo 0876414282, fanpage <a href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">facebook.com/ZiZiChinese</a>.</p>'},
+    refund:{title:'Chính sách hoàn tiền',html:
+      '<h3>1. Cam kết hoàn tiền</h3><p>ZiZi Chinese hoàn tiền 100% trong vòng <b>24 giờ</b> kể từ khi thanh toán nếu bạn chưa hài lòng với khóa học hoặc tài liệu, với điều kiện nêu ở mục 2.</p>'+
+      '<h3>2. Điều kiện áp dụng</h3><p>Chính sách hoàn tiền áp dụng khi bạn <b>chưa tải về trọn bộ tài liệu</b> và <b>chưa học quá 20%</b> nội dung khóa học. Với tài liệu số đã tải về đầy đủ, hoặc lớp học trực tiếp đã bắt đầu, chúng tôi không thể hoàn tiền do đặc thù sản phẩm số.</p>'+
+      '<h3>3. Trường hợp luôn được hỗ trợ</h3><p>Bạn được hoàn tiền hoặc cấp lại quyền nếu thanh toán thành công nhưng không nhận được tài khoản, không truy cập được sản phẩm do lỗi hệ thống, hoặc bị tính tiền trùng.</p>'+
+      '<h3>4. Cách yêu cầu</h3><p>Gửi yêu cầu kèm mã đơn hàng và email đã mua tới <a href="mailto:info.zizichinese@gmail.com">info.zizichinese@gmail.com</a> hoặc Zalo 0876414282. Chúng tôi phản hồi trong 24 đến 48 giờ làm việc và hoàn tiền về tài khoản bạn đã chuyển khoản trong 3 đến 5 ngày làm việc.</p>'},
+    privacy:{title:'Chính sách bảo mật',html:
+      '<h3>1. Thông tin chúng tôi thu thập</h3><p>Họ tên, email, số điện thoại bạn cung cấp khi mua hàng; thông tin đơn hàng và lịch sử học tập; dữ liệu truy cập ẩn danh phục vụ đo lường (ví dụ nguồn truy cập).</p>'+
+      '<h3>2. Mục đích sử dụng</h3><p>Tạo tài khoản và cấp quyền học; gửi thông tin đăng nhập, biên nhận và hỗ trợ; cải thiện nội dung và trải nghiệm; thông báo ưu đãi nếu bạn đồng ý nhận.</p>'+
+      '<h3>3. Bảo mật thông tin</h3><p>Dữ liệu được lưu trên hệ thống có mã hóa và phân quyền. Chúng tôi không bán, trao đổi thông tin cá nhân của bạn cho bên thứ ba. Thông tin thanh toán được xử lý qua kênh ngân hàng, chúng tôi không lưu số thẻ của bạn.</p>'+
+      '<h3>4. Chia sẻ với bên thứ ba</h3><p>Chỉ chia sẻ khi cần thiết với đơn vị cung cấp hạ tầng (lưu trữ, gửi email, cổng thanh toán) để vận hành dịch vụ, hoặc khi pháp luật yêu cầu.</p>'+
+      '<h3>5. Quyền của bạn</h3><p>Bạn có thể yêu cầu xem, sửa hoặc xóa thông tin cá nhân của mình bằng cách liên hệ <a href="mailto:info.zizichinese@gmail.com">info.zizichinese@gmail.com</a>.</p>'},
+    payment:{title:'Hướng dẫn thanh toán',html:
+      '<h3>1. Các bước thanh toán</h3><p>Chọn sản phẩm và bấm Mua ngay. Điền email và số điện thoại (email này sẽ nhận tài khoản học). Hệ thống hiện mã QR kèm số tiền và nội dung chuyển khoản. Mở app ngân hàng, quét mã QR, kiểm tra đúng số tiền rồi xác nhận.</p>'+
+      '<h3>2. Lưu ý khi chuyển khoản</h3><p>Vui lòng giữ nguyên nội dung chuyển khoản mà hệ thống tạo sẵn (mã đơn), không sửa, để hệ thống tự đối soát. Chuyển đúng số tiền hiển thị.</p>'+
+      '<h3>3. Nhận tài khoản</h3><p>Ngay sau khi nhận được tiền, hệ thống tự tạo tài khoản và gửi email và mật khẩu đăng nhập về email của bạn (kèm link tải nếu là tài liệu). Nếu đã có tài khoản, quyền học mới sẽ được cộng thêm. Nhớ kiểm tra cả mục Quảng cáo/Spam.</p>'+
+      '<h3>4. Chưa nhận được quyền học?</h3><p>Thông thường quyền được mở trong vòng 1 đến 2 phút. Nếu sau 10 phút vẫn chưa nhận, liên hệ <a href="mailto:info.zizichinese@gmail.com">info.zizichinese@gmail.com</a> hoặc Zalo 0876414282 kèm mã đơn và ảnh biên lai chuyển khoản, chúng tôi xử lý ngay.</p>'}
+  };
+  function openPolicy(key){
+    const p=POLICIES[key]||POLICIES.terms;
+    const t=document.getElementById('policyTitle'); if(t)t.textContent=p.title;
+    const b=document.getElementById('policyBody'); if(b)b.innerHTML=p.html;
+    go('policy');
+    _applyHash('chinh-sach/'+key);
   }
 
   /* ===== render lưới sản phẩm trên web ngoài ===== */
@@ -2935,6 +3002,7 @@
     const h=(location.hash||'').replace(/^#/,'');
     if(h==='quantri'||h==='admin'){ go('admin'); return; }
     if(h.indexOf('sp/')===0){ const slug=decodeURIComponent(h.slice(3)); const p=products.find(x=>x.slug===slug); if(p){ openProduct(p.id); } else { go('home'); } return; }
+    if(h==='chinh-sach'||h.indexOf('chinh-sach/')===0){ const k=h.indexOf('/')>0?h.split('/')[1]:'terms'; openPolicy(POLICIES[k]?k:'terms'); return; }
     const REV={'':'home','home':'home','thanh-toan':'checkout','hoc':'learn','dang-nhap':'auth','tu-vung':'vocab'};
     go(REV[h]!==undefined?REV[h]:'home');
   }
