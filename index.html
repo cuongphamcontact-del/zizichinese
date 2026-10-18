@@ -193,7 +193,9 @@
   footer h5{color:#fff;font-size:1rem;font-weight:700;margin-bottom:14px}
   footer a{display:block;padding:.22rem 0;opacity:.82}
   footer a:hover{opacity:1;color:#fff}
-  .foot-legal{border-top:1px solid rgba(255,255,255,.14);padding-top:22px;font-size:.78rem;opacity:.7;line-height:1.7}
+  .foot-legal{border-top:1px solid rgba(255,255,255,.14);padding-top:22px;font-size:.78rem;opacity:.7;line-height:1.7;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+  .foot-legal span{display:inline-flex;align-items:baseline}
+  .foot-legal span:not(:last-child)::after{content:"·";margin-left:10px;opacity:.5}
   .foot-brand .brand{color:#fff}
   .foot-brand p{opacity:.78;margin:12px 0 16px;max-width:36ch}
   .socials{display:flex;gap:.6rem}
@@ -347,7 +349,12 @@
     .hero p.lead{font-size:1rem;margin-bottom:1.3rem}
     .hero-stats{grid-template-columns:1fr 1fr;gap:10px;margin-top:1.4rem}
     .stat-card{padding:12px 13px}.stat-card b{font-size:1.3rem}
-    .products,.reviews,.trust .wrap,.foot-grid,.fmt{grid-template-columns:1fr}
+    .products,.reviews,.trust .wrap,.fmt{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:22px 20px}
+    .foot-brand{grid-column:1/-1}
+    .foot-legal{display:block;line-height:1.6}
+    .foot-legal span{display:block}
+    .foot-legal span:not(:last-child)::after{content:none}
     section.pad{padding:40px 0}
     .sec-head h2{font-size:1.6rem}
     .nav{height:60px;gap:.5rem}
@@ -1741,10 +1748,7 @@
       <div><h5>Chính sách</h5><a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a><a href="#" onclick="openPolicy('refund');return false">Chính sách hoàn tiền</a><a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a><a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a></div>
       <div><h5>Hỗ trợ</h5><a id="footZalo" href="https://zalo.me/0876414282" target="_blank" rel="noopener">Zalo: 0876 414 282</a><a id="footEmail" href="mailto:info.zizichinese@gmail.com">Email: info.zizichinese@gmail.com</a><a id="footFanpage" href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">Fanpage ZiZi Chinese</a><a id="footFanpage2" href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">Nhóm học viên</a></div>
     </div>
-    <div class="foot-legal" id="footLegal">
-      CÔNG TY TNHH TRUYỀN THÔNG &amp; GIÁO DỤC TRẠM DIGITAL · Mã số thuế: 0319210523 · Địa chỉ: Tầng 14, Tòa Nhà HM Town, 412 Nguyễn Thị Minh Khai, Phường Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam · Email: info.zizichinese@gmail.com · Zalo: 0876 414 282 ·
-      © 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.
-    </div>
+    <div class="foot-legal" id="footLegal"><span>CÔNG TY TNHH TRUYỀN THÔNG &amp; GIÁO DỤC TRẠM DIGITAL</span><span>Mã số thuế: 0319210523</span><span>Tầng 14, Tòa Nhà HM Town, 412 Nguyễn Thị Minh Khai, Phường Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam</span><span>© 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.</span></div>
   </div>
 </footer>
 
@@ -2047,7 +2051,7 @@
     const ff=document.getElementById('footFanpage'); if(ff){ ff.href=BIZ.fanpage; }
     const ff2=document.getElementById('footFanpage2'); if(ff2){ ff2.href=BIZ.fanpage; }
     const fl=document.getElementById('footLegal');
-    if(fl) fl.innerHTML=bizEsc(BIZ.company)+' · Mã số thuế: '+bizEsc(BIZ.tax)+' · Địa chỉ: '+bizEsc(BIZ.address)+' · Email: '+bizEsc(BIZ.email)+' · Zalo: '+bizEsc(z)+' · © 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.';
+    if(fl){ const parts=['<span>'+bizEsc(BIZ.company)+'</span>','<span>Mã số thuế: '+bizEsc(BIZ.tax)+'</span>']; if(BIZ.address)parts.push('<span>'+bizEsc(BIZ.address)+'</span>'); parts.push('<span>© 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.</span>'); fl.innerHTML=parts.join(''); }
     const pv=document.getElementById('view-policy');
     if(pv && pv.style.display==='block'){ const k=(location.hash||'').split('/')[1]; const bd=document.getElementById('policyBody'); if(bd)bd.innerHTML=policyHTML(POLICY_META[k]?k:'terms'); }
   }
