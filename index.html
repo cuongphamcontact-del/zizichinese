@@ -1895,6 +1895,7 @@
       if(error||!data||!data.length) return;         // lỗi/không có dữ liệu → giữ mặc định
       products=data.map(r=>fixVocabPack(mapRow(r)));
       ensureVocabPair();   // bù "Học trên web"/Excel nếu Supabase chưa có
+      try{ lessonData={}; }catch(e){}   // làm mới giáo trình theo sản phẩm vừa nạp
       current=products[0]||current;
       renderPublic();
       route();                                        // vẽ lại đúng trang đang mở
@@ -3509,10 +3510,21 @@
   };
   const COURSE_LESSONS={hsk1:HSK1_LESSONS, hsk2:HSK2_LESSONS};
   let lessonData={};
+  // Nhận diện khóa để lấy đúng giáo trình: theo slug, hoặc theo tên/level chứa "HSK1"/"HSK2"
+  function _courseKey(c, cid){
+    if(c && COURSE_LESSONS[c.slug]) return c.slug;
+    const s=((c&&c.slug||'')+' '+(c&&c.name||'')+' '+(c&&c.level||'')).toLowerCase();
+    if(/hsk\s*1(\b|[^0-9])/.test(s)) return 'hsk1';
+    if(/hsk\s*2(\b|[^0-9])/.test(s)) return 'hsk2';
+    if(cid===1) return 'hsk1';
+    if(cid===2) return 'hsk2';
+    return null;
+  }
   function getLessons(cid){
     if(!lessonData[cid]){
       const c=products.find(x=>x.id===cid);
-      const flat = (c&&COURSE_LESSONS[c.slug]) || (cid===1?HSK1_LESSONS : cid===2?HSK2_LESSONS : null);
+      const key=_courseKey(c, cid);
+      const flat = key ? COURSE_LESSONS[key] : null;
       const titles = flat ? flat.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
       lessonData[cid]=titles.map(t=>({title:t,video:'',files:[]}));
     }
