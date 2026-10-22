@@ -1817,6 +1817,8 @@
   ];
   let current = products[0];
   const fmtVND = n => n.toLocaleString('vi-VN')+'đ';
+  // Ngày + giờ phút cho các bảng quản trị: 22/10/2026 14:30
+  function fmtDT(x){ if(!x) return '-'; const d=new Date(x); if(isNaN(d.getTime())) return '-'; const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
 
   /* ===== URL riêng cho từng trang & sản phẩm (hash-routing, hợp hosting tĩnh, F5 không lỗi) ===== */
   const PRODUCT_SLUGS={1:'hsk1',2:'hsk2',3:'combo',4:'bo-thu',5:'hsk3',6:'hsk4',7:'hsk5',8:'hsk6',9:'tai-lieu-5000-tu',12:'hoc-5000-tu-online',10:'hsk1-truc-tiep',11:'hsk2-truc-tiep'};
@@ -3483,7 +3485,7 @@
       return `<tr><td><b>${esc(r.name||'-')}</b></td>
         <td>${esc(r.email)}${r.phone?'<br><span style="color:var(--ink-60);font-size:.8rem">'+esc(r.phone)+'</span>':''}</td>
         <td>${cTxt}${r.paid>0?'<br><span style="color:var(--jade-dark);font-size:.78rem;font-weight:600">'+fmtVND(r.spent)+'</span>':''}</td>
-        <td>${new Date(r.first).toLocaleDateString('vi-VN')}</td>
+        <td>${fmtDT(r.first)}</td>
         <td>${stTag}</td>
         <td><span class="tag" style="font-size:.68rem">${esc(r.src||'web')}</span></td>
         <td></td></tr>`;
@@ -3757,7 +3759,7 @@
       el.innerHTML=(data||[]).map(e=>{
         const name=((products.find(p=>String(p.id)===String(e.product_id))||{}).name)||'-';
         const pr=profMap[e.user_id]||{}; const who=pr.name||pr.email||'-';
-        return `<tr><td>${esc(who)}</td><td>${esc(name)}</td><td><span class="tag ${e.granted_by==='purchase'?'active':'pending'}" style="font-size:.68rem">${e.granted_by==='purchase'?'Mua':'Thủ công'}</span></td><td>${new Date(e.created_at).toLocaleDateString('vi-VN')}</td></tr>`;
+        return `<tr><td>${esc(who)}</td><td>${esc(name)}</td><td><span class="tag ${e.granted_by==='purchase'?'active':'pending'}" style="font-size:.68rem">${e.granted_by==='purchase'?'Mua':'Thủ công'}</span></td><td>${fmtDT(e.created_at)}</td></tr>`;
       }).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--ink-60);padding:18px">Chưa có ghi danh</td></tr>';
     }catch(e){}
   }
@@ -3795,7 +3797,7 @@
         code:o.code, cust:o.customer_name||o.customer_email||'-',
         course:((products.find(p=>String(p.id)===String(o.product_id))||{}).name)||'-',
         amount:o.amount||0, channel:o.channel||'web',
-        status:smap[o.status]||'pending', time:new Date(o.created_at).toLocaleDateString('vi-VN')
+        status:smap[o.status]||'pending', time:fmtDT(o.created_at)
       }));
       // Báo cáo tổng (Reports): toàn thời gian
       const paidAll=data.filter(o=>o.status==='paid');
