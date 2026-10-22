@@ -491,6 +491,18 @@
   .adm-nav .ic{width:19px;height:19px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-60)}
   .adm-nav .ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .adm-nav button.on .ic{color:var(--jade-dark)}
+  .perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:6px}
+  .perm-item{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--line,#e4efe9);border-radius:10px;font-size:.9rem;cursor:pointer;background:var(--paper)}
+  .perm-item input{width:auto}
+  .btn-sm{padding:6px 12px;font-size:.82rem}
+  .staff-list{display:flex;flex-direction:column;gap:8px}
+  .staff-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line,#e4efe9);border-radius:12px;flex-wrap:wrap}
+  .staff-row .sr-main b{display:block;font-size:.95rem}
+  .staff-row .sr-main span{font-size:.82rem;color:var(--ink-60)}
+  .sr-perms{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .perm-chip{font-size:.74rem;background:var(--paper-3);color:var(--ink-70,#4a5f59);padding:3px 9px;border-radius:999px}
+  .perm-chip.owner{background:var(--jade-tint);color:var(--jade-dark);font-weight:700}
+  .sr-act{display:flex;gap:6px;flex-wrap:wrap}
   .side-foot{border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
   .side-foot a{display:block;color:var(--ink-60);font-size:.84rem;padding:8px 12px;border-radius:8px}
   .side-foot a:hover{color:var(--jade-dark);background:var(--paper-2)}
@@ -1492,6 +1504,7 @@
         <button data-title="Ghi danh thủ công" onclick="admTab('enroll',this)"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.6"/><path d="M3 20a6.5 6.5 0 0 1 11-3.3"/><path d="M15.5 12.5l2 2 4-4"/></svg></span><span>Ghi danh</span></button>
         <div class="nav-group">Cài đặt</div>
         <button data-title="Thông tin doanh nghiệp" onclick="admTab('settings',this)"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/><path d="M3 21h18"/></svg></span><span>Thông tin DN</span></button>
+        <button data-title="Nhân viên &amp; phân quyền" onclick="admTab('staff',this)"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16.5 4.3a3.4 3.4 0 0 1 0 6.4"/><path d="M15 14.5l2 2 4-4"/></svg></span><span>Nhân viên</span></button>
       </nav>
       <div class="side-foot">
         <a href="#" onclick="go('home');return false">Xem trang chủ</a>
@@ -1812,6 +1825,32 @@
           </div>
         </section>
 
+        <!-- NHÂN VIÊN & PHÂN QUYỀN -->
+        <section class="adm-tab" id="tab-staff" hidden>
+          <div class="panel">
+            <h3>Cấp quyền cho nhân viên <span class="mini">Chọn đúng những phần nhân viên được xem &amp; thao tác</span></h3>
+            <p class="note-line" style="margin:-6px 0 14px">Nhập email nhân viên, tích các quyền cần cấp rồi bấm <b>Cấp quyền &amp; gửi email</b>. Hệ thống gửi email thông báo cho nhân viên kèm danh sách quyền và link đăng nhập. Lưu ý: nhân viên có quyền thao tác dữ liệu ở backend, chỉ cấp cho người tin cậy.</p>
+            <div class="mform" style="max-width:760px">
+              <div class="mrow">
+                <label>Email nhân viên<input id="st_email" type="email" placeholder="nhanvien@email.com"></label>
+                <label>Tên hiển thị<input id="st_name" type="text" placeholder="Vd: Hỗ trợ 1"></label>
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin:4px 0"><input id="st_full" type="checkbox" onchange="stToggleFull(this.checked)" style="width:auto"> Toàn quyền quản trị (như chủ)</label>
+              <div id="staffPermBox" class="perm-grid"></div>
+              <div class="mact" style="margin-top:12px;gap:8px">
+                <button class="btn btn-ghost" type="button" onclick="stSelectAll(true)">Chọn tất cả</button>
+                <button class="btn btn-ghost" type="button" onclick="stSelectAll(false)">Bỏ chọn</button>
+                <button class="btn btn-jade" type="button" onclick="saveStaff()">Cấp quyền &amp; gửi email</button>
+              </div>
+              <p id="st_msg" class="note-line" style="margin:8px 0 0"></p>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:14px">
+            <h3>Danh sách nhân viên <span class="mini">Người đang có quyền quản trị</span></h3>
+            <div id="staffList" class="staff-list"><p class="note-line">Đang tải…</p></div>
+          </div>
+        </section>
+
       </div>
     </div>
   </div>
@@ -2012,17 +2051,42 @@
     try{ const {error}=await sb.from('products').upsert(toDBRow(p,isNew),{onConflict:'slug'});
       return error?{error}:{ok:true}; }catch(e){ return {error:e}; }
   }
+  let _me={role:null,perms:[],name:'',email:''};
   async function checkAdminRole(){
     const sb=getSB(); if(!sb) return false;
     try{
       const {data:{user}}=await sb.auth.getUser(); if(!user) return false;
-      const {data}=await sb.from('profiles').select('role').eq('id',user.id).single();
-      return !!(data && data.role==='admin');
+      const {data}=await sb.from('profiles').select('role,perms,full_name,email').eq('id',user.id).single();
+      if(data && (data.role==='admin'||data.role==='staff')){
+        let perms=data.perms; if(typeof perms==='string'){ try{perms=JSON.parse(perms);}catch(_){perms=[];} }
+        _me={role:data.role, perms:Array.isArray(perms)?perms:[], name:data.full_name||'', email:data.email||user.email||''};
+        return true;
+      }
+      _me={role:null,perms:[],name:'',email:''}; return false;
     }catch(e){ return false; }
+  }
+  function permAllowed(perm){ return _me.role==='admin' || (_me.perms||[]).indexOf(perm)>=0; }
+  // Lọc giao diện admin theo quyền của người đang đăng nhập
+  function applyPerms(){
+    const isOwner=_me.role==='admin';
+    document.querySelectorAll('.adm-nav button').forEach(b=>{
+      const m=(b.getAttribute('onclick')||'').match(/admTab\('([\w-]+)'/); if(!m) return;
+      const perm=m[1];
+      b.style.display=(perm==='staff'?isOwner:permAllowed(perm))?'':'none';
+    });
+    document.querySelectorAll('.adm-nav .nav-group').forEach(g=>{
+      let el=g.nextElementSibling, any=false;
+      while(el && !el.classList.contains('nav-group')){ if(el.tagName==='BUTTON' && el.style.display!=='none') any=true; el=el.nextElementSibling; }
+      g.style.display=any?'':'none';
+    });
+    const first=[...document.querySelectorAll('.adm-nav button')].find(b=>b.style.display!=='none');
+    if(first){ const m=(first.getAttribute('onclick')||'').match(/admTab\('([\w-]+)'/); if(m) admTab(m[1], first); }
+    const who=document.querySelector('.adm-top .who span:first-child'); if(who) who.textContent='Xin chào, '+(isOwner?'Quản trị':(_me.name||'Nhân viên'));
+    const av=document.querySelector('.adm-top .who .av'); if(av) av.textContent=((_me.name||'Q').trim()[0]||'Q').toUpperCase();
   }
   async function restoreAdminSession(){
     try{ if(await checkAdminRole()){ admAuthed=true;
-      if(location.hash==='#quantri'||location.hash==='#admin'){ go('admin'); renderAll(); } } }catch(e){}
+      if(location.hash==='#quantri'||location.hash==='#admin'){ go('admin'); renderAll(); applyPerms(); } } }catch(e){}
   }
 
   /* ===== Pixel đo lường thật: FB Pixel + TikTok Pixel + GA4 ===== */
@@ -3108,19 +3172,91 @@
       admAuthed=true; errEl.textContent='';
       document.getElementById('admLogin').style.display='none';
       document.getElementById('admApp').style.display='grid';
-      renderAll();
+      renderAll(); applyPerms();
     }catch(e){ errEl.textContent='Lỗi đăng nhập, vui lòng thử lại.'; }
   }
   async function admLogout(){ try{ const sb=getSB(); if(sb) await sb.auth.signOut(); }catch(e){} admAuthed=false; go('home'); }
+
+  /* ===== NHÂN VIÊN & PHÂN QUYỀN ===== */
+  const PERM_LIST=[['overview','Tổng quan'],['courses','Sản phẩm (khóa học, tài liệu, combo)'],['cats','Danh mục'],['teachers','Giảng viên'],['videos','Thư viện video'],['orders','Đơn hàng'],['manual','Thanh toán thủ công'],['discounts','Mã giảm giá'],['refunds','Hoàn tiền'],['invoices','Hóa đơn GTGT'],['reports','Báo cáo tài chính'],['tracking','Tracking & pixel'],['users','Học viên'],['enroll','Ghi danh thủ công'],['settings','Thông tin doanh nghiệp']];
+  const PERM_LABEL=Object.fromEntries(PERM_LIST);
+  let _editStaffEmail='';
+  function stPermBoxHTML(sel){ sel=sel||[]; return PERM_LIST.map(([k,l])=>`<label class="perm-item"><input type="checkbox" class="st-perm" value="${k}" ${sel.indexOf(k)>=0?'checked':''}><span>${l}</span></label>`).join(''); }
+  function stToggleFull(on){ document.querySelectorAll('#staffPermBox .st-perm').forEach(c=>{ c.checked=on; c.disabled=on; }); document.getElementById('staffPermBox').style.opacity=on?'.5':'1'; }
+  function stSelectAll(on){ if(document.getElementById('st_full').checked) return; document.querySelectorAll('#staffPermBox .st-perm').forEach(c=>c.checked=on); }
+  function stResetForm(){ document.getElementById('st_email').value=''; document.getElementById('st_name').value=''; document.getElementById('st_full').checked=false; _editStaffEmail=''; document.getElementById('staffPermBox').innerHTML=stPermBoxHTML([]); stToggleFull(false); const m=document.getElementById('st_msg'); if(m)m.textContent=''; }
+  async function renderStaff(){
+    document.getElementById('staffPermBox').innerHTML=stPermBoxHTML([]);
+    const sb=getSB(); const box=document.getElementById('staffList');
+    if(!sb){ box.innerHTML='<p class="note-line">Chưa kết nối máy chủ.</p>'; return; }
+    try{
+      const {data,error}=await sb.from('profiles').select('email,full_name,role,perms').in('role',['admin','staff']).order('role',{ascending:true});
+      if(error){ box.innerHTML='<p class="note-line">Không tải được danh sách (chạy file SQL phân quyền trước nhé).</p>'; return; }
+      const rows=data||[];
+      box.innerHTML = rows.length? rows.map(r=>{
+        let perms=r.perms; if(typeof perms==='string'){try{perms=JSON.parse(perms);}catch(_){perms=[];}} if(!Array.isArray(perms))perms=[];
+        const isOwner=r.role==='admin';
+        const chips=isOwner?'<span class="perm-chip owner">Toàn quyền</span>':(perms.length?perms.map(p=>`<span class="perm-chip">${esc(PERM_LABEL[p]||p)}</span>`).join(''):'<span class="note-line">Chưa cấp quyền</span>');
+        const me=(_me.email||'').toLowerCase()===String(r.email||'').toLowerCase();
+        return `<div class="staff-row"><div class="sr-main"><b>${esc(r.full_name||r.email||'-')}</b><span>${esc(r.email||'')}</span><div class="sr-perms">${chips}</div></div>
+          <div class="sr-act">${me?'<span class="note-line">Bạn</span>':`<button class="btn btn-ghost btn-sm" onclick="editStaff('${esc(r.email)}')">Sửa quyền</button><button class="btn btn-ghost btn-sm" onclick="removeStaff('${esc(r.email)}')">Gỡ</button>`}</div></div>`;
+      }).join(''):'<p class="note-line">Chưa có nhân viên nào.</p>';
+    }catch(e){ box.innerHTML='<p class="note-line">Lỗi tải danh sách.</p>'; }
+  }
+  async function editStaff(email){
+    const sb=getSB(); if(!sb)return;
+    try{
+      const {data}=await sb.from('profiles').select('email,full_name,role,perms').eq('email',email).maybeSingle();
+      if(!data)return;
+      _editStaffEmail=data.email;
+      document.getElementById('st_email').value=data.email;
+      document.getElementById('st_name').value=data.full_name||'';
+      let perms=data.perms; if(typeof perms==='string'){try{perms=JSON.parse(perms);}catch(_){perms=[];}} if(!Array.isArray(perms))perms=[];
+      const full=data.role==='admin';
+      document.getElementById('staffPermBox').innerHTML=stPermBoxHTML(perms);
+      document.getElementById('st_full').checked=full; stToggleFull(full);
+      document.getElementById('st_msg').textContent='Đang sửa quyền cho '+data.email;
+      document.getElementById('st_email').scrollIntoView({block:'center'});
+    }catch(e){}
+  }
+  async function saveStaff(){
+    const sb=getSB(); const msg=document.getElementById('st_msg');
+    if(!sb){ msg.textContent='Chưa kết nối máy chủ.'; return; }
+    const email=document.getElementById('st_email').value.trim().toLowerCase();
+    const name=document.getElementById('st_name').value.trim();
+    const full=document.getElementById('st_full').checked;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.textContent='Email không hợp lệ.'; return; }
+    const perms=full?[]:[...document.querySelectorAll('#staffPermBox .st-perm:checked')].map(c=>c.value);
+    if(!full && !perms.length){ msg.textContent='Chọn ít nhất 1 quyền, hoặc tích "Toàn quyền".'; return; }
+    const permsText=full?[]:perms.map(p=>PERM_LABEL[p]||p);
+    msg.textContent='Đang cấp quyền & gửi email…';
+    try{
+      const {data,error}=await sb.functions.invoke('staff-invite',{body:{email,name,full,perms,permsText}});
+      if(error||(data&&data.error)){ msg.textContent='Lỗi: '+((data&&data.message)||(error&&error.message)||'không rõ'); return; }
+      toast((data&&data.created)?'Đã tạo tài khoản & gửi email mời nhân viên ✓':'Đã cập nhật quyền & gửi email ✓',3800,'success');
+      stResetForm(); renderStaff();
+    }catch(e){ msg.textContent='Lỗi kết nối, thử lại.'; }
+  }
+  async function removeStaff(email){
+    if(!confirm('Gỡ toàn bộ quyền quản trị của '+email+'? Họ sẽ thành học viên thường.'))return;
+    const sb=getSB(); if(!sb)return;
+    try{
+      const {error}=await sb.from('profiles').update({role:'student',perms:[]}).eq('email',email);
+      if(error){ toast('Lỗi: '+error.message,5000); return; }
+      toast('Đã gỡ quyền của '+email,3000,'success'); renderStaff();
+    }catch(e){ toast('Lỗi kết nối.'); }
+  }
   let prodFilter='all';
   function admTab(id,btn){
+    if(id==='staff'){ if(_me.role!=='admin'){ toast('Chỉ chủ tài khoản mới xem được mục này.'); return; } }
+    else if(!permAllowed(id)){ toast('Bạn chưa được cấp quyền ở mục này.'); return; }
     document.querySelectorAll('.adm-tab').forEach(t=>t.hidden=true);
     document.getElementById('tab-'+id).hidden=false;
     document.querySelectorAll('.adm-nav button').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('admTitle').textContent=btn.dataset.title;
     if(id==='courses'){ prodFilter=btn.dataset.filter||'all'; renderCourses(); }
-    const hooks={cats:renderCats,teachers:renderTeachers,videos:renderVideos,refunds:renderRefunds,invoices:renderInvoices,reports:renderReports,enroll:renderEnroll,manual:fillManual,orders:renderOrders,users:renderUsers,overview:renderOverview,tracking:renderTrackingSources,discounts:renderDiscounts,settings:renderBusinessInfo};
+    const hooks={cats:renderCats,teachers:renderTeachers,videos:renderVideos,refunds:renderRefunds,invoices:renderInvoices,reports:renderReports,enroll:renderEnroll,manual:fillManual,orders:renderOrders,users:renderUsers,overview:renderOverview,tracking:renderTrackingSources,discounts:renderDiscounts,settings:renderBusinessInfo,staff:renderStaff};
     if(hooks[id]) hooks[id]();
     window.scrollTo(0,0);
   }
