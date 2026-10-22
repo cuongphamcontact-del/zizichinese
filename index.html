@@ -640,6 +640,12 @@
   .player .play{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--jade-dark);font-size:24px;display:grid;place-items:center;z-index:2;padding-left:5px;transition:transform .15s}
   .player .play:hover{transform:scale(1.07)}
   .player .now-lesson{position:absolute;left:16px;bottom:14px;color:#fff;font-size:.8rem;background:rgba(0,0,0,.4);padding:.3em .7em;border-radius:20px}
+  .player.has-video{background:#000}
+  .player.has-video::after{display:none}
+  .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .player .novid{color:#fff;text-align:center;z-index:2;padding:18px;max-width:80%}
+  .player .novid b{display:block;font-size:1rem;margin-bottom:4px}
+  .player .novid span{font-size:.82rem;color:rgba(255,255,255,.8)}
   .learn-main h2{margin:18px 0 10px;font-size:1.6rem}
   .prog .prog-bar{height:8px;background:var(--paper-3);border-radius:20px;overflow:hidden}
   .prog .prog-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),var(--gold))}
@@ -656,6 +662,7 @@
   .lesson.done .ls{background:var(--jade);color:#fff}
   .lesson.now{background:var(--jade-tint)}.lesson.now .ls{background:var(--cinnabar);color:#fff}
   .lesson.lock{opacity:.5}
+  .lesson.active{background:var(--jade-tint);box-shadow:inset 0 0 0 2px var(--jade)}
   .lesson b{font-size:.88rem;display:block}.lesson span{font-size:.77rem;color:var(--ink-60)}
   /* ---------- dashboard khóa đã sở hữu ---------- */
   .learn-dash{max-width:1180px;margin:0 auto;padding:30px 24px 60px}
@@ -1312,8 +1319,8 @@
     <div class="learn-wrap">
       <div class="learn-main">
         <a class="back" href="#" onclick="backToDash();return false">← Khóa học của tôi</a>
-        <div class="player">
-          <button class="play" aria-label="Phát video">▶</button>
+        <div class="player" id="lessonPlayer">
+          <div class="novid"><b>Chọn một buổi học</b><span>Bấm vào buổi học bên phải để xem video.</span></div>
           <span class="now-lesson" id="nowLesson">Đang học</span>
         </div>
         <h2 id="learnTitle2">Khóa học</h2>
@@ -1968,7 +1975,7 @@
       if(error||!data||!data.length) return;         // lỗi/không có dữ liệu → giữ mặc định
       products=data.map(r=>fixVocabPack(mapRow(r)));
       ensureVocabPair();   // bù "Học trên web"/Excel nếu Supabase chưa có
-      try{ lessonData={}; }catch(e){}   // làm mới giáo trình theo sản phẩm vừa nạp
+      try{ lessonData={}; _lessonsLoaded={}; }catch(e){}   // làm mới giáo trình theo sản phẩm vừa nạp
       current=products[0]||current;
       renderPublic();
       route();                                        // vẽ lại đúng trang đang mở
@@ -2571,16 +2578,18 @@
   }
   function openCourse(id){
     const p=products.find(x=>String(x.id)===String(id)); if(!p)return;
+    if(getSB() && !_lessonsLoaded[id]){ ensureLessonsFromDB(id,()=>openCourse(id)); return; }
     const o=getOwned().find(x=>String(x.id)===String(id))||{done:0};
     const lessons=getLessons(id), total=lessons.length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
     document.getElementById('learnTitle2').textContent=p.name;
     document.getElementById('learnProgBar').style.width=pct+'%';
     document.getElementById('learnProgText').textContent=`Hoàn thành ${done}/${total} buổi · ${pct}%`;
     document.getElementById('lessonCount').textContent='· '+total+' buổi';
-    const cur=lessons[Math.min(done,total-1)];
-    document.getElementById('nowLesson').textContent='Đang học · '+((cur&&cur.title.split('—')[0].trim())||'Buổi 1');
+    let act=(_activeLesson[id]!=null && _activeLesson[id]<total)?_activeLesson[id]:Math.min(done,total-1);
+    if(act<0)act=0; _activeLesson[id]=act;
+    renderLessonPlayer(id,act);
     document.getElementById('lessonListLearn').innerHTML=lessons.map((l,i)=>{
-      const locked=i>done+3, cls=i<done?'done':i===done?'now':(locked?'lock':'');
+      const locked=i>done+3, cls=(i===act?'active ':'')+(i<done?'done':i===done?'now':(locked?'lock':''));
       const ls=i<done?'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>':i===done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>':(locked?'<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>':(i+1));
       const parts=l.title.split('—'), head=parts[0].trim(), sub=(parts[1]||'').trim();
       return `<div class="lesson ${cls}" onclick="pickLesson(${id},${i})"><span class="ls">${ls}</span><div><b>${esc(head)}</b><span>${esc(sub)}</span></div></div>`;
@@ -2589,14 +2598,70 @@
     document.getElementById('learnPlayer').style.display='block';
     window.scrollTo(0,0);
   }
+  let _activeLesson={}, _lessonsLoaded={};
+  // Tải buổi học (tiêu đề + video) từ Supabase. Đánh dấu đã thử để không tải lặp.
+  async function ensureLessonsFromDB(cid, cb){
+    const sb=getSB(); if(!sb || _lessonsLoaded[cid]){ if(cb)cb(); return; }
+    try{
+      const prod=products.find(x=>String(x.id)===String(cid));
+      const puid=await resolveProductUuid(prod);
+      if(puid){
+        const {data,error}=await sb.from('lessons').select('title,video_provider,video_id,sort_order').eq('product_id',puid).order('sort_order',{ascending:true});
+        if(!error && data && data.length){
+          lessonData[cid]=data.map(r=>({title:r.title||'',video:r.video_id||'',provider:r.video_provider||'youtube',files:[]}));
+          const c=products.find(x=>String(x.id)===String(cid)); if(c) c.lessons=data.length;
+        }
+      }
+    }catch(e){}
+    _lessonsLoaded[cid]=true; if(cb)cb();
+  }
+  // Lưu toàn bộ buổi học của 1 khóa lên Supabase (ghi đè). Tiến độ học viên lưu ở máy nên không ảnh hưởng.
+  async function saveLessonsToDB(cid){
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối máy chủ nên chưa lưu được buổi học.',5000); return false; }
+    const prod=products.find(x=>String(x.id)===String(cid));
+    const puid=await resolveProductUuid(prod);
+    if(!puid){ toast('Hãy bấm Lưu sản phẩm trước để đồng bộ khóa học lên Supabase, rồi mới lưu buổi học.',6000); return false; }
+    const ls=getLessons(cid);
+    const rows=ls.map((l,i)=>({product_id:puid,sort_order:i,title:l.title||('Buổi '+(i+1)),video_provider:l.provider||'youtube',video_id:(l.video||'').trim()||null,is_preview:false}));
+    try{
+      await sb.from('lessons').delete().eq('product_id',puid);
+      if(rows.length){ const {error}=await sb.from('lessons').insert(rows); if(error){ toast('Lỗi lưu buổi học: '+error.message,6000); return false; } }
+      _lessonsLoaded[cid]=true;
+      toast('Đã lưu '+rows.length+' buổi học lên máy chủ ✓',3000,'success'); return true;
+    }catch(e){ toast('Lỗi kết nối, thử lại.'); return false; }
+  }
+  async function saveLessonsAndClose(cid){ const ok=await saveLessonsToDB(cid); if(ok) closeModal(); }
+  // Trích ID video YouTube từ link hoặc ID; hỗ trợ youtu.be, watch?v=, /embed/, /shorts/
+  function ytId(u){ u=(u||'').trim(); if(!u) return '';
+    if(/^[A-Za-z0-9_-]{11}$/.test(u)) return u;
+    const m=u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/); return m?m[1]:''; }
+  // Dựng mã nhúng video theo nền tảng (giờ: YouTube ẩn; sau: Bunny)
+  function videoEmbed(l){
+    const v=(l&&l.video||'').trim(); if(!v) return '';
+    const prov=(l.provider||'').toLowerCase();
+    if(prov==='bunny' || /mediadelivery\.net|b-cdn\.net|iframe\.mediadelivery/i.test(v)){
+      const src=/^https?:/i.test(v)?v:('https://iframe.mediadelivery.net/embed/'+v);
+      return `<iframe src="${esc(src)}" loading="lazy" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe>`;
+    }
+    const id=ytId(v);
+    if(id) return `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" loading="lazy" title="Bài học" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`;
+    if(/^https?:/i.test(v)) return `<iframe src="${esc(v)}" loading="lazy" allowfullscreen></iframe>`;
+    return '';
+  }
+  function renderLessonPlayer(id,i){
+    const lessons=getLessons(id), l=lessons[i]; const box=document.getElementById('lessonPlayer'); if(!box||!l) return;
+    const emb=videoEmbed(l);
+    const label='<span class="now-lesson" id="nowLesson">Buổi '+(i+1)+' · '+esc((l.title||'').split('—')[0].trim())+'</span>';
+    if(emb){ box.classList.add('has-video'); box.innerHTML=emb+label; }
+    else { box.classList.remove('has-video'); box.innerHTML='<div class="novid"><b>Video đang được cập nhật</b><span>Buổi học này chưa có video. Vui lòng quay lại sau nhé.</span></div>'+label; }
+  }
   function pickLesson(id,i){
     const lessons=getLessons(id), total=lessons.length, owned=getOwned();
     let e=owned.find(x=>x.id===id); if(!e){e={id,done:0};owned.push(e);}
     if(i>(e.done||0)+3){ toast('Buổi này chưa mở khóa, học các buổi trước đã nhé.'); return; }
     e.done=Math.min(Math.max(e.done||0, i+1), total);
-    saveOwned(owned);
+    saveOwned(owned); _activeLesson[id]=i;
     openCourse(id);
-    toast('Đã học: '+lessons[i].title.split('—')[0].trim());
   }
   function backToDash(){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); window.scrollTo(0,0); }
   function renderPublic(){
@@ -3204,7 +3269,7 @@
     if(vz.qi>=vz.queue.length){ vzEl('vzPanel').innerHTML=vzDone(); return; }
     const it=vz.queue[vz.qi], t=vz.typed;
     vzEl('vzPanel').innerHTML=`<article class="vz-card">${vzMetaRow(it)}
-      <div class="vz-mean" style="font-size:1.4rem;margin-top:10px">${vzEsc(it.m)}</div><div class="vz-py">${t?vzEsc(it.p):'· · ·'}</div>
+      <div class="vz-mean" style="font-size:1.4rem;margin-top:10px">${vzEsc(it.m)}</div><div class="vz-py">${vzEsc(it.p)}</div>${it.c?`<div class="vz-pos">${vzEsc(it.c)}</div>`:''}
       <input class="vz-in ${t?(t.ok?'ok':'bad'):''}" id="vzIn" placeholder="Gõ chữ Hán hoặc pinyin" autocomplete="off" autocapitalize="off" spellcheck="false" lang="zh-CN" value="${t?vzEsc(t.v):''}" ${t?'readonly':''}>
       <div class="vz-verdict ${t?(t.ok?'ok':'bad'):''}">${t?(t.ok?'Chính xác!':`Đáp án: <span class="hz" style="font-size:1.3rem">${vzEsc(it.w)}</span>`):''}</div>
       ${t?vzExample(it)+`<button class="vz-btn primary" data-act="next">Tiếp theo<span class="vz-kbd">Enter</span></button>`:`<div class="vz-row"><button class="vz-btn ghost" data-act="skip">Không biết</button><button class="vz-btn primary" data-act="check">Kiểm tra<span class="vz-kbd">Enter</span></button></div>`}</article>`;
@@ -3620,19 +3685,20 @@
       const key=_courseKey(c, cid);
       const flat = key ? COURSE_LESSONS[key] : null;
       const titles = flat ? flat.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
-      lessonData[cid]=titles.map(t=>({title:t,video:'',files:[]}));
+      lessonData[cid]=titles.map(t=>({title:t,video:'',provider:'youtube',files:[]}));
     }
     return lessonData[cid];
   }
   function manageLessons(cid){
     const c=products.find(x=>x.id===cid);
     openModal('Bài học · '+c.name, `
-      <p class="note-line" style="margin:-4px 0 12px">Sửa <b>tiêu đề</b> ngay trên ô. Dán <b>link/ID video</b> từ nền tảng của bạn (Vimeo/Bunny/VdoCipher), hoặc bấm <b>Tải video lên</b>. File bài tập bấm <b>Tải lên</b>.</p>
+      <p class="note-line" style="margin:-4px 0 12px">Sửa <b>tiêu đề</b> ngay trên ô. Dán <b>link YouTube</b> của buổi học (nên để video ở chế độ <b>Không công khai / Unlisted</b>) vào ô video — sau này đổi sang Bunny chỉ cần dán link Bunny. File bài tập bấm <b>Tải lên</b>.</p>
       <div id="lessonMgr" class="lmgr"></div>
       <div class="mact" style="margin-top:10px;justify-content:space-between">
         <button class="btn btn-ghost" onclick="addLesson(${cid})">+ Thêm buổi</button>
-        <button class="btn btn-jade" onclick="closeModal();toast('Đã lưu nội dung')">Xong</button></div>`);
+        <button class="btn btn-jade" onclick="saveLessonsAndClose(${cid})">Lưu buổi học</button></div>`);
     renderLessonMgr(cid);
+    ensureLessonsFromDB(cid, ()=>renderLessonMgr(cid));
   }
   function renderLessonMgr(cid){
     const ls=getLessons(cid);
@@ -3644,8 +3710,8 @@
           <button class="ldel" onclick="delLesson(${cid},${i})" aria-label="Xóa buổi">×</button>
         </div>
         <div class="lvid">
-          <input placeholder="Dán link / ID video…" value="${(l.video||'').replace(/"/g,'&quot;')}" onchange="setVideo(${cid},${i},this.value)">
-          <label class="upl vid">Tải video lên<input type="file" hidden accept="video/*" onchange="upVideo(${cid},${i},this)"></label>
+          <input placeholder="Dán link YouTube (ẩn) hoặc Bunny…" value="${(l.video||'').replace(/"/g,'&quot;')}" onchange="setVideo(${cid},${i},this.value)">
+          ${l.video?`<a class="upl vid" href="${/^https?:/i.test(l.video)?l.video.replace(/"/g,'&quot;'):'https://youtu.be/'+ytId(l.video)}" target="_blank" rel="noopener">Xem thử</a>`:''}
         </div>
         <div class="lfiles">
           ${l.files.map((f,fi)=>`<span class="chipf">${f} <button onclick="rmFile(${cid},${i},${fi})" aria-label="Xóa">×</button></span>`).join('')||'<span class="muted">Chưa có tài liệu</span>'}
@@ -3654,7 +3720,7 @@
       </div>`).join('');
   }
   function setLTitle(cid,i,v){getLessons(cid)[i].title=v;}
-  function setVideo(cid,i,v){getLessons(cid)[i].video=v.trim();renderLessonMgr(cid);toast(v.trim()?'Đã gắn link video':'Đã xóa video');}
+  function setVideo(cid,i,v){v=(v||'').trim();const l=getLessons(cid)[i];l.video=v;l.provider=/mediadelivery\.net|b-cdn\.net/i.test(v)?'bunny':'youtube';renderLessonMgr(cid);toast(v?'Đã gắn link video':'Đã xóa video');}
   function upVideo(cid,i,input){if(input.files&&input.files[0]){getLessons(cid)[i].video='(tải lên) '+input.files[0].name;renderLessonMgr(cid);toast('Đã nhận video, sẽ đẩy lên kho khi lưu (demo)');}}
   function addFile(cid,i,input){if(input.files&&input.files[0]){getLessons(cid)[i].files.push(input.files[0].name);renderLessonMgr(cid);toast('Đã thêm tài liệu (demo)');}}
   function rmFile(cid,i,fi){getLessons(cid)[i].files.splice(fi,1);renderLessonMgr(cid);}
