@@ -2169,6 +2169,7 @@
   /* trang Đăng nhập / Tạo tài khoản */
   let authMode='login';
   function openAuth(mode){
+    _recovering=false;
     authMode = mode==='register'?'register':'login';
     const reg = authMode==='register';
     document.getElementById('authTitle').textContent = reg?'Tạo tài khoản':'Đăng nhập';
@@ -2368,7 +2369,7 @@
       const {data,error}=await sb.auth.updateUser({password:p});
       if(error){ e.textContent='Lỗi: '+error.message; return; }
       const nm=(data&&data.user&&data.user.user_metadata&&data.user.user_metadata.full_name)||'học viên';
-      loggedIn=true; setLearnerName(nm); if(data&&data.user)setLearnerEmail(data.user.email||''); updateAuthUI(); backToForm(); authErr(''); toast('Đổi mật khẩu thành công!'); go('learn');
+      _recovering=false; loggedIn=true; setLearnerName(nm); if(data&&data.user)setLearnerEmail(data.user.email||''); updateAuthUI(); backToForm(); authErr(''); toast('Đổi mật khẩu thành công!'); go('learn');
     }catch(err){ e.textContent='Lỗi kết nối, thử lại.'; }
   }
   async function restoreSession(){
@@ -2391,9 +2392,11 @@
   // vì supabase-js hay tự xoá hash trước khi listener kịp chạy). Hỗ trợ cả 2 kiểu:
   //  - implicit: trả về #access_token=...&type=recovery
   //  - pkce:     trả về ?code=...  (cần exchangeCodeForSession)
+  let _recovering=false;
   async function handleRecoveryLink(mark){
     try{
       mark=mark||{recovery:false,code:'',err:''};
+      if(mark.err||mark.recovery||mark.code) _recovering=true;   // đang ở luồng khôi phục: chặn route tự về trang chủ
       if(mark.err){
         go('auth');
         document.getElementById('authForm').style.display='none';
@@ -3136,6 +3139,7 @@
   /* ===== URL admin riêng (không lộ trên web): chỉ vào bằng #quantri ===== */
   function route(){
     if(_supHash) return;
+    if(_recovering || /access_token=|refresh_token=|type=recovery|error_code=|otp_expired/i.test(location.hash||'')) return;   // link khôi phục mật khẩu: để handleRecoveryLink xử lý, không về trang chủ
     const h=(location.hash||'').replace(/^#/,'');
     if(h==='quantri'||h==='admin'){ go('admin'); return; }
     if(h.indexOf('sp/')===0){ const slug=decodeURIComponent(h.slice(3)); const p=products.find(x=>x.slug===slug); if(p){ openProduct(p.id); } else { go('home'); } return; }
