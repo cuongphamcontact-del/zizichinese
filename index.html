@@ -281,6 +281,14 @@
   .curriculum .cr-out ul{list-style:none;display:grid;gap:7px;font-size:.9rem}
   .curriculum .cr-out li{padding-left:16px;position:relative;line-height:1.5}
   .curriculum .cr-out li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:2px;background:var(--gold,#e4b53f)}
+  .curriculum .cr-acc{display:grid;gap:8px}
+  .curriculum .cr-item{border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff}
+  .curriculum .cr-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;text-align:left;font-family:inherit;font-weight:700;color:var(--ink);font-size:.96rem;cursor:pointer;background:#fff}
+  .curriculum .cr-head:hover{background:var(--paper)}
+  .curriculum .cr-chev{flex:none;color:var(--ink-60);transition:transform .2s}
+  .curriculum .cr-item.open .cr-chev{transform:rotate(180deg)}
+  .curriculum .cr-panel{display:none;padding:0 15px 8px}
+  .curriculum .cr-item.open .cr-panel{display:block}
   .guarantee{border:1.5px dashed var(--gold);border-radius:6px;padding:20px;display:flex;gap:.9rem;align-items:center;margin:24px 0}
   .guarantee .g-ic{font-size:32px;flex:none}
   .guarantee b{display:block;color:var(--gold)}
@@ -2606,14 +2614,16 @@
   }
   function renderCurriculum(p){
     const box=document.getElementById('pCurriculum'); if(!box) return;
-    if(p.slug!=='hsk1' || typeof HSK1_CURRICULUM==='undefined'){ box.style.display='none'; box.innerHTML=''; return; }
-    const phases=HSK1_CURRICULUM.map(g=>'<div class="cr-phase">'+esc(g.phase)+'</div><ul class="cr-list">'+
-      g.items.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>').join('');
-    const out='<div class="cr-out"><b>Sau khóa học, học viên có thể:</b><ul>'+
-      HSK1_OUTCOMES.map(o=>'<li>'+esc(o)+'</li>').join('')+'</ul></div>';
-    box.innerHTML='<h3>Nội dung khóa học</h3><div class="cr-sub">Lộ trình 30 buổi, từ người mới bắt đầu đến nền tảng HSK1.</div>'+phases+out;
+    const cur=(typeof CURRICULA!=='undefined')?CURRICULA[p.slug]:null;
+    if(!cur){ box.style.display='none'; box.innerHTML=''; return; }
+    const chev='<svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+    const acc=cur.phases.map(g=>'<div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>'+esc(g.phase)+'</span>'+chev+'</button>'+
+      '<div class="cr-panel"><ul class="cr-list">'+g.items.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul></div></div>').join('');
+    const out='<div class="cr-out"><b>Mục tiêu sau khóa học:</b><ul>'+cur.outcomes.map(o=>'<li>'+esc(o)+'</li>').join('')+'</ul></div>';
+    box.innerHTML='<h3>Nội dung khóa học</h3><div class="cr-sub">'+esc(cur.note)+'</div><div class="cr-acc">'+acc+'</div>'+out;
     box.style.display='block';
   }
+  function toggleCr(btn){ const it=btn.closest('.cr-item'); if(it) it.classList.toggle('open'); }
   // ================= GIỎ HÀNG =================
   let _cartMode=false, _checkoutItems=[];
   function getCart(){ try{ const c=JSON.parse(localStorage.getItem('zizi_cart')||'[]'); return Array.isArray(c)?c:[]; }catch(_){ return []; } }
@@ -3463,12 +3473,47 @@
     'Xây dựng nền tảng để tiếp tục học lên HSK2.'
   ];
   const HSK1_LESSONS=HSK1_CURRICULUM.reduce((a,g)=>a.concat(g.items),[]);
+  const HSK2_CURRICULUM=[
+    {phase:'Giai đoạn 1: Học bài mới', items:[
+      'Buổi 1-2 · Bài 16: 你常去图书馆吗？ · Bạn có thường xuyên đến thư viện không?',
+      'Buổi 3-4 · Bài 17: 他在做什么呢？ · Anh ấy đang làm gì thế?',
+      'Buổi 5-6 · Bài 18: 我去邮局寄包裹 · Tôi đến bưu điện gửi bưu phẩm.',
+      'Buổi 7-8 · Bài 19: 可以试试吗？ · Có thể thử được không?',
+      'Buổi 9-10 · Bài 20: 祝你生日快乐 · Chúc bạn sinh nhật vui vẻ.',
+      'Buổi 11-12 · Bài 21: 我们明天七点一刻出发。 · Ngày mai chúng ta xuất phát lúc 7 giờ 15 phút.',
+      'Buổi 13-14 · Bài 22: 我打算请老师教我京剧 · Tôi dự định mời thầy giáo dạy tôi Kinh kịch.',
+      'Buổi 15-16 · Bài 23: 学校里边有邮局吗？ · Trong trường có bưu điện không?',
+      'Buổi 17-18 · Bài 24: 你可以再说一遍吗？ · Bạn có thể nói lại một lần nữa không?',
+      'Buổi 19-20 · Bài 25: 他学汉语学得很好！ · Anh ấy học tiếng Trung rất giỏi!',
+      'Buổi 21-22 · Bài 26: 田芳去哪儿了？ · Điền Phương đi đâu rồi?',
+      'Buổi 23-24 · Bài 27: 玛丽哭了 · Mary đã khóc.',
+      'Buổi 25-26 · Bài 28: (đang cập nhật tên bài học)',
+      'Buổi 27 · Bài 29: 我都做对了 · Tôi đều làm đúng cả rồi.',
+      'Buổi 28 · Bài 30: 我来了两个多月了。 · Tôi đến đây được hơn hai tháng rồi.'
+    ]},
+    {phase:'Giai đoạn 2: Ôn tập và đánh giá', items:[
+      'Buổi 29 · Ôn tập tổng hợp kiến thức HSK2.',
+      'Buổi 30 · Làm bài kiểm tra cuối khóa.'
+    ]}
+  ];
+  const HSK2_OUTCOMES=[
+    'Mở rộng vốn từ vựng và nâng cao khả năng sử dụng ngữ pháp tiếng Trung.',
+    'Giao tiếp trong các tình huống thực tế: học tập, mua sắm, đi lại, sinh hoạt và công việc.',
+    'Nâng cao khả năng nghe hiểu, đọc hiểu và diễn đạt câu tiếng Trung.',
+    'Củng cố nền tảng để tiếp tục học lên trình độ cao hơn.'
+  ];
+  const HSK2_LESSONS=HSK2_CURRICULUM.reduce((a,g)=>a.concat(g.items),[]);
+  const CURRICULA={
+    hsk1:{note:'Lộ trình 30 buổi, từ người mới bắt đầu đến nền tảng HSK1.', phases:HSK1_CURRICULUM, outcomes:HSK1_OUTCOMES},
+    hsk2:{note:'Lộ trình 30 buổi, phát triển từ vựng, ngữ pháp và giao tiếp tiếng Trung.', phases:HSK2_CURRICULUM, outcomes:HSK2_OUTCOMES}
+  };
+  const COURSE_LESSONS={hsk1:HSK1_LESSONS, hsk2:HSK2_LESSONS};
   let lessonData={};
   function getLessons(cid){
     if(!lessonData[cid]){
       const c=products.find(x=>x.id===cid);
-      const isHSK1 = (c&&c.slug==='hsk1') || cid===1;
-      const titles = isHSK1 ? HSK1_LESSONS.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
+      const flat = (c&&COURSE_LESSONS[c.slug]) || (cid===1?HSK1_LESSONS : cid===2?HSK2_LESSONS : null);
+      const titles = flat ? flat.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
       lessonData[cid]=titles.map(t=>({title:t,video:'',files:[]}));
     }
     return lessonData[cid];
