@@ -2324,15 +2324,20 @@
     const email=(document.getElementById('au_email').value||'').replace(/\s/g,'').toLowerCase();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ authErr('Nhập đúng email của bạn vào ô "Email" phía trên rồi bấm "Quên mật khẩu?".'); document.getElementById('au_email').focus(); return; }
     authErr('');
+    const sb=getSB(); if(!sb){ authErr('Chưa kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); return; }
+    let sent=false;
+    // 1) Ưu tiên hàm gửi mail riêng (Resend) nếu đã deploy
     try{
-      const {httpok,status,data}=await _callFn('forgot-password',{method:'POST',body:{email}});
-      if(!(httpok&&data&&data.ok)){
-        let m=(data&&data.message)||'';
-        if(status===404) m='Máy chủ gửi mail chưa sẵn sàng (chưa deploy forgot-password).';
-        authErr('Không gửi được. '+(m||'Vui lòng thử lại sau.'));
-        return;
-      }
-    }catch(e){ authErr('Lỗi kết nối, thử lại.'); return; }
+      const {httpok,data}=await _callFn('forgot-password',{method:'POST',body:{email}});
+      if(httpok&&data&&data.ok) sent=true;
+    }catch(e){ /* bỏ qua, dùng cách dự phòng của Supabase */ }
+    // 2) Dự phòng: bộ gửi mail sẵn có của Supabase (cùng máy chủ với đăng nhập nên không lỗi kết nối)
+    if(!sent){
+      try{
+        const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+        if(error){ authErr('Không gửi được link đặt lại: '+error.message); return; }
+      }catch(e){ authErr('Lỗi kết nối, thử lại.'); return; }
+    }
     document.getElementById('authForm').style.display='none';
     const sw=document.getElementById('authSwitch'); if(sw)sw.style.display='none';
     const o=document.getElementById('otpPanel'); o.style.display='block';
