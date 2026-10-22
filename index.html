@@ -959,8 +959,7 @@
     </a>
     <nav class="nav-links">
       <a href="#khoahoc" onclick="go('home')">Khóa học</a>
-      <a href="#nangcao" onclick="go('home')">Nâng cao</a>
-      <a href="#danhgia" onclick="go('home')">Đánh giá</a>
+      <a href="#sanpham" onclick="go('home')">Sản phẩm</a>
       <a href="#" onclick="openPolicy('about');return false">Giới thiệu</a>
       <a href="#" onclick="openPolicy('contact');return false">Liên hệ</a>
       <a class="nav-learn" href="#" style="display:none" onclick="go('learn');return false">Khu vực học</a>
@@ -974,8 +973,7 @@
   </div>
   <div class="nav-drawer" id="navDrawer">
     <a href="#khoahoc" onclick="toggleNav();go('home')">Khóa học</a>
-    <a href="#nangcao" onclick="toggleNav();go('home')">Nâng cao</a>
-    <a href="#danhgia" onclick="toggleNav();go('home')">Đánh giá</a>
+    <a href="#sanpham" onclick="toggleNav();go('home')">Sản phẩm</a>
     <a href="#" onclick="toggleNav();openPolicy('about');return false">Giới thiệu</a>
     <a href="#" onclick="toggleNav();openPolicy('contact');return false">Liên hệ</a>
     <a class="nav-learn" style="display:none" href="#" onclick="toggleNav();go('learn');return false">Khu vực học viên</a>
@@ -1026,27 +1024,39 @@
   </section>
 
   <!-- PRODUCTS -->
-  <section class="pad" id="khoahoc">
+  <!-- SẢN PHẨM: TÀI LIỆU -->
+  <section class="pad" id="sanpham">
     <div class="wrap">
       <div class="sec-head">
-        <span class="eyebrow">Khóa học</span>
-        <h2>Chọn điểm bắt đầu của bạn</h2>
-        <p>Mỗi khóa là một tài khoản học online, xem lại không giới hạn. Bắt đầu ở đâu cũng được, hoặc đi trọn lộ trình với Combo.</p>
+        <span class="eyebrow">Tài liệu</span>
+        <h2>Tài liệu tự học</h2>
+        <p>File tải về và chương trình học trên web: 5000 từ vựng HSK, flashcard, tài liệu luyện tập. Mua một lần, dùng mãi.</p>
       </div>
-
-      <div class="products" id="saleGrid"></div>
+      <div class="products" id="gridDoc"></div>
     </div>
   </section>
 
-  <!-- KHÓA NÂNG CAO / PRE-ORDER -->
-  <section class="pad" id="nangcao" style="background:var(--paper-2)">
+  <!-- SẢN PHẨM: KHÓA HỌC VIDEO -->
+  <section class="pad" id="khoahoc" style="background:var(--paper-2)">
     <div class="wrap">
       <div class="sec-head">
-        <span class="eyebrow">Khóa nâng cao · Đặt trước</span>
-        <h2>Đi tiếp lên HSK3 → HSK6</h2>
-        <p>Bộ khóa video các cấp cao đang mở <b>đặt trước (pre-order)</b> với giá ưu đãi. Chốt sớm để giữ mức tốt nhất, giá gốc cao hơn 45%.</p>
+        <span class="eyebrow">Khóa học</span>
+        <h2>Khóa học video</h2>
+        <p>Khóa video quay sẵn theo lộ trình HSK, kích hoạt ngay sau thanh toán, xem lại trọn đời trên mọi thiết bị.</p>
       </div>
-      <div class="products" id="preGrid"></div>
+      <div class="products" id="gridVideo"></div>
+    </div>
+  </section>
+
+  <!-- SẢN PHẨM: LỚP TRỰC TIẾP -->
+  <section class="pad" id="truc-tiep">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Lớp trực tiếp</span>
+        <h2>Khóa học online trực tiếp với giáo viên</h2>
+        <p>Học trực tiếp cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, được chữa phát âm 1-1 và có ghi hình xem lại.</p>
+      </div>
+      <div class="products" id="gridLive"></div>
     </div>
   </section>
 
@@ -1168,6 +1178,11 @@
       <p>Kích hoạt ngay sau thanh toán · Xem lại trọn đời · Hoàn tiền trong 24h</p>
       <div class="fc-price"><span class="fc-now" id="finalNow">199k</span><span class="fc-was" id="finalWas">399k</span></div>
       <a class="fc-btn" href="#" onclick="buyNow();return false">Đăng ký học ngay →</a>
+    </div>
+
+    <div class="p-section" id="pSimilar" style="display:none">
+      <h3 class="ps-h">Sản phẩm tương tự</h3>
+      <div class="products" id="similarGrid"></div>
     </div>
   </div>
   <div class="mcta">
@@ -2586,10 +2601,10 @@
   function backToDash(){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); window.scrollTo(0,0); }
   function renderPublic(){
     const pub=products.filter(p=>p.published!==false && !(p.slug===VZ_WEB && products.some(x=>x.slug===VZ_XLS&&x.published!==false)));
-    const sale=pub.filter(p=>p.status==='sale'), pre=pub.filter(p=>p.status==='preorder');
-    document.getElementById('saleGrid').innerHTML=sale.map(cardHTML).join('');
-    document.getElementById('preGrid').innerHTML=pre.map(cardHTML).join('');
-    document.getElementById('nangcao').style.display = pre.length?'':'none';
+    const fill=(gid,secId,arr)=>{ const g=document.getElementById(gid); if(g)g.innerHTML=arr.map(cardHTML).join(''); const sec=document.getElementById(secId); if(sec)sec.style.display=arr.length?'':'none'; };
+    fill('gridDoc','sanpham',   pub.filter(p=>p.type==='doc'));
+    fill('gridVideo','khoahoc', pub.filter(p=>p.type==='video'));
+    fill('gridLive','truc-tiep',pub.filter(p=>p.type==='live'));
   }
 
   function openProduct(id){
@@ -2622,6 +2637,7 @@
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
     renderWhatsIn(p);
     renderCurriculum(p);
+    renderSimilar(p);
     { const tb=document.getElementById('tryVocabBtn'); if(tb) tb.style.display=isVocabPack(p.slug)?'flex':'none'; }
     renderPackChooser(p);
     const li=document.getElementById('liveInfo');
@@ -2684,6 +2700,17 @@
     box.style.display='block';
   }
   function toggleCr(btn){ const it=btn.closest('.cr-item'); if(it) it.classList.toggle('open'); }
+  function renderSimilar(p){
+    const box=document.getElementById('pSimilar'); if(!box) return;
+    const grid=document.getElementById('similarGrid');
+    const pub=products.filter(x=>x.published!==false && x.slug!==p.slug && !(x.slug===VZ_WEB && products.some(y=>y.slug===VZ_XLS&&y.published!==false)));
+    let rel=pub.filter(x=>x.type===p.type);
+    if(rel.length<4) rel=rel.concat(pub.filter(x=>x.type!==p.type));
+    rel=rel.slice(0,4);
+    if(!rel.length){ box.style.display='none'; return; }
+    if(grid) grid.innerHTML=rel.map(cardHTML).join('');
+    box.style.display='block';
+  }
   // ================= GIỎ HÀNG =================
   let _cartMode=false, _checkoutItems=[];
   function getCart(){ try{ const c=JSON.parse(localStorage.getItem('zizi_cart')||'[]'); return Array.isArray(c)?c:[]; }catch(_){ return []; } }
