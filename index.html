@@ -281,14 +281,34 @@
   .curriculum .cr-out ul{list-style:none;display:grid;gap:7px;font-size:.9rem}
   .curriculum .cr-out li{padding-left:16px;position:relative;line-height:1.5}
   .curriculum .cr-out li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:2px;background:var(--gold,#e4b53f)}
-  .curriculum .cr-acc{display:grid;gap:8px}
-  .curriculum .cr-item{border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff}
-  .curriculum .cr-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;text-align:left;font-family:inherit;font-weight:700;color:var(--ink);font-size:.96rem;cursor:pointer;background:#fff}
-  .curriculum .cr-head:hover{background:var(--paper)}
-  .curriculum .cr-chev{flex:none;color:var(--ink-60);transition:transform .2s}
-  .curriculum .cr-item.open .cr-chev{transform:rotate(180deg)}
-  .curriculum .cr-panel{display:none;padding:0 15px 8px}
-  .curriculum .cr-item.open .cr-panel{display:block}
+  .cr-acc{display:grid;gap:8px}
+  .cr-item{border:1px solid var(--line-2);border-radius:8px;overflow:hidden;background:#fff}
+  .cr-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;text-align:left;font-family:inherit;font-weight:700;color:var(--ink);font-size:.96rem;cursor:pointer;background:#fff}
+  .cr-head:hover{background:var(--paper)}
+  .cr-chev{flex:none;color:var(--ink-60);transition:transform .2s}
+  .cr-item.open .cr-chev{transform:rotate(180deg)}
+  .cr-panel{display:none;padding:0 15px 8px}
+  .cr-item.open .cr-panel{display:block}
+  /* ---- Product conversion sections ---- */
+  .p-section{margin:30px 0}
+  .ps-h{font-size:1.35rem;margin-bottom:14px;color:var(--ink)}
+  .foryou{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .fy{background:#fff;border:1px solid var(--line-2);border-radius:12px;padding:18px}
+  .fy .fy-ic{width:38px;height:38px;border-radius:10px;background:var(--jade-tint,#e4f5f0);color:var(--jade-dark);display:grid;place-items:center;margin-bottom:10px}
+  .fy .fy-ic svg{width:20px;height:20px}
+  .fy b{display:block;margin-bottom:4px;font-size:1rem}
+  .fy p{color:var(--ink-60);font-size:.9rem;line-height:1.55;margin:0}
+  .faq-acc .cr-head{font-weight:600}
+  .faq-acc .cr-panel{color:var(--ink-60);font-size:.92rem;line-height:1.6;padding:2px 15px 14px}
+  .final-cta{background:linear-gradient(135deg,var(--jade),var(--jade-dark,#127d69));color:#fff;border-radius:16px;padding:34px 26px;text-align:center;margin:34px 0 10px;box-shadow:0 20px 40px -20px rgba(26,168,142,.6)}
+  .final-cta h3{font-size:1.5rem;margin:0 0 6px;color:#fff}
+  .final-cta p{opacity:.92;font-size:.95rem;margin:0 0 16px}
+  .final-cta .fc-price{display:flex;align-items:baseline;justify-content:center;gap:12px;margin-bottom:16px}
+  .final-cta .fc-now{font-size:2rem;font-weight:800}
+  .final-cta .fc-was{opacity:.7;text-decoration:line-through;font-size:1.1rem}
+  .final-cta .fc-btn{background:#fff;color:var(--jade-dark);font-weight:800;font-size:1.05rem;padding:15px 40px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 10px 24px -10px rgba(0,0,0,.35)}
+  .final-cta .fc-btn:hover{transform:translateY(-1px)}
+  @media(max-width:720px){ .foryou{grid-template-columns:1fr} .final-cta{padding:26px 18px} .final-cta h3{font-size:1.25rem} }
   .guarantee{border:1.5px dashed var(--gold);border-radius:6px;padding:20px;display:flex;gap:.9rem;align-items:center;margin:24px 0}
   .guarantee .g-ic{font-size:32px;flex:none}
   .guarantee b{display:block;color:var(--gold)}
@@ -1111,6 +1131,42 @@
       </ul>
     </div>
     <div class="curriculum" id="pCurriculum" style="display:none"></div>
+
+    <div class="p-section" id="pForYou">
+      <h3 class="ps-h">Khóa học này dành cho bạn</h3>
+      <div class="foryou">
+        <div class="fy"><div class="fy-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div><b>Người mất gốc</b><p>Bắt đầu từ số 0: phát âm pinyin, nét chữ và bộ thủ, không cần biết trước gì.</p></div>
+        <div class="fy"><div class="fy-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div><b>Người bận rộn, tự học</b><p>Video ngắn chia theo chủ đề, học lúc nào cũng được, xem lại trọn đời trên điện thoại.</p></div>
+        <div class="fy"><div class="fy-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><b>Muốn giao tiếp thật</b><p>Học để nói được trong tình huống thật: chào hỏi, mua sắm, hỏi đường, công việc.</p></div>
+      </div>
+    </div>
+
+    <div class="p-section">
+      <h3 class="ps-h">Học viên nói gì</h3>
+      <div class="reviews">
+        <div class="rev"><div class="stars">★★★★★</div><p>"Thanh toán xong là vào học được luôn, không phải chờ ai duyệt. Video ngắn gọn dễ theo cho người đi làm bận."</p><div class="who"><span class="av">T</span><div><b>Minh Tuấn</b><span>Đã học HSK1</span></div></div></div>
+        <div class="rev"><div class="stars">★★★★★</div><p>"Từ chỗ không đọc nổi pinyin giờ đã thi thử HSK2 được 210/240. Cảm ơn cô nhiều lắm ạ."</p><div class="who"><span class="av">H</span><div><b>Thu Hà</b><span>Đã học HSK2</span></div></div></div>
+        <div class="rev"><div class="stars">★★★★★</div><p>"Mình sợ nhất là viết chữ, học bộ thủ xong tự nhiên nhìn chữ nào cũng thấy quen. Đáng tiền thật sự."</p><div class="who"><span class="av">L</span><div><b>Lan Anh</b><span>Đã học Combo HSK1+2</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="p-section">
+      <h3 class="ps-h">Câu hỏi thường gặp</h3>
+      <div class="cr-acc faq-acc">
+        <div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>Thanh toán xong bao lâu thì được học?</span><svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="cr-panel">Ngay sau khi chuyển khoản thành công, hệ thống tự tạo tài khoản và gửi thông tin đăng nhập về email của bạn, thường trong 1 đến 2 phút. Đăng nhập là vào học được ngay.</div></div>
+        <div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>Khóa học có thời hạn không?</span><svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="cr-panel">Không. Bạn được xem lại trọn đời và nhận cập nhật nội dung mới miễn phí, trên cả điện thoại lẫn máy tính.</div></div>
+        <div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>Mất gốc hoàn toàn học được không?</span><svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="cr-panel">Được. Lộ trình bắt đầu từ phát âm pinyin và nét chữ cơ bản, đi từ dễ đến khó, có ví dụ và bài tập cho từng buổi.</div></div>
+        <div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>Nếu không phù hợp thì sao?</span><svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="cr-panel">ZiZi hoàn tiền 100% trong vòng 24 giờ nếu bạn thấy chưa phù hợp, chỉ cần nhắn Zalo, không hỏi lý do (áp dụng khi chưa học quá 20% nội dung).</div></div>
+        <div class="cr-item"><button type="button" class="cr-head" onclick="toggleCr(this)"><span>Có được hỗ trợ khi học không?</span><svg class="cr-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="cr-panel">Có. Bạn được vào nhóm kín hỏi đáp cùng giảng viên và cộng đồng học viên, hỗ trợ qua Zalo trong suốt quá trình học.</div></div>
+      </div>
+    </div>
+
+    <div class="final-cta">
+      <h3>Sẵn sàng bắt đầu học hôm nay?</h3>
+      <p>Kích hoạt ngay sau thanh toán · Xem lại trọn đời · Hoàn tiền trong 24h</p>
+      <div class="fc-price"><span class="fc-now" id="finalNow">199k</span><span class="fc-was" id="finalWas">399k</span></div>
+      <a class="fc-btn" href="#" onclick="buyNow();return false">Đăng ký học ngay →</a>
+    </div>
   </div>
   <div class="mcta">
     <div><small>Ưu đãi hôm nay</small><b id="mCtaPrice">199k</b></div>
@@ -2548,6 +2604,7 @@
     document.getElementById('pNow').textContent=p.priceLabel;
     document.getElementById('pWas').textContent=p.wasLabel||'';
     document.getElementById('mCtaPrice').textContent=p.priceLabel;
+    { const fn=document.getElementById('finalNow'), fw=document.getElementById('finalWas'); if(fn)fn.textContent=p.priceLabel; if(fw){ fw.textContent=p.wasLabel||''; fw.style.display=p.wasLabel?'':'none'; } }
     const isDoc=p.type==='doc', isLive=p.type==='live';
     document.getElementById('pNote').innerHTML = isDoc
       ? (p.slug===VZ_WEB ? '<b>Học trên web</b>, mở khóa ngay sau thanh toán: đăng nhập rồi vào <b>Khu vực học viên → Học trên web</b>, dùng được trên điện thoại và máy tính.'
