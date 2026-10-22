@@ -269,6 +269,18 @@
   .whatsin ul{list-style:none;display:grid;gap:.6rem;font-size:.92rem}
   .whatsin li{display:flex;gap:.6rem}
   .whatsin li .n{width:26px;height:26px;flex:none;background:var(--jade);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700}
+  .curriculum{background:var(--paper-2);border-radius:6px;padding:26px;margin:28px 0}
+  .curriculum h3{font-size:1.3rem;margin-bottom:4px}
+  .curriculum .cr-sub{color:var(--ink-60);font-size:.9rem;margin-bottom:12px}
+  .curriculum .cr-phase{font-weight:800;color:var(--jade-dark);margin:16px 0 6px;font-size:.98rem}
+  .curriculum .cr-list{list-style:none;display:grid;gap:0}
+  .curriculum .cr-list li{font-size:.92rem;line-height:1.5;padding:8px 0 8px 16px;position:relative;border-bottom:1px solid var(--line-2)}
+  .curriculum .cr-list li::before{content:"";position:absolute;left:0;top:14px;width:6px;height:6px;border-radius:50%;background:var(--jade)}
+  .curriculum .cr-out{margin-top:18px;padding-top:14px;border-top:1px solid var(--line-2)}
+  .curriculum .cr-out b{display:block;margin-bottom:8px}
+  .curriculum .cr-out ul{list-style:none;display:grid;gap:7px;font-size:.9rem}
+  .curriculum .cr-out li{padding-left:16px;position:relative;line-height:1.5}
+  .curriculum .cr-out li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:2px;background:var(--gold,#e4b53f)}
   .guarantee{border:1.5px dashed var(--gold);border-radius:6px;padding:20px;display:flex;gap:.9rem;align-items:center;margin:24px 0}
   .guarantee .g-ic{font-size:32px;flex:none}
   .guarantee b{display:block;color:var(--gold)}
@@ -1090,6 +1102,7 @@
         <li><span class="n">4</span><div>Nhóm kín hỏi đáp cùng giảng viên và cộng đồng học viên.</div></li>
       </ul>
     </div>
+    <div class="curriculum" id="pCurriculum" style="display:none"></div>
   </div>
   <div class="mcta">
     <div><small>Ưu đãi hôm nay</small><b id="mCtaPrice">199k</b></div>
@@ -2540,6 +2553,7 @@
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
     renderWhatsIn(p);
+    renderCurriculum(p);
     { const tb=document.getElementById('tryVocabBtn'); if(tb) tb.style.display=isVocabPack(p.slug)?'flex':'none'; }
     renderPackChooser(p);
     const li=document.getElementById('liveInfo');
@@ -2589,6 +2603,16 @@
     const ul=document.getElementById('wiList'); if(!ul) return;
     const items=WHATSIN[p.slug]||(p.type==='doc'?WHATSIN._doc:p.type==='live'?WHATSIN._live:null);
     ul.innerHTML = items ? items.map((x,i)=>'<li><span class="n">'+(i+1)+'</span><div>'+x+'</div></li>').join('') : _WI_DEFAULT;
+  }
+  function renderCurriculum(p){
+    const box=document.getElementById('pCurriculum'); if(!box) return;
+    if(p.slug!=='hsk1' || typeof HSK1_CURRICULUM==='undefined'){ box.style.display='none'; box.innerHTML=''; return; }
+    const phases=HSK1_CURRICULUM.map(g=>'<div class="cr-phase">'+esc(g.phase)+'</div><ul class="cr-list">'+
+      g.items.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>').join('');
+    const out='<div class="cr-out"><b>Sau khóa học, học viên có thể:</b><ul>'+
+      HSK1_OUTCOMES.map(o=>'<li>'+esc(o)+'</li>').join('')+'</ul></div>';
+    box.innerHTML='<h3>Nội dung khóa học</h3><div class="cr-sub">Lộ trình 30 buổi, từ người mới bắt đầu đến nền tảng HSK1.</div>'+phases+out;
+    box.style.display='block';
   }
   // ================= GIỎ HÀNG =================
   let _cartMode=false, _checkoutItems=[];
@@ -3404,17 +3428,47 @@
 
   /* ===== Quản lý bài học: gắn video (nền tảng thứ 3) + tải file bài tập ===== */
   /* @DATA-LESSONS ★ Giáo trình HSK1 */
-  const HSK1_LESSONS=['Buổi 1 · Nhập môn tiếng Trung','Buổi 2 · Ngữ âm P1','Buổi 3 · Ngữ âm P2','Buổi 4 · Ngữ âm P3',
-    'Buổi 5 · Bài 1 你好','Buổi 6 · Bài 2 汉语不太难','Buổi 7 · Bài 3 明天见','Buổi 8–9 · Bài 4 你去哪儿',
-    'Buổi 10 · Bài 5 这是王老师','Buổi 11 · Bài 6 我学习汉语','Buổi 12–13 · Bài 7 你吃什么',
-    'Buổi 14–15 · Bài 8 苹果一斤多少钱','Buổi 16 · Bài 9 我换人民币','Buổi 17–18 · Bài 10 他住哪儿',
-    'Buổi 18–19 · Bài 11 我们都是留学生','Buổi 20 · Luyện tập','Buổi 21–22 · Bài 12 你在哪儿学习',
-    'Buổi 23–25 · Bài 13 这是不是中药','Buổi 26–28 · Bài 14 你的车是新的还是旧的','Buổi 29–30 · Bài 15 你们公司有多少职员 (Ôn tập)'];
+  const HSK1_CURRICULUM=[
+    {phase:'Giai đoạn 1: Nhập môn và phát âm', items:[
+      'Buổi 1 · Nhập môn tiếng Trung',
+      'Buổi 2 · Thanh mẫu, vận mẫu và thanh điệu (Phần 1)',
+      'Buổi 3 · Thanh mẫu, vận mẫu và thanh điệu (Phần 2)',
+      'Buổi 4 · Thanh mẫu, vận mẫu và thanh điệu (Phần 3)'
+    ]},
+    {phase:'Giai đoạn 2: Giao tiếp cơ bản', items:[
+      'Buổi 5 · Bài 1: 你好 Nǐ hǎo · Xin chào',
+      'Buổi 6 · Bài 2: 汉语不太难 Hànyǔ bú tài nán · Tiếng Hán không khó lắm',
+      'Buổi 7 · Bài 3: 明天见 Míngtiān jiàn · Ngày mai gặp lại',
+      'Buổi 8-9 · Bài 4: 你去哪儿 Nǐ qù nǎr · Bạn đi đâu đấy?',
+      'Buổi 10-11 · Bài 5: 这是王老师 Zhè shì Wáng lǎoshī · Đây là thầy giáo Vương',
+      'Buổi 11 · Bài 6: 我学习汉语 Wǒ xuéxí Hànyǔ · Tôi học tiếng Hán',
+      'Buổi 12-13 · Bài 7: 你吃什么 Nǐ chī shénme · Bạn ăn gì?',
+      'Buổi 14-15 · Bài 8: 苹果一斤多少钱 Píngguǒ yì jīn duōshǎo qián · Một cân táo bao nhiêu tiền?',
+      'Buổi 16 · Bài 9: 我换人民币 Wǒ huàn rénmínbì · Tôi đổi tiền Nhân dân tệ',
+      'Buổi 17-18 · Bài 10: 他住哪儿 Tā zhù nǎr · Ông ấy sống ở đâu?',
+      'Buổi 18-19 · Bài 11: 我们都是留学生 Wǒmen dōu shì liúxuéshēng · Chúng tôi đều là lưu học sinh'
+    ]},
+    {phase:'Giai đoạn 3: Luyện tập và củng cố', items:[
+      'Buổi 20 · Luyện tập tổng hợp',
+      'Buổi 21-22 · Bài 12: 你在哪儿学习 Nǐ zài nǎr xuéxí · Bạn học ở đâu?',
+      'Buổi 23-25 · Bài 13: 这是不是中药 Zhè shì bú shì zhōngyào · Đây có phải là thuốc Đông y không?',
+      'Buổi 26-28 · Bài 14: 你的车是新的还是旧的 Nǐ de chē shì xīn de háishi jiù de · Xe của bạn mới hay cũ?',
+      'Buổi 29-30 · Ôn tập Bài 15: 你们公司有多少职员 Nǐmen gōngsī yǒu duōshǎo zhíyuán · Công ty của bạn có bao nhiêu nhân viên?'
+    ]}
+  ];
+  const HSK1_OUTCOMES=[
+    'Nắm vững nền tảng phát âm tiếng Trung với hệ thống Pinyin.',
+    'Làm quen với từ vựng và cấu trúc ngữ pháp cơ bản.',
+    'Giao tiếp trong các tình huống quen thuộc: chào hỏi, giới thiệu, hỏi đường, ăn uống và mua sắm.',
+    'Xây dựng nền tảng để tiếp tục học lên HSK2.'
+  ];
+  const HSK1_LESSONS=HSK1_CURRICULUM.reduce((a,g)=>a.concat(g.items),[]);
   let lessonData={};
   function getLessons(cid){
     if(!lessonData[cid]){
       const c=products.find(x=>x.id===cid);
-      const titles = cid===1 ? HSK1_LESSONS.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
+      const isHSK1 = (c&&c.slug==='hsk1') || cid===1;
+      const titles = isHSK1 ? HSK1_LESSONS.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
       lessonData[cid]=titles.map(t=>({title:t,video:'',files:[]}));
     }
     return lessonData[cid];
