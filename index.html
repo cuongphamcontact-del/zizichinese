@@ -1296,6 +1296,8 @@
       <a href="#" onclick="openPolicy('about');return false">Giới thiệu</a>
       <a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a>
       <a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a>
+      <a href="#" onclick="openPolicy('price');return false">Chính sách giá</a>
+      <a href="#" onclick="openPolicy('conditions');return false">Điều kiện, hạn chế</a>
       <a href="#" onclick="openPolicy('refund');return false">Đổi trả &amp; hoàn tiền</a>
       <a href="#" onclick="openPolicy('shipping');return false">Vận chuyển &amp; giao nhận</a>
       <a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a>
@@ -1758,7 +1760,7 @@
         <div class="socials"><a href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener" aria-label="Facebook">f</a><a href="#">▶</a><a href="#">♪</a></div>
       </div>
       <div><h5>Khóa học</h5><a href="#" onclick="openProduct('hsk1');return false">Khóa HSK1</a><a href="#" onclick="openProduct('hsk2');return false">Khóa HSK2</a><a href="#" onclick="openProduct('combo');return false">Combo HSK1+2</a><a href="#" onclick="openProduct('bo-thu');return false">Bộ thủ &amp; công thức</a></div>
-      <div><h5>Chính sách</h5><a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a><a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a><a href="#" onclick="openPolicy('refund');return false">Chính sách đổi trả &amp; hoàn tiền</a><a href="#" onclick="openPolicy('shipping');return false">Chính sách vận chuyển &amp; giao nhận</a><a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a><a href="#" onclick="openPolicy('process');return false">Quy trình mua hàng &amp; khiếu nại</a></div>
+      <div><h5>Chính sách</h5><a href="#" onclick="openPolicy('terms');return false">Điều khoản dịch vụ</a><a href="#" onclick="openPolicy('privacy');return false">Chính sách bảo mật</a><a href="#" onclick="openPolicy('price');return false">Chính sách giá</a><a href="#" onclick="openPolicy('conditions');return false">Điều kiện, hạn chế cung cấp</a><a href="#" onclick="openPolicy('refund');return false">Chính sách đổi trả &amp; hoàn tiền</a><a href="#" onclick="openPolicy('shipping');return false">Chính sách vận chuyển &amp; giao nhận</a><a href="#" onclick="openPolicy('payment');return false">Hướng dẫn thanh toán</a><a href="#" onclick="openPolicy('process');return false">Quy trình mua hàng &amp; khiếu nại</a></div>
       <div><h5>Hỗ trợ</h5><a href="#" onclick="openPolicy('about');return false">Giới thiệu</a><a href="#" onclick="openPolicy('contact');return false">Liên hệ</a><a id="footZalo" href="https://zalo.me/0876414282" target="_blank" rel="noopener">Zalo: 0876 414 282</a><a id="footEmail" href="mailto:info.zizichinese@gmail.com">Email: info.zizichinese@gmail.com</a><a id="footFanpage" href="https://www.facebook.com/ZiZiChinese" target="_blank" rel="noopener">Fanpage ZiZi Chinese</a></div>
     </div>
     <div class="foot-legal" id="footLegal"><span>CÔNG TY TNHH TRUYỀN THÔNG &amp; GIÁO DỤC TRẠM DIGITAL</span><span>Mã số thuế: 0319210523</span><span>Tầng 14, Tòa Nhà HM Town, 412 Nguyễn Thị Minh Khai, Phường Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam</span><span>© 2026 ZiZi Chinese. Bản quyền thuộc ZiZi Chinese.</span></div>
@@ -2020,7 +2022,7 @@
   const zaloDigits=z=>String(z||'').replace(/[^\d]/g,'');
   const zaloPretty=z=>{const d=zaloDigits(z);return d.length>=10?d.replace(/(\d{4})(\d{3})(\d+)/,'$1 $2 $3'):(d||'');};
   const fanpageShort=u=>String(u||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/+$/,'');
-  const POLICY_META={about:'Giới thiệu',terms:'Điều khoản dịch vụ',privacy:'Chính sách bảo mật',refund:'Chính sách đổi trả & hoàn tiền',shipping:'Chính sách vận chuyển & giao nhận',payment:'Hướng dẫn thanh toán',process:'Quy trình mua hàng & khiếu nại',contact:'Liên hệ'};
+  const POLICY_META={about:'Giới thiệu',terms:'Điều khoản dịch vụ',privacy:'Chính sách bảo mật',price:'Chính sách giá',payment:'Hướng dẫn thanh toán',conditions:'Điều kiện, hạn chế khi cung cấp sản phẩm',refund:'Chính sách đổi trả & hoàn tiền',shipping:'Chính sách vận chuyển & giao nhận',process:'Quy trình mua hàng & khiếu nại',contact:'Liên hệ'};
   function policyHTML(key){
     const mail='<a href="mailto:'+bizEsc(BIZ.email)+'">'+bizEsc(BIZ.email)+'</a>';
     const zp=bizEsc(zaloPretty(BIZ.zalo));
@@ -2032,6 +2034,17 @@
       '<h3>Chúng tôi cung cấp</h3><p>Khóa học video theo cấp HSK1 đến HSK6, tài liệu tự học (file Excel, PDF), lớp học trực tiếp qua Zoom, và chương trình học 5000 từ vựng HSK trên web với thẻ nhớ, luyện gõ và lịch ôn tự động.</p>'+
       '<h3>Giá trị của chúng tôi</h3><p>Nội dung được biên soạn kỹ, cập nhật thường xuyên, lộ trình rõ ràng từ mất gốc đến giao tiếp. Học viên được hỗ trợ qua email và Zalo trong suốt quá trình học.</p>'+
       '<h3>Thông tin doanh nghiệp</h3><p><b>'+co+'</b><br>Mã số thuế: '+tax+'<br>Địa chỉ: '+addr+'<br>Email: '+mail+' · Điện thoại/Zalo: '+ph+'</p>';
+    if(key==='price') return ''+
+      '<h3>1. Niêm yết giá</h3><p>Toàn bộ sản phẩm được niêm yết giá rõ ràng bằng Đồng Việt Nam (VND) tại từng trang sản phẩm. Giá hiển thị là giá khách hàng thanh toán cho sản phẩm số; với sản phẩm bản cứng, phí vận chuyển (nếu có) được hiển thị riêng tại bước thanh toán.</p>'+
+      '<h3>2. Chương trình ưu đãi</h3><p>Khi có chương trình ưu đãi, website hiển thị đồng thời giá niêm yết và giá ưu đãi để khách hàng đối chiếu. Mã giảm giá (nếu có) được áp dụng công khai tại bước thanh toán.</p>'+
+      '<h3>3. Thay đổi giá</h3><p>Giá sản phẩm có thể được điều chỉnh theo từng thời điểm. Giá áp dụng cho mỗi đơn hàng là giá hiển thị tại thời điểm khách hàng xác nhận đặt mua, và không ảnh hưởng tới các đơn hàng đã hoàn tất thanh toán.</p>'+
+      '<h3>4. Hóa đơn</h3><p>Khách hàng có nhu cầu xuất hóa đơn giá trị gia tăng vui lòng cung cấp thông tin xuất hóa đơn khi đặt hàng hoặc liên hệ '+mail+'.</p>';
+    if(key==='conditions') return ''+
+      '<h3>1. Đối tượng và điều kiện sử dụng</h3><p>Sản phẩm và dịch vụ của ZiZi Chinese dành cho người có nhu cầu học tiếng Trung. Khi mua hàng, khách hàng cung cấp email và số điện thoại chính xác để nhận tài khoản và được hỗ trợ.</p>'+
+      '<h3>2. Tính chất sản phẩm số</h3><p>Khóa học, tài liệu bản mềm và tài khoản học online là sản phẩm số, được cấp quyền truy cập hoặc tải về sau khi thanh toán thành công. Mỗi tài khoản dành cho một người học.</p>'+
+      '<h3>3. Hạn chế sử dụng</h3><p>Không chia sẻ tài khoản, mật khẩu cho người khác. Không sao chép, phát tán, bán lại, đăng tải công khai tài liệu, video dưới mọi hình thức. Hành vi vi phạm có thể dẫn đến khóa tài khoản mà không hoàn tiền.</p>'+
+      '<h3>4. Yêu cầu kỹ thuật</h3><p>Để sử dụng sản phẩm, khách hàng cần thiết bị (điện thoại, máy tính) có kết nối internet. Một số nội dung yêu cầu phần mềm phổ biến như trình duyệt web, Excel hoặc Google Sheets.</p>'+
+      '<h3>5. Phạm vi cung cấp</h3><p>Sản phẩm số được cung cấp trực tuyến trên toàn quốc. Sản phẩm bản cứng (nếu có) được giao theo Chính sách vận chuyển, giao nhận.</p>';
     if(key==='shipping') return ''+
       '<h3>1. Phạm vi áp dụng</h3><p>Phần lớn sản phẩm của ZiZi Chinese là sản phẩm số (khóa học, tài liệu bản mềm, tài khoản học online) được giao <b>tự động qua email và tài khoản</b> ngay sau khi thanh toán, không phát sinh phí và thời gian vận chuyển.</p>'+
       '<h3>2. Giao nhận bản cứng</h3><p>Với tài liệu có <b>bản cứng (in)</b>, chúng tôi giao qua đơn vị vận chuyển trên toàn quốc. Thời gian dự kiến 2 đến 4 ngày làm việc với nội thành và 3 đến 7 ngày với tỉnh xa, kể từ khi xác nhận thanh toán.</p>'+
