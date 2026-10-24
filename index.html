@@ -2004,7 +2004,7 @@
     return {id:r.id,slug:r.slug,type:r.type,name:r.name,char:r.char_icon||'字',level:r.level_label||'',
       desc:r.description||'',description:r.description||'',bullets:[],
       price:r.price,priceLabel:shortPrice(r.price||0),wasLabel:r.original_price?shortPrice(r.original_price):'',off,
-      status:r.status,featured:!!r.featured,published:r.published!==false,sort:r.sort_order,
+      status:r.status,preorder:!!r.preorder_enabled,featured:!!r.featured,published:r.published!==false,sort:r.sort_order,
       lessons:r.lessons_count||0,res:r.res_count||0,students:r.students_count||0,
       cover:((r.cover_url&&/^https?:/.test(r.cover_url))?r.cover_url:(LOCAL_COVERS[r.slug]||'')),live:r.live_info||null,
       hasSoft:r.has_soft,hasHard:r.has_hard,hardPrice:r.hard_price,shipFee:r.ship_fee,revenue:''};
@@ -2307,8 +2307,9 @@
 
   /* ===== render lưới sản phẩm trên web ngoài ===== */
   function cardHTML(p){
-    const cta = p.status==='preorder'?'Đặt trước':'Xem chi tiết';
-    const badge = p.status==='preorder'?'<span class="pbadge pre">Đặt trước</span>'
+    const pre = p.status==='preorder'||p.preorder;
+    const cta = pre?'Đặt trước':'Xem chi tiết';
+    const badge = pre?'<span class="pbadge pre">Đặt trước</span>'
                  :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>'
                  :(p.type==='live'?'<span class="pbadge live">Trực tiếp</span>'
                  :'<span class="pbadge video">Video</span>'));
@@ -2780,7 +2781,8 @@
       : isLive
       ? '<b>Lớp trực tiếp</b>, học cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, có ghi hình xem lại. Nhận lịch &amp; link phòng học sau khi thanh toán.'
       : '<b>Khóa học qua video quay sẵn</b>, bạn <b>tự học</b> theo lộ trình, kích hoạt ngay sau thanh toán, xem lại trọn đời trên mọi thiết bị.<br><span style="color:var(--cinnabar);font-weight:600">Lưu ý: đây KHÔNG phải lớp trực tiếp với giáo viên.</span>';
-    const buyTxt = isDoc?'Mua ngay →':isLive?'Đăng ký lớp ngay →':(p.status==='preorder'?'Đặt trước ngay →':'Đăng ký học ngay →');
+    const isPre = p.status==='preorder'||p.preorder;
+    const buyTxt = isDoc?'Mua ngay →':isLive?'Đăng ký lớp ngay →':(isPre?'Đặt trước ngay →':'Đăng ký học ngay →');
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
     document.querySelector('.whatsin h3').textContent = isDoc?'Bên trong tài liệu có gì?':isLive?'Lớp học gồm những gì?':'Bên trong khóa học có gì?';
