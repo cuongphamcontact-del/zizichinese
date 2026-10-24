@@ -3789,7 +3789,19 @@
     'Giao tiếp trong các tình huống quen thuộc: chào hỏi, giới thiệu, hỏi đường, ăn uống và mua sắm.',
     'Xây dựng nền tảng để tiếp tục học lên HSK2.'
   ];
-  const HSK1_LESSONS=HSK1_CURRICULUM.reduce((a,g)=>a.concat(g.items),[]);
+  // Tách lộ trình (có buổi gộp như "Buổi 8-9") thành danh sách từng buổi 1→N để học viên học & gắn 1 video/buổi
+  function expandLessons(curriculum){
+    const slots={}; let max=0;
+    curriculum.forEach(g=>(g.items||[]).forEach(it=>{
+      const m=String(it).match(/^Buổi\s+(\d+)(?:\s*[-–]\s*(\d+))?\s*·?\s*(.*)$/);
+      if(!m) return;
+      const a=+m[1], b=m[2]?+m[2]:a, rest=(m[3]||'').trim();
+      for(let n=a;n<=b;n++){ slots[n]='Buổi '+n+(rest?' · '+rest:''); if(n>max)max=n; }
+    }));
+    const out=[]; for(let n=1;n<=max;n++) out.push(slots[n]||('Buổi '+n));
+    return out;
+  }
+  const HSK1_LESSONS=expandLessons(HSK1_CURRICULUM);
   const HSK2_CURRICULUM=[
     {phase:'Giai đoạn 1: Học bài mới', items:[
       'Buổi 1-2 · Bài 16: 你常去图书馆吗？ · Bạn có thường xuyên đến thư viện không?',
@@ -3819,7 +3831,7 @@
     'Nâng cao khả năng nghe hiểu, đọc hiểu và diễn đạt câu tiếng Trung.',
     'Củng cố nền tảng để tiếp tục học lên trình độ cao hơn.'
   ];
-  const HSK2_LESSONS=HSK2_CURRICULUM.reduce((a,g)=>a.concat(g.items),[]);
+  const HSK2_LESSONS=expandLessons(HSK2_CURRICULUM);
   const CURRICULA={
     hsk1:{note:'Lộ trình 30 buổi, từ người mới bắt đầu đến nền tảng HSK1.', phases:HSK1_CURRICULUM, outcomes:HSK1_OUTCOMES},
     hsk2:{note:'Lộ trình 30 buổi, phát triển từ vựng, ngữ pháp và giao tiếp tiếng Trung.', phases:HSK2_CURRICULUM, outcomes:HSK2_OUTCOMES}
