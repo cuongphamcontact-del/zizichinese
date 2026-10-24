@@ -4033,18 +4033,23 @@
 
   /* ===== TRACKING ===== */
   async function saveTracking(){
-    const px={fb_pixel_id:(val('px_fb')||'').trim(),tiktok_pixel_id:(val('px_tt')||'').trim(),ga4_id:(val('px_ga')||'').trim()};
-    const ev={pageview:_cb('ev_pageview'),viewcontent:_cb('ev_viewcontent'),initiatecheckout:_cb('ev_checkout'),lead:_cb('ev_lead'),purchase:_cb('ev_purchase')};
     const sb=getSB();
     if(!sb){ toast('Chưa kết nối Supabase'); return; }
+    const g=id=>{const e=document.getElementById(id);return e?(e.value||'').trim():'';};
+    const px={fb_pixel_id:g('px_fb'),tiktok_pixel_id:g('px_tt'),ga4_id:g('px_ga')};
+    const ev={pageview:_cb('ev_pageview'),viewcontent:_cb('ev_viewcontent'),initiatecheckout:_cb('ev_checkout'),lead:_cb('ev_lead'),purchase:_cb('ev_purchase')};
     try{
       const r1=await sb.from('settings').upsert({key:'pixels',value:px},{onConflict:'key'});
+      if(r1.error){ toast('Lưu Pixel lỗi: '+r1.error.message,7000); return; }
       const r2=await sb.from('settings').upsert({key:'events_enabled',value:ev},{onConflict:'key'});
-      if(r1.error||r2.error){ toast('Lưu lỗi, kiểm tra quyền admin'); return; }
+      if(r2.error){ toast('Lưu sự kiện lỗi: '+r2.error.message,7000); return; }
       ZIZI_EVENTS={...ZIZI_EVENTS,...ev};
       updatePxState(px);
-      toast('Đã lưu Pixel vào Supabase. Tải lại website để pixel bắt đầu chạy.');
-    }catch(e){ toast('Lưu lỗi'); }
+      // Bật pixel ngay, không cần tải lại trang
+      try{ _pxInit=false; initPixels(px); }catch(_){}
+      const names=[]; if(px.fb_pixel_id)names.push('Facebook'); if(px.tiktok_pixel_id)names.push('TikTok'); if(px.ga4_id)names.push('GA4');
+      toast(names.length?('Đã lưu & bật pixel: '+names.join(', ')+' ✓'):'Đã lưu cấu hình ✓',4000,'success');
+    }catch(e){ toast('Lưu lỗi: '+((e&&e.message)||e),7000); }
   }
   // Lưu ý: CAPI token là BÍ MẬT, không lưu ở đây (trang công khai), để dành cho Edge Function (Giai đoạn sau).
 
