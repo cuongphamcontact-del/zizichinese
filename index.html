@@ -675,6 +675,7 @@
   .lesson.now{background:var(--jade-tint)}.lesson.now .ls{background:var(--cinnabar);color:#fff}
   .lesson.lock{opacity:.5}
   .lesson.active{background:var(--jade-tint);box-shadow:inset 0 0 0 2px var(--jade)}
+  .mark-done.is-done{background:var(--paper-3);color:var(--ink-60);box-shadow:none}
   .lesson b{font-size:.88rem;display:block}.lesson span{font-size:.77rem;color:var(--ink-60)}
   /* ---------- dashboard khóa đã sở hữu ---------- */
   .learn-dash{max-width:1180px;margin:0 auto;padding:30px 24px 60px}
@@ -1336,6 +1337,7 @@
           <span class="now-lesson" id="nowLesson">Đang học</span>
         </div>
         <h2 id="learnTitle2">Khóa học</h2>
+        <button class="btn btn-jade mark-done" id="markDoneBtn" style="display:none;margin:2px 0 12px">Đánh dấu đã học xong</button>
         <div class="prog"><div class="prog-bar"><i id="learnProgBar" style="width:0%"></i></div><small id="learnProgText">0/0 buổi</small></div>
         <div class="dl">
           <b>Tài nguyên buổi học</b>
@@ -2603,7 +2605,9 @@
     try{ const o=JSON.parse(localStorage.getItem('zizi_owned')||'[]'); return Array.isArray(o)?o:[]; }catch(_){ return []; }
   }
   function saveOwned(o){ try{localStorage.setItem('zizi_owned',JSON.stringify(o));}catch(_){} }
-  function addOwned(id){ const o=getOwned(); if(!o.some(x=>x.id===id)){ o.push({id,done:0}); saveOwned(o);} }
+  function addOwned(id){ const o=getOwned(); if(!o.some(x=>String(x.id)===String(id))){ o.push({id,cl:[]}); saveOwned(o);} }
+  // Số buổi đã hoàn thành (hỗ trợ cả bản cũ dùng 'done')
+  function ownedDone(e,total){ if(e&&Array.isArray(e.cl)) return Math.min(e.cl.length,total); return Math.min((e&&e.done)||0,total); }
   // Đọc quyền sở hữu THẬT từ Supabase (bảng enrollments của học viên đang đăng nhập)
   async function fetchOwned(){
     const sb=getSB(); if(!sb) return getOwned();
@@ -2614,7 +2618,7 @@
       const {data,error}=await sb.from('enrollments').select('product_id').eq('user_id',uid);
       if(error||!data) return [];
       const prog=getOwned();
-      return data.map(r=>{ const pr=prog.find(x=>String(x.id)===String(r.product_id)); return {id:r.product_id,done:pr?pr.done:0}; });
+      return data.map(r=>{ const pr=prog.find(x=>String(x.id)===String(r.product_id)); return {id:r.product_id, cl: pr&&Array.isArray(pr.cl)?pr.cl:(pr&&pr.done?Array.from({length:pr.done},(_,k)=>k):[])}; });
     }catch(e){ return []; }
   }
   async function renderLearn(){
@@ -2630,7 +2634,7 @@
       if(isDoc) return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3><p class="oc-doc">${p.slug===VZ_WEB?'Học online không giới hạn · tiến độ lưu theo tài khoản.':'Tài liệu đã sở hữu · tải về không giới hạn.'}</p>
         ${p.slug===VZ_WEB?`<button class="btn btn-primary btn-sm" onclick="openVocab('learn')">Học trên web</button>`:`<button class="btn btn-jade btn-sm" onclick="downloadDoc('${p.id}')">Tải ${p.slug===VZ_XLS?'Excel':'tài liệu'}</button>`}</div></div>`;
-      const total=getLessons(p.id).length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
+      const total=getLessons(p.id).length, done=ownedDone(o,total), pct=total?Math.round(done/total*100):0;
       return `<div class="owned-card"><div class="oc-thumb">${thumb}<span class="oc-badge">${badge}</span></div>
         <div class="oc-body"><h3>${p.name}</h3>
         <div class="oc-prog"><div class="oc-bar"><i style="width:${pct}%"></i></div><small>${done}/${total} buổi · ${pct}%</small></div>
@@ -2649,20 +2653,24 @@
   function openCourse(id){
     const p=products.find(x=>String(x.id)===String(id)); if(!p)return;
     if(getSB() && !_lessonsLoaded[id]){ ensureLessonsFromDB(id,()=>openCourse(id)); return; }
-    const o=getOwned().find(x=>String(x.id)===String(id))||{done:0};
-    const lessons=getLessons(id), total=lessons.length, done=Math.min(o.done||0,total), pct=total?Math.round(done/total*100):0;
+    const o=getOwned().find(x=>String(x.id)===String(id))||{cl:[]};
+    const lessons=getLessons(id), total=lessons.length;
+    const cl=new Set(Array.isArray(o.cl)?o.cl:(o.done?Array.from({length:o.done},(_,k)=>k):[]));
+    const done=Math.min(cl.size,total), pct=total?Math.round(done/total*100):0;
     document.getElementById('learnTitle2').textContent=p.name;
     document.getElementById('learnProgBar').style.width=pct+'%';
     document.getElementById('learnProgText').textContent=`Hoàn thành ${done}/${total} buổi · ${pct}%`;
     document.getElementById('lessonCount').textContent='· '+total+' buổi';
-    let act=(_activeLesson[id]!=null && _activeLesson[id]<total)?_activeLesson[id]:Math.min(done,total-1);
+    let act=(_activeLesson[id]!=null && _activeLesson[id]<total)?_activeLesson[id]:0;
     if(act<0)act=0; _activeLesson[id]=act;
     renderLessonPlayer(id,act);
+    const mb=document.getElementById('markDoneBtn');
+    if(mb){ const d=cl.has(act); mb.textContent=d?'Đã học xong buổi này — bỏ đánh dấu':'Đánh dấu đã học xong'; mb.classList.toggle('is-done',d); mb.style.display='inline-flex'; mb.onclick=()=>toggleDone(id,act); }
     document.getElementById('lessonListLearn').innerHTML=lessons.map((l,i)=>{
-      const locked=i>done+3, cls=(i===act?'active ':'')+(i<done?'done':i===done?'now':(locked?'lock':''));
-      const ls=i<done?'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>':i===done?'<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>':(locked?'<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>':(i+1));
+      const isDone=cl.has(i), cls=(i===act?'active ':'')+(isDone?'done':'');
+      const ls=isDone?'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>':(i===act?'<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>':(i+1));
       const parts=l.title.split('—'), head=parts[0].trim(), sub=(parts[1]||'').trim();
-      return `<div class="lesson ${cls}" onclick="pickLesson(${id},${i})"><span class="ls">${ls}</span><div><b>${esc(head)}</b><span>${esc(sub)}</span></div></div>`;
+      return `<div class="lesson ${cls}" onclick="playLesson('${id}',${i})"><span class="ls">${ls}</span><div><b>${esc(head)}</b><span>${esc(sub)}</span></div></div>`;
     }).join('');
     document.getElementById('learnDash').style.display='none';
     document.getElementById('learnPlayer').style.display='block';
@@ -2725,14 +2733,20 @@
     if(emb){ box.classList.add('has-video'); box.innerHTML=emb+label; }
     else { box.classList.remove('has-video'); box.innerHTML='<div class="novid"><b>Video đang được cập nhật</b><span>Buổi học này chưa có video. Vui lòng quay lại sau nhé.</span></div>'+label; }
   }
-  function pickLesson(id,i){
-    const lessons=getLessons(id), total=lessons.length, owned=getOwned();
-    let e=owned.find(x=>x.id===id); if(!e){e={id,done:0};owned.push(e);}
-    if(i>(e.done||0)+3){ toast('Buổi này chưa mở khóa, học các buổi trước đã nhé.'); return; }
-    e.done=Math.min(Math.max(e.done||0, i+1), total);
-    saveOwned(owned); _activeLesson[id]=i;
+  // Chọn & xem 1 buổi (đã mua thì mở hết, không khóa)
+  function playLesson(id,i){ _activeLesson[id]=i; openCourse(id); }
+  // Đánh dấu / bỏ đánh dấu hoàn thành buổi hiện tại; đánh dấu xong tự sang buổi sau
+  function toggleDone(id,i){
+    const total=getLessons(id).length, owned=getOwned();
+    let e=owned.find(x=>String(x.id)===String(id)); if(!e){ e={id,cl:[]}; owned.push(e); }
+    if(!Array.isArray(e.cl)) e.cl = e.done?Array.from({length:e.done},(_,k)=>k):[];
+    const s=new Set(e.cl);
+    if(s.has(i)){ s.delete(i); } else { s.add(i); if(i+1<total) _activeLesson[id]=i+1; }
+    e.cl=[...s].sort((a,b)=>a-b); delete e.done; saveOwned(owned);
     openCourse(id);
   }
+  // giữ tương thích nếu nơi khác còn gọi
+  function pickLesson(id,i){ playLesson(id,i); }
   function backToDash(){ document.getElementById('learnPlayer').style.display='none'; document.getElementById('learnDash').style.display='block'; renderLearn(); window.scrollTo(0,0); }
   function renderPublic(){
     const pub=products.filter(p=>p.published!==false && !(p.slug===VZ_WEB && products.some(x=>x.slug===VZ_XLS&&x.published!==false)));
