@@ -3240,7 +3240,8 @@
     try{
       const {data,error}=await sb.functions.invoke('staff-invite',{body:{email,name,full,perms,permsText}});
       if(!error && data && !data.error){
-        toast((data&&data.created)?'Đã tạo tài khoản & gửi email mời nhân viên ✓':'Đã cập nhật quyền & gửi email ✓',3800,'success');
+        if(data.mailSent){ toast((data&&data.created)?'Đã tạo tài khoản & gửi email mời nhân viên ✓':'Đã cập nhật quyền & gửi email ✓',3800,'success'); msg.textContent='Đã cấp quyền và gửi email cho '+email+' ✓'; }
+        else { toast('Đã cấp quyền ✓ nhưng CHƯA gửi được email',6000); msg.textContent='Cấp quyền OK, nhưng email chưa gửi được: '+(data.mailError||'kiểm tra Secrets RESEND_API_KEY và tên miền gửi trong Resend.'); }
         stResetForm(); renderStaff(); return;
       }
       // hàm có nhưng từ chối (vd: không phải chủ) → báo rõ

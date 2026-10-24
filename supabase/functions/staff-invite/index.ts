@@ -86,16 +86,21 @@ Deno.serve(async (req) => {
     if (upErr) return json({ error: "update_failed", message: upErr.message }, 400);
 
     // 5) Gửi email thông báo
+    let mailSent = false, mailError = "";
     if (RESEND_KEY) {
       try {
-        await fetch("https://api.resend.com/emails", {
+        const rr = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: { "Authorization": `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({ from: MAIL_FROM, to: mail, subject: "Bạn được cấp quyền quản trị ZiZi Chinese", html: inviteEmail(name, full ? "Quản trị viên (toàn quyền)" : "Nhân viên hỗ trợ", items, SITE_URL + "#quantri") }),
         });
-      } catch (_) { /* ignore mail error */ }
+        if (rr.ok) mailSent = true;
+        else mailError = "Resend " + rr.status + ": " + (await rr.text().catch(() => "")).slice(0, 300);
+      } catch (e) { mailError = String(e); }
+    } else {
+      mailError = "Chưa khai báo RESEND_API_KEY trong Edge Functions → Secrets.";
     }
-    return json({ ok: true, created, role });
+    return json({ ok: true, created, role, mailSent, mailError });
   } catch (e) {
     return json({ error: "server", message: String(e) }, 500);
   }
