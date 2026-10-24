@@ -2098,6 +2098,9 @@
   }
 
   /* ===== Pixel đo lường thật: FB Pixel + TikTok Pixel + GA4 ===== */
+  // Pixel mặc định gắn sẵn vào website (tự chạy kể cả khi chưa lưu cấu hình trong admin).
+  // Muốn đổi: vào Admin → Tracking nhập ID mới và Lưu (giá trị đã lưu sẽ ghi đè mặc định).
+  const PIXEL_DEFAULT={fb_pixel_id:'2753550385019514',tiktok_pixel_id:'',ga4_id:''};
   let ZIZI_EVENTS={pageview:true,viewcontent:true,initiatecheckout:true,lead:false,purchase:true};
   let _pxInit=false;
   function initPixels(px){
@@ -2124,14 +2127,25 @@
     try{ if(window.gtag){ const gm={ViewContent:'view_item',InitiateCheckout:'begin_checkout',Purchase:'purchase',Lead:'generate_lead'}; gtag('event',gm[ev]||ev,data||{}); } }catch(e){}
   }
   async function loadPixelConfig(){
-    const sb=getSB(); if(!sb) return;
-    try{
-      const {data}=await sb.from('settings').select('key,value').in('key',['pixels','events_enabled']);
-      if(!data) return;
-      const prow=data.find(r=>r.key==='pixels'), erow=data.find(r=>r.key==='events_enabled');
-      const ev=(erow&&erow.value)||null; if(ev) ZIZI_EVENTS={...ZIZI_EVENTS,...ev};
-      const px=(prow&&prow.value)||null; if(px) initPixels(px);
-    }catch(e){}
+    let saved={};
+    const sb=getSB();
+    if(sb){
+      try{
+        const {data}=await sb.from('settings').select('key,value').in('key',['pixels','events_enabled']);
+        if(data){
+          const prow=data.find(r=>r.key==='pixels'), erow=data.find(r=>r.key==='events_enabled');
+          const ev=(erow&&erow.value)||null; if(ev) ZIZI_EVENTS={...ZIZI_EVENTS,...ev};
+          saved=(prow&&prow.value)||{};
+        }
+      }catch(e){}
+    }
+    // ID đã lưu (nếu có) ghi đè mặc định; không có thì dùng ID gắn sẵn
+    const px={
+      fb_pixel_id: saved.fb_pixel_id||PIXEL_DEFAULT.fb_pixel_id,
+      tiktok_pixel_id: saved.tiktok_pixel_id||PIXEL_DEFAULT.tiktok_pixel_id,
+      ga4_id: saved.ga4_id||PIXEL_DEFAULT.ga4_id
+    };
+    if(px.fb_pixel_id||px.tiktok_pixel_id||px.ga4_id) initPixels(px);
   }
   const _cb=id=>{const e=document.getElementById(id);return e?e.checked:false;};
   function updatePxState(px){
@@ -2146,10 +2160,10 @@
       const prow=data?data.find(r=>r.key==='pixels'):null, erow=data?data.find(r=>r.key==='events_enabled'):null;
       const px=(prow&&prow.value)||{}, ev=(erow&&erow.value)||{};
       const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};
-      set('px_fb',px.fb_pixel_id);set('px_tt',px.tiktok_pixel_id);set('px_ga',px.ga4_id);
+      set('px_fb',px.fb_pixel_id||PIXEL_DEFAULT.fb_pixel_id);set('px_tt',px.tiktok_pixel_id||PIXEL_DEFAULT.tiktok_pixel_id);set('px_ga',px.ga4_id||PIXEL_DEFAULT.ga4_id);
       const ck=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.checked=!!v;};
       ck('ev_pageview',ev.pageview);ck('ev_viewcontent',ev.viewcontent);ck('ev_checkout',ev.initiatecheckout);ck('ev_lead',ev.lead);ck('ev_purchase',ev.purchase);
-      updatePxState(px);
+      updatePxState({fb_pixel_id:px.fb_pixel_id||PIXEL_DEFAULT.fb_pixel_id,tiktok_pixel_id:px.tiktok_pixel_id||PIXEL_DEFAULT.tiktok_pixel_id,ga4_id:px.ga4_id||PIXEL_DEFAULT.ga4_id});
     }catch(e){}
   }
 
