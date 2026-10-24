@@ -2056,7 +2056,13 @@
     const sb=getSB(); if(!sb) return false;
     try{
       const {data:{user}}=await sb.auth.getUser(); if(!user) return false;
-      const {data}=await sb.from('profiles').select('role,perms,full_name,email').eq('id',user.id).single();
+      // Thử đọc kèm cột perms; nếu Supabase chưa có cột perms (chưa chạy SQL phân quyền) thì đọc không có perms
+      let data=null;
+      let r=await sb.from('profiles').select('role,perms,full_name,email').eq('id',user.id).single();
+      if(r.error && /perms/i.test((r.error.message||'')+(r.error.details||'')+(r.error.hint||''))){
+        r=await sb.from('profiles').select('role,full_name,email').eq('id',user.id).single();
+      }
+      data=r.data;
       if(data && (data.role==='admin'||data.role==='staff')){
         let perms=data.perms; if(typeof perms==='string'){ try{perms=JSON.parse(perms);}catch(_){perms=[];} }
         _me={role:data.role, perms:Array.isArray(perms)?perms:[], name:data.full_name||'', email:data.email||user.email||''};
