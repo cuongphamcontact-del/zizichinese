@@ -3863,8 +3863,11 @@
     openModal('Bài học · '+c.name, `
       <p class="note-line" style="margin:-4px 0 12px">Sửa <b>tiêu đề</b> ngay trên ô. Dán <b>link YouTube</b> của buổi học (nên để video ở chế độ <b>Không công khai / Unlisted</b>) vào ô video — sau này đổi sang Bunny chỉ cần dán link Bunny. File bài tập bấm <b>Tải lên</b>.</p>
       <div id="lessonMgr" class="lmgr"></div>
-      <div class="mact" style="margin-top:10px;justify-content:space-between">
-        <button class="btn btn-ghost" onclick="addLesson('${cid}')">+ Thêm buổi</button>
+      <div class="mact" style="margin-top:10px;gap:8px;flex-wrap:wrap;justify-content:space-between">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="addLesson('${cid}')">+ Thêm buổi</button>
+          <button class="btn btn-ghost" onclick="resetLessons('${cid}')">Tạo lại 30 buổi mặc định</button>
+        </div>
         <button class="btn btn-jade" onclick="saveLessonsAndClose('${cid}')">Lưu buổi học</button></div>`);
     renderLessonMgr(cid);
     ensureLessonsFromDB(cid, ()=>renderLessonMgr(cid));
@@ -3887,6 +3890,17 @@
           <label class="upl">+ Tải file bài tập<input type="file" hidden accept=".pdf,.xlsx,.xls,.mp3,.zip,.doc,.docx,.png,.jpg" onchange="addFile('${cid}',${i},this)"></label>
         </div>
       </div>`).join('');
+  }
+  // Dựng lại danh sách buổi theo lộ trình mặc định (30 buổi 1→N), xóa dữ liệu buổi hiện tại trong form
+  function resetLessons(cid){
+    const c=products.find(x=>String(x.id)===String(cid));
+    const key=_courseKey(c,cid);
+    const flat=key?COURSE_LESSONS[key]:null;
+    if(!flat||!flat.length){ toast('Khóa này chưa có lộ trình mặc định để tạo lại.',4000); return; }
+    if(!confirm('Tạo lại '+flat.length+' buổi theo lộ trình chuẩn? Video/link đang gắn trong form sẽ bị xóa (chưa ảnh hưởng tới bản đã lưu cho tới khi bấm Lưu).')) return;
+    lessonData[cid]=flat.map(t=>({title:t,video:'',provider:'youtube',files:[]}));
+    renderLessonMgr(cid);
+    toast('Đã tạo lại '+flat.length+' buổi. Gắn video rồi bấm "Lưu buổi học" để áp dụng.',5000,'success');
   }
   function setLTitle(cid,i,v){getLessons(cid)[i].title=v;}
   function setVideo(cid,i,v){v=(v||'').trim();const l=getLessons(cid)[i];l.video=v;l.provider=/mediadelivery\.net|b-cdn\.net/i.test(v)?'bunny':'youtube';renderLessonMgr(cid);toast(v?'Đã gắn link video':'Đã xóa video');}
