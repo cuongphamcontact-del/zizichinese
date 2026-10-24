@@ -3235,11 +3235,25 @@
     const perms=full?[]:[...document.querySelectorAll('#staffPermBox .st-perm:checked')].map(c=>c.value);
     if(!full && !perms.length){ msg.textContent='Chọn ít nhất 1 quyền, hoặc tích "Toàn quyền".'; return; }
     const permsText=full?[]:perms.map(p=>PERM_LABEL[p]||p);
-    msg.textContent='Đang cấp quyền & gửi email…';
+    msg.textContent='Đang cấp quyền…';
+    // 1) Thử qua hàm staff-invite (cấp quyền + tự gửi email). Nếu chưa deploy thì chuyển sang cách 2.
     try{
       const {data,error}=await sb.functions.invoke('staff-invite',{body:{email,name,full,perms,permsText}});
-      if(error||(data&&data.error)){ msg.textContent='Lỗi: '+((data&&data.message)||(error&&error.message)||'không rõ'); return; }
-      toast((data&&data.created)?'Đã tạo tài khoản & gửi email mời nhân viên ✓':'Đã cập nhật quyền & gửi email ✓',3800,'success');
+      if(!error && data && !data.error){
+        toast((data&&data.created)?'Đã tạo tài khoản & gửi email mời nhân viên ✓':'Đã cập nhật quyền & gửi email ✓',3800,'success');
+        stResetForm(); renderStaff(); return;
+      }
+      // hàm có nhưng từ chối (vd: không phải chủ) → báo rõ
+      if(data && data.error && data.error!=='invite_failed'){ msg.textContent='Lỗi: '+(data.message||data.error); return; }
+    }catch(e){ /* hàm chưa deploy → dùng cách 2 */ }
+    // 2) Dự phòng: cấp quyền trực tiếp (không gửi email). Yêu cầu nhân viên đã có tài khoản.
+    try{
+      const {data:prof,error:e0}=await sb.from('profiles').select('id').eq('email',email).maybeSingle();
+      if(e0 && /perms/i.test((e0.message||'')+(e0.details||''))){ msg.textContent='Cần chạy file SQL phân quyền trên Supabase trước (update-2026-10-23-phan-quyen.sql).'; return; }
+      if(!prof){ msg.textContent='Email này chưa có tài khoản trên web. Nhờ nhân viên bấm "Tạo tài khoản" bằng email này trước, rồi cấp lại.'; return; }
+      const {error}=await sb.from('profiles').update({role:full?'admin':'staff',perms:full?[]:perms}).eq('id',prof.id);
+      if(error){ msg.textContent='Lỗi lưu quyền: '+error.message; return; }
+      toast('Đã cấp quyền cho nhân viên ✓ (email tự động cần deploy hàm staff-invite)',4500,'success');
       stResetForm(); renderStaff();
     }catch(e){ msg.textContent='Lỗi kết nối, thử lại.'; }
   }
