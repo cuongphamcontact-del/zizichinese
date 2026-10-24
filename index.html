@@ -3838,7 +3838,7 @@
   }
   function getLessons(cid){
     if(!lessonData[cid]){
-      const c=products.find(x=>x.id===cid);
+      const c=products.find(x=>String(x.id)===String(cid));
       const key=_courseKey(c, cid);
       const flat = key ? COURSE_LESSONS[key] : null;
       const titles = flat ? flat.slice() : Array.from({length:(c&&c.lessons)||1},(_,i)=>'Buổi '+(i+1));
@@ -3847,13 +3847,13 @@
     return lessonData[cid];
   }
   function manageLessons(cid){
-    const c=products.find(x=>x.id===cid);
+    const c=products.find(x=>String(x.id)===String(cid));
     openModal('Bài học · '+c.name, `
       <p class="note-line" style="margin:-4px 0 12px">Sửa <b>tiêu đề</b> ngay trên ô. Dán <b>link YouTube</b> của buổi học (nên để video ở chế độ <b>Không công khai / Unlisted</b>) vào ô video — sau này đổi sang Bunny chỉ cần dán link Bunny. File bài tập bấm <b>Tải lên</b>.</p>
       <div id="lessonMgr" class="lmgr"></div>
       <div class="mact" style="margin-top:10px;justify-content:space-between">
-        <button class="btn btn-ghost" onclick="addLesson(${cid})">+ Thêm buổi</button>
-        <button class="btn btn-jade" onclick="saveLessonsAndClose(${cid})">Lưu buổi học</button></div>`);
+        <button class="btn btn-ghost" onclick="addLesson('${cid}')">+ Thêm buổi</button>
+        <button class="btn btn-jade" onclick="saveLessonsAndClose('${cid}')">Lưu buổi học</button></div>`);
     renderLessonMgr(cid);
     ensureLessonsFromDB(cid, ()=>renderLessonMgr(cid));
   }
@@ -3862,17 +3862,17 @@
     document.getElementById('lessonMgr').innerHTML=ls.map((l,i)=>`
       <div class="lrow">
         <div class="ltitle-row">
-          <input class="ltitle-in" value="${(l.title||'').replace(/"/g,'&quot;')}" onchange="setLTitle(${cid},${i},this.value)" placeholder="Tên buổi học">
+          <input class="ltitle-in" value="${(l.title||'').replace(/"/g,'&quot;')}" onchange="setLTitle('${cid}',${i},this.value)" placeholder="Tên buổi học">
           ${l.video?'<span class="ok">● video</span>':''}
-          <button class="ldel" onclick="delLesson(${cid},${i})" aria-label="Xóa buổi">×</button>
+          <button class="ldel" onclick="delLesson('${cid}',${i})" aria-label="Xóa buổi">×</button>
         </div>
         <div class="lvid">
-          <input placeholder="Dán link YouTube (ẩn) hoặc Bunny…" value="${(l.video||'').replace(/"/g,'&quot;')}" onchange="setVideo(${cid},${i},this.value)">
+          <input placeholder="Dán link YouTube (ẩn) hoặc Bunny…" value="${(l.video||'').replace(/"/g,'&quot;')}" onchange="setVideo('${cid}',${i},this.value)">
           ${l.video?`<a class="upl vid" href="${/^https?:/i.test(l.video)?l.video.replace(/"/g,'&quot;'):'https://youtu.be/'+ytId(l.video)}" target="_blank" rel="noopener">Xem thử</a>`:''}
         </div>
         <div class="lfiles">
-          ${l.files.map((f,fi)=>`<span class="chipf">${f} <button onclick="rmFile(${cid},${i},${fi})" aria-label="Xóa">×</button></span>`).join('')||'<span class="muted">Chưa có tài liệu</span>'}
-          <label class="upl">+ Tải file bài tập<input type="file" hidden accept=".pdf,.xlsx,.xls,.mp3,.zip,.doc,.docx,.png,.jpg" onchange="addFile(${cid},${i},this)"></label>
+          ${l.files.map((f,fi)=>`<span class="chipf">${f} <button onclick="rmFile('${cid}',${i},${fi})" aria-label="Xóa">×</button></span>`).join('')||'<span class="muted">Chưa có tài liệu</span>'}
+          <label class="upl">+ Tải file bài tập<input type="file" hidden accept=".pdf,.xlsx,.xls,.mp3,.zip,.doc,.docx,.png,.jpg" onchange="addFile('${cid}',${i},this)"></label>
         </div>
       </div>`).join('');
   }
@@ -3883,7 +3883,7 @@
   function rmFile(cid,i,fi){getLessons(cid)[i].files.splice(fi,1);renderLessonMgr(cid);}
   function addLesson(cid){const ls=getLessons(cid);ls.push({title:'Buổi '+(ls.length+1),video:'',files:[]});syncLessonCount(cid);renderLessonMgr(cid);}
   function delLesson(cid,i){const ls=getLessons(cid);ls.splice(i,1);syncLessonCount(cid);renderLessonMgr(cid);}
-  function syncLessonCount(cid){const c=products.find(x=>x.id===cid);if(c){c.lessons=getLessons(cid).length;renderCourses();renderPublic();}}
+  function syncLessonCount(cid){const c=products.find(x=>String(x.id)===String(cid));if(c){c.lessons=getLessons(cid).length;renderCourses();renderPublic();}}
 
   /* ===== USERS CRUD ===== */
   function renderUsers(){
