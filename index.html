@@ -2441,7 +2441,7 @@
 
   /* ===== render lưới sản phẩm trên web ngoài ===== */
   function cardHTML(p){
-    const pre = p.status==='preorder'||p.preorder;
+    const pre = p.status==='preorder';
     const cta = pre?'Đặt trước':'Xem chi tiết';
     const badge = pre?'<span class="pbadge pre">Đặt trước</span>'
                  :(p.type==='doc'?'<span class="pbadge doc">Tài liệu</span>'
@@ -2937,7 +2937,7 @@
       : isLive
       ? '<b>Lớp trực tiếp</b>, học cùng giáo viên qua Zoom theo lịch cố định, lớp nhỏ, có ghi hình xem lại. Nhận lịch &amp; link phòng học sau khi thanh toán.'
       : '<b>Khóa học qua video quay sẵn</b>, bạn <b>tự học</b> theo lộ trình, kích hoạt ngay sau thanh toán, xem lại trọn đời trên mọi thiết bị.<br><span style="color:var(--cinnabar);font-weight:600">Lưu ý: đây KHÔNG phải lớp trực tiếp với giáo viên.</span>';
-    const isPre = p.status==='preorder'||p.preorder;
+    const isPre = p.status==='preorder';
     const buyTxt = isDoc?'Mua ngay →':isLive?'Đăng ký lớp ngay →':(isPre?'Đặt trước ngay →':'Đăng ký học ngay →');
     document.getElementById('buyBtn').textContent=buyTxt;
     document.getElementById('mCtaBtn').textContent=buyTxt;
