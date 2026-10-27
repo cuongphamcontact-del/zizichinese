@@ -503,6 +503,7 @@
   .sr-perms{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
   .perm-chip{font-size:.74rem;background:var(--paper-3);color:var(--ink-70,#4a5f59);padding:3px 9px;border-radius:999px}
   .perm-chip.owner{background:var(--jade-tint);color:var(--jade-dark);font-weight:700}
+  .inv-badge{display:inline-block;font-size:.62rem;font-weight:800;background:var(--cinnabar);color:#fff;padding:1px 6px;border-radius:5px;vertical-align:middle}
   .sr-act{display:flex;gap:6px;flex-wrap:wrap}
   .side-foot{border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
   .side-foot a{display:block;color:var(--ink-60);font-size:.84rem;padding:8px 12px;border-radius:8px}
@@ -1245,10 +1246,18 @@
               <label><input type="radio" name="fmt" value="soft" checked onchange="recalcCheckout()"><b>Bản mềm</b><span id="fmtSoftP">Tải về ngay sau thanh toán</span></label>
               <label><input type="radio" name="fmt" value="hard" onchange="recalcCheckout()"><b>Bản cứng</b><span id="fmtHardP">In màu, giao 2–4 ngày (+ship)</span></label>
             </div>
-            <div class="field"><label>Họ và tên</label><input type="text" id="co_name" placeholder="Nguyễn Văn A"></div>
+            <div class="field"><label>Họ và tên đầy đủ</label><input type="text" id="co_name" placeholder="Nguyễn Văn A"></div>
             <div class="field"><label>Email <em style="color:var(--cinnabar)">*</em></label><input type="email" id="co_email" placeholder="ban@email.com"></div>
-            <div class="field"><label>Số điện thoại / Zalo <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
+            <div class="field"><label>Tên Zalo</label><small style="display:block;color:var(--ink-60);font-size:.8rem;margin:-2px 0 6px">Điền đúng tên Zalo để được duyệt vào nhóm học tập.</small><input type="text" id="co_zalo" placeholder="Tên hiển thị trên Zalo"></div>
+            <div class="field"><label>Zalo / Số điện thoại liên hệ <em style="color:var(--cinnabar)">*</em></label><input type="tel" id="co_phone" placeholder="09xx xxx xxx"></div>
             <div class="field" id="addrField" style="display:none"><label>Địa chỉ nhận bản cứng</label><input type="text" id="co_addr" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></div>
+            <div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600"><input type="checkbox" id="co_invoice" onchange="toggleInvoice()" style="width:auto"> Tôi cần xuất hóa đơn VAT</label></div>
+            <div id="invoiceFields" style="display:none;background:var(--paper-2);border-radius:12px;padding:12px 12px 2px;margin-bottom:12px">
+              <div class="field"><label>Tên công ty / đơn vị</label><input type="text" id="co_inv_company" placeholder="CÔNG TY TNHH ..."></div>
+              <div class="field"><label>Mã số thuế</label><input type="text" id="co_inv_tax" placeholder="VD: 0312345678"></div>
+              <div class="field"><label>Địa chỉ xuất hóa đơn</label><input type="text" id="co_inv_addr" placeholder="Địa chỉ ghi trên hóa đơn"></div>
+              <div class="field" style="margin-bottom:6px"><label>Email nhận hóa đơn</label><input type="email" id="co_inv_email" placeholder="ketoan@congty.com"></div>
+            </div>
             <div class="field"><label>Mã giảm giá (nếu có)</label>
               <div style="display:flex;gap:8px">
                 <input type="text" id="co_coupon" placeholder="Nhập mã, vd ZIZI10" style="text-transform:uppercase;flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();applyCoupon()}">
@@ -3096,21 +3105,27 @@
   let pollTimer=null, pollTries=0;
   function stopPoll(){ if(pollTimer){clearInterval(pollTimer);pollTimer=null;} pollTries=0; }
 
+  function toggleInvoice(){ const on=document.getElementById('co_invoice')?.checked; const el=document.getElementById('invoiceFields'); if(el) el.style.display=on?'block':'none'; }
   async function createOrder(){
-    const name=(document.getElementById('co_name')?.value||'').trim();
-    const email=(document.getElementById('co_email')?.value||'').trim().toLowerCase();
-    const phone=(document.getElementById('co_phone')?.value||'').trim();
-    const address=(document.getElementById('co_addr')?.value||'').trim();
+    const cv=id=>(document.getElementById(id)?.value||'').trim();
+    const name=cv('co_name');
+    const email=cv('co_email').toLowerCase();
+    const phone=cv('co_phone');
+    const address=cv('co_addr');
+    const zalo_name=cv('co_zalo');
+    const want_invoice=!!document.getElementById('co_invoice')?.checked;
+    const invoice=want_invoice?{company:cv('co_inv_company'),tax:cv('co_inv_tax'),address:cv('co_inv_addr'),email:cv('co_inv_email')}:null;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Vui lòng nhập email hợp lệ để nhận tài khoản.'); document.getElementById('co_email')?.focus(); return; }
     if(!/^0\d{8,10}$/.test(phone.replace(/\s/g,''))){ toast('Vui lòng nhập số điện thoại (VD: 09xxxxxxxx).'); document.getElementById('co_phone')?.focus(); return; }
-    const coupon=(document.getElementById('co_coupon')?.value||'').trim().toUpperCase();
+    if(want_invoice && (!invoice.company||!invoice.tax)){ toast('Cần xuất hóa đơn thì nhập tối thiểu Tên công ty và Mã số thuế.',5000); document.getElementById('co_inv_company')?.focus(); return; }
+    const coupon=cv('co_coupon').toUpperCase();
     let bodyProd;
     if(_cartMode){ bodyProd={items:_checkoutItems.map(it=>({slug:it.slug,variant:it.variant,schedule:it.schedule||''}))}; }
     else { const p=current; bodyProd={slug:p.slug,variant:(p.type==='doc'?(p._hard?'hard':'soft'):'course'),schedule:(p.type==='live'?getLiveSchedule():'')}; }
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
     try{
-      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{...bodyProd,name,email,phone,address,source:getSource(),coupon,...fbParams()}});
+      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{...bodyProd,name,email,phone,address,zalo_name,want_invoice,invoice,source:getSource(),coupon,...fbParams()}});
       if(httpok && data && data.ok){
         // ---- Đơn thật + VietQR động ----
         document.getElementById('qrImg').src=data.qr_url;
@@ -4073,7 +4088,7 @@
   function renderOrders(){
     const list=orderFilter==='all'?orders:orders.filter(o=>o.status===orderFilter);
     document.getElementById('orderList').innerHTML=list.map(o=>`
-      <tr><td>#${o.code}</td><td>${o.cust}</td><td>${o.course}</td><td>${fmtVND(o.amount)}</td><td>${o.channel}</td>
+      <tr><td>#${o.code}${o.wantInvoice?' <span class="inv-badge">HĐ</span>':''}</td><td>${o.cust}</td><td>${o.course}</td><td>${fmtVND(o.amount)}</td><td>${o.channel}</td>
       <td>${tagFor(o.status)}</td><td>${o.time}</td>
       <td><button class="lnk" onclick="editOrder('${o.code}')">Sửa</button></td></tr>`).join('')
       || '<tr><td colspan="8" style="text-align:center;color:var(--ink-60);padding:20px">Không có đơn nào</td></tr>';
@@ -4083,7 +4098,15 @@
     const o=code?orders.find(x=>x.code===code):{code:'',cust:'',course:products[0].name,amount:products[0].price,channel:'Thủ công',status:'paid',time:'vừa xong'};
     const opts=courseNames().map(n=>`<option${n===o.course?' selected':''}>${n}</option>`).join('');
     const st=s=>`<option value="${s}"${o.status===s?' selected':''}>`;
+    const raw=code?(_ordersRaw.find(x=>x.code===code)||{}):{}; const inv=raw.invoice_info||null;
+    const extra = code ? `<div class="note-line" style="background:var(--paper-2);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.85rem;line-height:1.6">
+      ${raw.customer_email?`<div>Email: <b>${esc(raw.customer_email)}</b></div>`:''}
+      ${raw.customer_phone?`<div>Zalo/SĐT: <b>${esc(raw.customer_phone)}</b></div>`:''}
+      ${raw.zalo_name?`<div>Tên Zalo: <b>${esc(raw.zalo_name)}</b></div>`:''}
+      ${raw.want_invoice?`<div style="margin-top:6px;color:var(--cinnabar);font-weight:700">Khách yêu cầu xuất hóa đơn VAT</div>${inv?`<div>Công ty: <b>${esc(inv.company||'')}</b></div><div>MST: <b>${esc(inv.tax||'')}</b></div><div>Địa chỉ HĐ: ${esc(inv.address||'')}</div><div>Email HĐ: ${esc(inv.email||'')}</div>`:''}`:''}
+    </div>` : '';
     openModal(code?'Sửa đơn hàng':'Thêm đơn thủ công',`<div class="mform">
+      ${extra}
       <label>Khách hàng<input id="o_cust" value="${o.cust}"></label>
       <label>Khóa học<select id="o_course">${opts}</select></label>
       <div class="mrow"><label>Số tiền (đ)<input id="o_amount" type="number" value="${o.amount}"></label>
@@ -4347,9 +4370,14 @@
   async function loadAdminData(){
     const sb=getSB(); if(!sb) return;
     try{
-      const {data,error}=await sb.from('orders')
-        .select('code,customer_name,customer_email,customer_phone,amount,status,channel,created_at,product_id')
+      let {data,error}=await sb.from('orders')
+        .select('code,customer_name,customer_email,customer_phone,amount,status,channel,created_at,product_id,zalo_name,want_invoice,invoice_info')
         .order('created_at',{ascending:false});
+      // Nếu DB chưa có cột mới (chưa chạy SQL form) thì đọc lại không có cột đó
+      if(error && /zalo_name|want_invoice|invoice_info/i.test((error.message||'')+(error.details||''))){
+        const r2=await sb.from('orders').select('code,customer_name,customer_email,customer_phone,amount,status,channel,created_at,product_id').order('created_at',{ascending:false});
+        data=r2.data; error=r2.error;
+      }
       if(error||!data) return;
       _ordersRaw=data;
       const smap={paid:'paid',pending:'pending',refunded:'refund',cancelled:'pending',review:'pending'};
@@ -4357,7 +4385,8 @@
         code:o.code, cust:o.customer_name||o.customer_email||'-',
         course:((products.find(p=>String(p.id)===String(o.product_id))||{}).name)||'-',
         amount:o.amount||0, channel:o.channel||'web',
-        status:smap[o.status]||'pending', time:fmtDT(o.created_at)
+        status:smap[o.status]||'pending', time:fmtDT(o.created_at),
+        wantInvoice:!!o.want_invoice
       }));
       // Báo cáo tổng (Reports): toàn thời gian
       const paidAll=data.filter(o=>o.status==='paid');

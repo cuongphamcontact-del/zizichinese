@@ -42,6 +42,17 @@ Deno.serve(async (req) => {
     const event_source_url = String(body.event_source_url || "").slice(0, 400) || null;
     const client_ua = (req.headers.get("user-agent") || "").slice(0, 400) || null;
     const client_ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim().slice(0, 64) || null;
+    // Tên Zalo (để duyệt vào nhóm) + yêu cầu xuất hóa đơn VAT
+    const zalo_name = String(body.zalo_name || "").slice(0, 120) || null;
+    const want_invoice = !!body.want_invoice;
+    const invoice_info = (want_invoice && body.invoice && typeof body.invoice === "object")
+      ? {
+        company: String(body.invoice.company || "").slice(0, 200),
+        tax: String(body.invoice.tax || "").slice(0, 40),
+        address: String(body.invoice.address || "").slice(0, 300),
+        email: String(body.invoice.email || "").slice(0, 160),
+      }
+      : null;
 
     const mail = String(email).trim().toLowerCase();
     if (!mail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
@@ -125,6 +136,7 @@ Deno.serve(async (req) => {
         source: "auto",
         channel,
         fbp, fbc, client_ua, client_ip, event_source_url,
+        zalo_name, want_invoice, invoice_info,
       }).select("id,code,amount").single();
       if (!error) order = data;
       else if (!String(error.message || "").includes("duplicate")) {
