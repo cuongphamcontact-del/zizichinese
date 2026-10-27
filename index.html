@@ -1784,6 +1784,12 @@
 
         <!-- BÁO CÁO TÀI CHÍNH -->
         <section class="adm-tab" id="tab-reports" hidden>
+          <div class="kpis" style="margin-bottom:12px">
+            <div class="kpi"><div class="lbl">Doanh thu hôm nay</div><div class="val" id="rpToday">0đ</div><div class="chg" id="rpTodayN">0 đơn</div></div>
+            <div class="kpi"><div class="lbl">7 ngày qua</div><div class="val" id="rp7">0đ</div><div class="chg" id="rp7N">0 đơn</div></div>
+            <div class="kpi"><div class="lbl">Tháng này</div><div class="val" id="rpMon">0đ</div><div class="chg" id="rpMonN">0 đơn</div></div>
+            <div class="kpi"><div class="lbl">Giá trị đơn TB</div><div class="val" id="rpAov">0đ</div><div class="chg">AOV (kỳ đang xem)</div></div>
+          </div>
           <div class="chips"><button class="on" onclick="rpRange('month',this)">Tháng này</button><button onclick="rpRange('quarter',this)">Quý này</button><button onclick="rpRange('year',this)">Năm nay</button></div>
           <div class="kpis" style="margin-top:14px">
             <div class="kpi"><div class="lbl">Doanh thu gộp</div><div class="val" id="rpGross">0đ</div><div class="chg" id="rpGrossSub">-</div></div>
@@ -1800,6 +1806,47 @@
               <div class="tbl-scroll"><table class="adm-tbl">
                 <thead><tr><th>Loại</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
                 <tbody id="reportByType"></tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:14px">
+            <h3>Hiệu quả quảng cáo <span class="mini">Nhập chi phí ads của kỳ đang xem để tính ROAS</span></h3>
+            <div class="mform" style="max-width:420px;margin-bottom:6px">
+              <label>Chi phí quảng cáo kỳ đang xem (đ)<input id="rpSpend" type="number" placeholder="VD: 2000000" oninput="rpSaveSpend()"></label>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><div class="lbl">Doanh thu từ ads</div><div class="val" id="rpAdsRev">0đ</div><div class="chg" id="rpAdsN">0 đơn</div></div>
+              <div class="kpi"><div class="lbl">ROAS</div><div class="val" id="rpRoas">—</div><div class="chg">Doanh thu ads ÷ chi phí</div></div>
+              <div class="kpi"><div class="lbl">Chi phí mỗi đơn (CPO)</div><div class="val" id="rpCpo">—</div><div class="chg">Chi phí ÷ số đơn ads</div></div>
+              <div class="kpi"><div class="lbl">Lãi gộp sau chi phí ads</div><div class="val" id="rpProfit">—</div><div class="chg">Doanh thu ads − chi phí</div></div>
+            </div>
+          </div>
+
+          <div class="two-col" style="margin-top:14px">
+            <div class="panel"><h3>Theo kênh / nguồn</h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Kênh</th><th>Đơn</th><th>Doanh thu</th><th>%</th></tr></thead>
+                <tbody id="rpByChannel"></tbody>
+              </table></div>
+            </div>
+            <div class="panel"><h3>Theo chiến dịch <span class="mini">từ utm_campaign</span></h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Chiến dịch</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
+                <tbody id="rpByCampaign"></tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div class="two-col" style="margin-top:14px">
+            <div class="panel"><h3>Doanh thu theo ngày <span class="mini">kỳ đang xem</span></h3>
+              <div id="rpDayChart" class="ov-chart"></div>
+              <p class="note-line" id="rpDayNote" style="display:none;margin:6px 0 0">Chưa có doanh thu trong kỳ.</p>
+            </div>
+            <div class="panel"><h3>Top sản phẩm bán chạy</h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Sản phẩm</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
+                <tbody id="rpTopProd"></tbody>
               </table></div>
             </div>
           </div>
@@ -4312,8 +4359,73 @@
     const cat={'Khóa học':{c:0,r:0},'Combo':{c:0,r:0},'Tài liệu':{c:0,r:0}};
     paid.forEach(o=>{ const k=_prodCategory(o.product_id); if(cat[k]){ cat[k].c++; cat[k].r+=o.amount||0; } });
     document.getElementById('reportByType').innerHTML=Object.keys(cat).map(k=>`<tr><td>${k}</td><td>${cat[k].c}</td><td>${fmtVND(cat[k].r)}</td></tr>`).join('');
-    // Biểu đồ 12 tháng gần nhất (không phụ thuộc chip)
+
+    // ===== Thẻ nhanh (cố định, không theo chip) =====
+    const sum=arr=>arr.reduce((s,o)=>s+(o.amount||0),0);
+    const allPaid=_ordersRaw.filter(o=>o.status==='paid');
+    const nw=new Date();
+    const dayS=new Date(nw.getFullYear(),nw.getMonth(),nw.getDate());
+    const d7S=new Date(nw.getTime()-7*864e5);
+    const monS=new Date(nw.getFullYear(),nw.getMonth(),1);
+    const tO=allPaid.filter(o=>new Date(o.created_at)>=dayS);
+    const w7O=allPaid.filter(o=>new Date(o.created_at)>=d7S);
+    const mO=allPaid.filter(o=>new Date(o.created_at)>=monS);
+    set('rpToday',fmtVND(sum(tO))); set('rpTodayN',tO.length+' đơn');
+    set('rp7',fmtVND(sum(w7O))); set('rp7N',w7O.length+' đơn');
+    set('rpMon',fmtVND(sum(mO))); set('rpMonN',mO.length+' đơn');
+    set('rpAov', paid.length?fmtVND(Math.round(gross/paid.length)):'0đ');
+
+    // ===== Theo kênh / nguồn (trong kỳ) =====
+    const chMap={};
+    paid.forEach(o=>{ const k=((o.channel||'web').split('/')[0]).trim()||'web'; const g=chMap[k]||{c:0,r:0}; g.c++; g.r+=o.amount||0; chMap[k]=g; });
+    const chEl=document.getElementById('rpByChannel');
+    if(chEl) chEl.innerHTML=Object.entries(chMap).sort((a,b)=>b[1].r-a[1].r).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td><td>${gross?Math.round(v.r/gross*100):0}%</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--ink-60)">Chưa có đơn trong kỳ</td></tr>';
+
+    // ===== Theo chiến dịch (phần sau dấu "/" trong kênh = utm_campaign) =====
+    const cpMap={};
+    paid.forEach(o=>{ const camp=((o.channel||'').split('/')[1]||'').trim(); if(!camp)return; const g=cpMap[camp]||{c:0,r:0}; g.c++; g.r+=o.amount||0; cpMap[camp]=g; });
+    const cpEl=document.getElementById('rpByCampaign');
+    if(cpEl) cpEl.innerHTML=Object.entries(cpMap).sort((a,b)=>b[1].r-a[1].r).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--ink-60)">Chưa có dữ liệu chiến dịch</td></tr>';
+
+    // ===== Top sản phẩm bán chạy (trong kỳ) =====
+    const prMap={};
+    paid.forEach(o=>{ const p=products.find(x=>String(x.id)===String(o.product_id)); const nm=(p&&p.name)||'(khác)'; const g=prMap[nm]||{c:0,r:0}; g.c++; g.r+=o.amount||0; prMap[nm]=g; });
+    const prEl=document.getElementById('rpTopProd');
+    if(prEl) prEl.innerHTML=Object.entries(prMap).sort((a,b)=>b[1].r-a[1].r).slice(0,10).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--ink-60)">Chưa có đơn</td></tr>';
+
+    // ===== Hiệu quả quảng cáo / ROAS =====
+    const adsO=paid.filter(o=>/facebook|fb-ads|ads/i.test(o.channel||''));
+    const adsRev=sum(adsO);
+    set('rpAdsRev',fmtVND(adsRev)); set('rpAdsN',adsO.length+' đơn');
+    let spend=0; try{ spend=+(localStorage.getItem('zizi_adspend_'+_rpRange.type)||0)||0; }catch(_){}
+    const spEl=document.getElementById('rpSpend'); if(spEl && document.activeElement!==spEl) spEl.value=spend||'';
+    if(spend>0){
+      set('rpRoas',(adsRev/spend).toFixed(2)+'x');
+      set('rpCpo',adsO.length?fmtVND(Math.round(spend/adsO.length)):'—');
+      set('rpProfit',fmtVND(adsRev-spend));
+    } else { set('rpRoas','—'); set('rpCpo','—'); set('rpProfit','—'); }
+
+    // Biểu đồ 12 tháng + biểu đồ theo ngày của kỳ
     _rpChart();
+    _rpDayChart(start,end);
+  }
+  function rpSaveSpend(){ try{ localStorage.setItem('zizi_adspend_'+_rpRange.type, (document.getElementById('rpSpend').value||'')); }catch(_){} renderReports(); }
+  function _rpDayChart(start,end){
+    const box=document.getElementById('rpDayChart'), note=document.getElementById('rpDayNote'); if(!box)return;
+    const paid=_ordersRaw.filter(o=>o.status==='paid'&&new Date(o.created_at)>=start&&new Date(o.created_at)<=end);
+    const spanDays=Math.ceil((end-start)/864e5), daily=spanDays<=45, buckets=[];
+    if(daily){
+      for(let t=new Date(start.getFullYear(),start.getMonth(),start.getDate()); t<=end; t=new Date(t.getTime()+864e5)) buckets.push({k:t.getDate()+'/'+(t.getMonth()+1),key:t.toDateString(),v:0});
+      paid.forEach(o=>{ const b=buckets.find(x=>x.key===new Date(o.created_at).toDateString()); if(b)b.v+=o.amount||0; });
+    } else {
+      let t=new Date(start.getFullYear(),start.getMonth(),1);
+      while(t<=end){ buckets.push({k:(t.getMonth()+1)+'/'+String(t.getFullYear()).slice(2),y:t.getFullYear(),m:t.getMonth(),v:0}); t=new Date(t.getFullYear(),t.getMonth()+1,1); }
+      paid.forEach(o=>{ const d=new Date(o.created_at); const b=buckets.find(x=>x.y===d.getFullYear()&&x.m===d.getMonth()); if(b)b.v+=o.amount||0; });
+    }
+    const max=Math.max(1,...buckets.map(b=>b.v));
+    if(!paid.length){ box.innerHTML=''; if(note)note.style.display='block'; return; }
+    if(note)note.style.display='none';
+    box.innerHTML=buckets.map(b=>{ const h=Math.round(b.v/max*150)+2; const lb=b.v>=1000000?(Math.round(b.v/100000)/10)+'tr':(b.v>=1000?Math.round(b.v/1000)+'k':(b.v||'')); return `<div class="col" title="${b.k}: ${fmtVND(b.v)}"><span class="amt">${b.v?lb:''}</span><div class="bar" style="height:${h}px"></div><span class="lb">${b.k}</span></div>`; }).join('');
   }
   function _rpChart(){
     const box=document.getElementById('rpChart'), note=document.getElementById('rpChartNote'); if(!box)return;
