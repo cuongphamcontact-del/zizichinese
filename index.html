@@ -3526,9 +3526,9 @@
     if(vz.qi>=vz.queue.length){ vzEl('vzPanel').innerHTML=vzDone(); return; }
     const it=vz.queue[vz.qi], t=vz.typed;
     vzEl('vzPanel').innerHTML=`<article class="vz-card">${vzMetaRow(it)}
-      <div class="vz-mean" style="font-size:1.4rem;margin-top:10px">${vzEsc(it.m)}</div><div class="vz-py">${vzEsc(it.p)}</div>${it.c?`<div class="vz-pos">${vzEsc(it.c)}</div>`:''}
+      <div class="vz-mean" style="font-size:1.4rem;margin-top:10px">${vzEsc(it.m)}</div>${it.c?`<div class="vz-pos">${vzEsc(it.c)}</div>`:''}
       <input class="vz-in ${t?(t.ok?'ok':'bad'):''}" id="vzIn" placeholder="Gõ chữ Hán hoặc pinyin" autocomplete="off" autocapitalize="off" spellcheck="false" lang="zh-CN" value="${t?vzEsc(t.v):''}" ${t?'readonly':''}>
-      <div class="vz-verdict ${t?(t.ok?'ok':'bad'):''}">${t?(t.ok?'Chính xác!':`Đáp án: <span class="hz" style="font-size:1.3rem">${vzEsc(it.w)}</span>`):''}</div>
+      <div class="vz-verdict ${t?(t.ok?'ok':'bad'):''}">${t?`${t.ok?'Chính xác!':'Đáp án:'} <span class="hz" style="font-size:1.3rem">${vzEsc(it.w)}</span> · <b>${vzEsc(it.p)}</b>`:''}</div>
       ${t?vzExample(it)+`<button class="vz-btn primary" data-act="next">Tiếp theo<span class="vz-kbd">Enter</span></button>`:`<div class="vz-row"><button class="vz-btn ghost" data-act="skip">Không biết</button><button class="vz-btn primary" data-act="check">Kiểm tra<span class="vz-kbd">Enter</span></button></div>`}</article>`;
     if(!t) setTimeout(()=>{ const i=vzEl('vzIn'); if(i&&matchMedia('(pointer:fine)').matches) i.focus(); },30);
   }
