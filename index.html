@@ -661,9 +661,9 @@
   .player .zizi-play{position:relative;z-index:2;width:84px;height:84px;border-radius:50%;background:var(--jade);box-shadow:0 10px 32px rgba(0,0,0,.42);display:grid;place-items:center;border:0;cursor:pointer;transition:transform .15s}
   .player .zizi-play:hover{transform:scale(1.08)}
   .player .zizi-play svg{width:34px;height:34px;margin-left:5px;fill:#fff}
-  /* Lớp che dấu vết YouTube: che kín tên kênh (trên) và "Watch on YouTube" (dưới-phải), vẫn chừa nút toàn màn hình */
-  .player .yt-top-shield{position:absolute;top:0;left:0;right:0;height:56px;z-index:4;background:linear-gradient(180deg,#0b1513 0%,#0b1513 62%,rgba(11,21,19,0) 100%)}
-  .player .yt-br-shield{position:absolute;right:0;bottom:46px;width:210px;height:56px;z-index:4;background:#0b1513}
+  /* Lớp chặn trong suốt: không che hình, chỉ chặn bấm vào tên kênh / "Watch on YouTube" để không nhảy sang YouTube */
+  .player .yt-top-shield{position:absolute;top:0;left:0;right:0;height:56px;z-index:4}
+  .player .yt-br-shield{position:absolute;right:0;bottom:46px;width:210px;height:56px;z-index:4}
   .player .now-lesson{z-index:5}
   .player .novid b{display:block;font-size:1rem;margin-bottom:4px}
   .player .novid span{font-size:.82rem;color:rgba(255,255,255,.8)}
