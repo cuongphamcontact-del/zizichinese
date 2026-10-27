@@ -656,6 +656,13 @@
   .player.has-video::after{display:none}
   .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .player .novid{color:#fff;text-align:center;z-index:2;padding:18px;max-width:80%}
+  .player .yt-facade{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;background:linear-gradient(135deg,var(--jade-dark),var(--ink));overflow:hidden}
+  .player .yt-facade .yt-cover{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.5}
+  .player .zizi-play{position:relative;z-index:2;width:84px;height:84px;border-radius:50%;background:var(--jade);box-shadow:0 10px 32px rgba(0,0,0,.42);display:grid;place-items:center;border:0;cursor:pointer;transition:transform .15s}
+  .player .zizi-play:hover{transform:scale(1.08)}
+  .player .zizi-play svg{width:34px;height:34px;margin-left:5px;fill:#fff}
+  .player .yt-top-shield{position:absolute;top:0;left:0;right:0;height:60px;z-index:4}
+  .player .now-lesson{z-index:5}
   .player .novid b{display:block;font-size:1rem;margin-bottom:4px}
   .player .novid span{font-size:.82rem;color:rgba(255,255,255,.8)}
   .learn-main h2{margin:18px 0 10px;font-size:1.6rem}
@@ -2782,10 +2789,32 @@
   }
   function renderLessonPlayer(id,i){
     const lessons=getLessons(id), l=lessons[i]; const box=document.getElementById('lessonPlayer'); if(!box||!l) return;
-    const emb=videoEmbed(l);
     const label='<span class="now-lesson" id="nowLesson">Buổi '+(i+1)+' · '+esc((l.title||'').split('—')[0].trim())+'</span>';
-    if(emb){ box.classList.add('has-video'); box.innerHTML=emb+label; }
-    else { box.classList.remove('has-video'); box.innerHTML='<div class="novid"><b>Video đang được cập nhật</b><span>Buổi học này chưa có video. Vui lòng quay lại sau nhé.</span></div>'+label; }
+    const v=(l.video||'').trim(), prov=(l.provider||'').toLowerCase();
+    if(!v){ box.classList.remove('has-video'); box.innerHTML='<div class="novid"><b>Video đang được cập nhật</b><span>Buổi học này chưa có video. Vui lòng quay lại sau nhé.</span></div>'+label; return; }
+    box.classList.add('has-video');
+    // Bunny (sau này) — nhúng thẳng, không có nhãn YouTube
+    if(prov==='bunny' || /mediadelivery\.net|b-cdn\.net/i.test(v)){
+      const src=/^https?:/i.test(v)?v:('https://iframe.mediadelivery.net/embed/'+v);
+      box.innerHTML=`<iframe src="${esc(src)}" loading="lazy" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe>`+label;
+      return;
+    }
+    // YouTube: hiện ảnh bìa + nút Play thương hiệu ZiZi, bấm mới tải video (ẩn tên kênh/nút đỏ)
+    const yid=ytId(v);
+    if(yid){
+      const cover=(current&&current.cover)?current.cover:'assets/zizi-face.png';
+      box.innerHTML=`<div class="yt-facade" data-yid="${yid}">
+          <div class="yt-cover" style="background-image:url('${esc(cover)}')"></div>
+          <button class="zizi-play" type="button" aria-label="Phát video" onclick="playYt(this.parentNode)"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        </div>`+label;
+      return;
+    }
+    box.innerHTML=`<iframe src="${esc(v)}" loading="lazy" allowfullscreen></iframe>`+label;
+  }
+  // Bấm nút ZiZi → nạp video, tự phát; thêm lớp chắn phía trên để chặn bấm sang YouTube
+  function playYt(fac){
+    const yid=fac&&fac.getAttribute('data-yid'); if(!yid) return;
+    fac.outerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${yid}?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=1" title="Bài học" allow="accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe><div class="yt-top-shield" aria-hidden="true"></div>`;
   }
   // Chọn & xem 1 buổi (đã mua thì mở hết, không khóa)
   function playLesson(id,i){ _activeLesson[id]=i; openCourse(id); }
