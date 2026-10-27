@@ -1825,6 +1825,19 @@
               <button class="btn btn-jade" style="margin-top:4px" onclick="saveBusinessInfo()">Lưu thông tin</button>
             </div>
           </div>
+          <div class="panel" style="margin-top:14px">
+            <h3>Tài khoản nhận tiền (VietQR / SePay) <span class="mini">Dùng để tạo mã QR chuyển khoản khi khách mua</span></h3>
+            <p class="note-line" style="margin:-6px 0 14px">Nhập đúng tài khoản bạn đã kết nối trong SePay. Đổi ở đây là mã QR thanh toán trên website đổi theo ngay. Mã ngân hàng dùng kiểu VietQR, VD: VCB, TCB, MB, ACB, BIDV, VPB, TPB, VIB, MBBank…</p>
+            <div class="mform" style="max-width:720px">
+              <div class="mrow">
+                <label>Mã ngân hàng (VietQR)<input id="bank_code" type="text" placeholder="VD: MB, VCB, TCB…"></label>
+                <label>Số tài khoản<input id="bank_no" type="text" placeholder="Số tài khoản công ty"></label>
+              </div>
+              <label>Tên chủ tài khoản<input id="bank_name" type="text" placeholder="CÔNG TY TNHH ..."></label>
+              <div id="bankPrev" class="note-line" style="margin:2px 0 0"></div>
+              <button class="btn btn-jade" style="margin-top:6px" onclick="saveBankInfo()">Lưu tài khoản nhận tiền</button>
+            </div>
+          </div>
         </section>
 
         <!-- NHÂN VIÊN & PHÂN QUYỀN -->
@@ -2307,6 +2320,31 @@
     const g=(id,v)=>{const el=document.getElementById(id); if(el)el.value=v||'';};
     g('biz_company',BIZ.company); g('biz_tax',BIZ.tax); g('biz_email',BIZ.email);
     g('biz_zalo',BIZ.zalo); g('biz_phone',BIZ.phone); g('biz_fanpage',BIZ.fanpage); g('biz_address',BIZ.address);
+    loadBankInfo();
+  }
+  // Tài khoản nhận tiền (settings.bank_info) — tạo mã VietQR khi khách mua
+  async function loadBankInfo(){
+    const sb=getSB(); const g=(id,v)=>{const el=document.getElementById(id); if(el)el.value=v||'';};
+    if(!sb) return;
+    try{
+      const {data}=await sb.from('settings').select('value').eq('key','bank_info').maybeSingle();
+      const b=(data&&data.value)||{};
+      g('bank_code',b.bank); g('bank_no',b.account_no); g('bank_name',b.account_name);
+      const pv=document.getElementById('bankPrev');
+      if(pv) pv.textContent=(b.bank&&b.account_no)?('Đang dùng: '+b.bank+' · '+b.account_no+(b.account_name?(' · '+b.account_name):'')):'Chưa cấu hình tài khoản — khách chưa thanh toán được.';
+    }catch(e){}
+  }
+  async function saveBankInfo(){
+    const sb=getSB(); if(!sb){ toast('Chưa kết nối Supabase'); return; }
+    const v=id=>((document.getElementById(id)||{}).value||'').trim();
+    const bank=v('bank_code').toUpperCase(), account_no=v('bank_no').replace(/\s/g,''), account_name=v('bank_name');
+    if(!bank||!account_no){ toast('Nhập đủ Mã ngân hàng và Số tài khoản.',5000); return; }
+    try{
+      const {error}=await sb.from('settings').upsert({key:'bank_info',value:{bank,account_no,account_name}},{onConflict:'key'});
+      if(error){ toast('Lưu lỗi: '+error.message,6000); return; }
+      const pv=document.getElementById('bankPrev'); if(pv) pv.textContent='Đang dùng: '+bank+' · '+account_no+(account_name?(' · '+account_name):'');
+      toast('Đã đổi tài khoản nhận tiền ✓. Mã QR thanh toán đã dùng tài khoản mới.',4500,'success');
+    }catch(e){ toast('Lưu lỗi, thử lại.'); }
   }
   async function saveBusinessInfo(){
     const v=id=>(document.getElementById(id).value||'').trim();
