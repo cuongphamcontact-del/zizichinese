@@ -36,6 +36,12 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const { name = "", email = "", phone = "", address = "", source = "" } = body;
     const channel = (String(source || "web").trim() || "web").slice(0, 120);
+    // Dữ liệu đối sánh Facebook (để webhook gửi Purchase qua Conversions API)
+    const fbp = String(body.fbp || "").slice(0, 200) || null;
+    const fbc = String(body.fbc || "").slice(0, 300) || null;
+    const event_source_url = String(body.event_source_url || "").slice(0, 400) || null;
+    const client_ua = (req.headers.get("user-agent") || "").slice(0, 400) || null;
+    const client_ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim().slice(0, 64) || null;
 
     const mail = String(email).trim().toLowerCase();
     if (!mail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
@@ -118,6 +124,7 @@ Deno.serve(async (req) => {
         status: "pending",
         source: "auto",
         channel,
+        fbp, fbc, client_ua, client_ip, event_source_url,
       }).select("id,code,amount").single();
       if (!error) order = data;
       else if (!String(error.message || "").includes("duplicate")) {

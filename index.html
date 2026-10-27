@@ -2119,10 +2119,11 @@
       }
     }catch(e){}
   }
-  function track(ev,data){
+  function track(ev,data,eventID){
     const keyMap={ViewContent:'viewcontent',InitiateCheckout:'initiatecheckout',Purchase:'purchase',Lead:'lead'};
     const k=keyMap[ev]; if(k && ZIZI_EVENTS[k]===false) return;
-    try{ if(window.fbq) fbq('track',ev,data||{}); }catch(e){}
+    const opt=eventID?{eventID:String(eventID)}:undefined;   // chống trùng với Conversions API
+    try{ if(window.fbq) fbq('track',ev,data||{},opt); }catch(e){}
     try{ if(window.ttq) ttq.track(ev,data||{}); }catch(e){}
     try{ if(window.gtag){ const gm={ViewContent:'view_item',InitiateCheckout:'begin_checkout',Purchase:'purchase',Lead:'generate_lead'}; gtag('event',gm[ev]||ev,data||{}); } }catch(e){}
   }
@@ -3039,7 +3040,7 @@
     const btn=document.getElementById('createOrderBtn'); const old=btn?btn.textContent:'';
     if(btn){ btn.disabled=true; btn.textContent='Đang tạo đơn…'; }
     try{
-      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{...bodyProd,name,email,phone,address,source:getSource(),coupon}});
+      const {httpok,data}=await _callFn('create-order',{method:'POST',body:{...bodyProd,name,email,phone,address,source:getSource(),coupon,...fbParams()}});
       if(httpok && data && data.ok){
         // ---- Đơn thật + VietQR động ----
         document.getElementById('qrImg').src=data.qr_url;
@@ -3117,7 +3118,7 @@
     const btn=document.getElementById('successBtn'), msg=document.getElementById('successMsg');
     if(_cartMode){
       const n=_checkoutItems.length;
-      track('Purchase',{value:_checkoutItems.reduce((s,i)=>s+i.price,0),currency:'VND',num_items:n});
+      track('Purchase',{value:_checkoutItems.reduce((s,i)=>s+i.price,0),currency:'VND',num_items:n},orderCodeVal);
       document.getElementById('learnCourse').textContent=n+' sản phẩm';
       const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=n+' sản phẩm';
       document.getElementById('credLabel').textContent='Đã mua';
@@ -3131,7 +3132,7 @@
       return;
     }
     const p=current, isDoc=p.type==='doc', isLive=p.type==='live', hard=p._hard;
-    track('Purchase',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'});
+    track('Purchase',{content_name:p.name,content_ids:[p.slug],value:p.price||0,currency:'VND'},orderCodeVal);
     document.getElementById('learnCourse').textContent=p.name;
     const lt=document.getElementById('learnTitle2'); if(lt)lt.textContent=p.name;
     document.getElementById('credLabel').textContent = isDoc?'Sản phẩm':(isLive?'Lớp đã đăng ký':'Khóa đã mở');
@@ -4468,9 +4469,17 @@
       let s=p.get('utm_source')||p.get('src')||p.get('ref')||(p.get('fbclid')?'facebook-ads':'')||(p.get('gclid')?'google-ads':'');
       const camp=p.get('utm_campaign')||p.get('utm_content')||'';
       if(s){ const v=(camp?(s+' / '+camp):s).slice(0,120); localStorage.setItem('zizi_src',v); }
+      const fbclid=p.get('fbclid'); if(fbclid) localStorage.setItem('zizi_fbclid',fbclid);
     }catch(e){}
   }
   function getSource(){ try{ return localStorage.getItem('zizi_src')||'web'; }catch(e){ return 'web'; } }
+  // Dữ liệu đối sánh Facebook gửi kèm đơn để webhook bắn Purchase qua Conversions API
+  function fbParams(){
+    const ck=n=>{try{const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):'';}catch(_){return '';}};
+    let fbc=ck('_fbc');
+    if(!fbc){ try{ const id=new URLSearchParams(location.search).get('fbclid')||localStorage.getItem('zizi_fbclid'); if(id) fbc='fb.1.'+Date.now()+'.'+id; }catch(_){} }
+    return { fbp:ck('_fbp')||'', fbc:fbc||'', event_source_url:location.origin+location.pathname };
+  }
   captureSource();
   // Bắt dấu hiệu link đặt lại mật khẩu NGAY (trước khi supabase-js xoá hash khỏi URL)
   const _recovMark=(function(){

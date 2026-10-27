@@ -80,6 +80,45 @@ function unlockEmail(name: string, email: string, course: string) {
     </div></div>`;
 }
 
+// --- SHA-256 (hash email cho Facebook) ---
+async function sha256(s: string) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// --- Gửi sự kiện Purchase về Facebook qua Conversions API ---
+async function sendCapiPurchase(order: any, log: (m: string) => void) {
+  const PIXEL = Deno.env.get("FB_PIXEL_ID") || "";
+  const TOKEN = Deno.env.get("FB_CAPI_TOKEN") || "";
+  if (!PIXEL || !TOKEN) { log("capi_skip:no_config"); return; }
+  try {
+    const ud: Record<string, unknown> = {};
+    const email = String(order.customer_email || "").trim().toLowerCase();
+    if (email) ud.em = [await sha256(email)];
+    if (order.fbp) ud.fbp = order.fbp;
+    if (order.fbc) ud.fbc = order.fbc;
+    if (order.client_ip) ud.client_ip_address = order.client_ip;
+    if (order.client_ua) ud.client_user_agent = order.client_ua;
+    const ev = {
+      event_name: "Purchase",
+      event_time: Math.floor(Date.now() / 1000),
+      event_id: order.code,                         // chống trùng với pixel trình duyệt
+      action_source: "website",
+      event_source_url: order.event_source_url || (Deno.env.get("SITE_URL") || "https://zizichinese.com"),
+      user_data: ud,
+      custom_data: { currency: "VND", value: Number(order.amount || 0), content_type: "product" },
+    };
+    const r = await fetch(`https://graph.facebook.com/v21.0/${PIXEL}/events?access_token=${encodeURIComponent(TOKEN)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: [ev] }),
+    });
+    log("capi:" + r.status + ":" + (await r.text().catch(() => "")).slice(0, 180));
+  } catch (e) {
+    log("capi_err:" + String(e).slice(0, 140));
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("method", { status: 405 });
 
@@ -124,7 +163,7 @@ Deno.serve(async (req) => {
 
     // --- Lấy đơn 'pending' theo mã ---
     const { data: order } = await sb.from("orders")
-      .select("id,code,status,amount,customer_email,customer_name,product_id,variant,items")
+      .select("id,code,status,amount,customer_email,customer_name,product_id,variant,items,fbp,fbc,client_ua,client_ip,event_source_url")
       .eq("code", orderCode).maybeSingle();
     if (!order) { log("order_not_found:" + orderCode); throw { soft: true }; }
     matched = order.id;
@@ -165,6 +204,9 @@ Deno.serve(async (req) => {
       sepay_txn_id: txnId, user_id: userId,
     }).eq("id", order.id);
     log("order_paid");
+
+    // --- Gửi Purchase về Facebook qua Conversions API (đo đơn chuyển khoản) ---
+    await sendCapiPurchase(order, log);
 
     // --- Danh sách món trong đơn (giỏ hàng) ---
     const items = (Array.isArray(order.items) && order.items.length)
