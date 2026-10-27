@@ -1830,10 +1830,25 @@
                 <tbody id="rpByChannel"></tbody>
               </table></div>
             </div>
-            <div class="panel"><h3>Theo chiến dịch <span class="mini">từ utm_campaign</span></h3>
+            <div class="panel"><h3>Theo chiến dịch <span class="mini">utm_campaign</span></h3>
               <div class="tbl-scroll"><table class="adm-tbl">
                 <thead><tr><th>Chiến dịch</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
                 <tbody id="rpByCampaign"></tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div class="two-col" style="margin-top:14px">
+            <div class="panel"><h3>Theo nhóm quảng cáo <span class="mini">utm_content</span></h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Nhóm quảng cáo</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
+                <tbody id="rpByAdset"></tbody>
+              </table></div>
+            </div>
+            <div class="panel"><h3>Theo quảng cáo <span class="mini">utm_term</span></h3>
+              <div class="tbl-scroll"><table class="adm-tbl">
+                <thead><tr><th>Quảng cáo</th><th>Đơn</th><th>Doanh thu</th></tr></thead>
+                <tbody id="rpByAd"></tbody>
               </table></div>
             </div>
           </div>
@@ -4135,7 +4150,7 @@
   function renderOrders(){
     const list=orderFilter==='all'?orders:orders.filter(o=>o.status===orderFilter);
     document.getElementById('orderList').innerHTML=list.map(o=>`
-      <tr><td>#${o.code}${o.wantInvoice?' <span class="inv-badge">HĐ</span>':''}</td><td>${o.cust}</td><td>${o.course}</td><td>${fmtVND(o.amount)}</td><td>${o.channel}</td>
+      <tr><td>#${o.code}${o.wantInvoice?' <span class="inv-badge">HĐ</span>':''}</td><td>${o.cust}</td><td>${o.course}</td><td>${fmtVND(o.amount)}</td><td>${(function(){const c=_parseChannel(o.channel);return esc(c.src+(c.camp?' / '+c.camp:''));})()}</td>
       <td>${tagFor(o.status)}</td><td>${o.time}</td>
       <td><button class="lnk" onclick="editOrder('${o.code}')">Sửa</button></td></tr>`).join('')
       || '<tr><td colspan="8" style="text-align:center;color:var(--ink-60);padding:20px">Không có đơn nào</td></tr>';
@@ -4375,17 +4390,16 @@
     set('rpMon',fmtVND(sum(mO))); set('rpMonN',mO.length+' đơn');
     set('rpAov', paid.length?fmtVND(Math.round(gross/paid.length)):'0đ');
 
-    // ===== Theo kênh / nguồn (trong kỳ) =====
-    const chMap={};
-    paid.forEach(o=>{ const k=((o.channel||'web').split('/')[0]).trim()||'web'; const g=chMap[k]||{c:0,r:0}; g.c++; g.r+=o.amount||0; chMap[k]=g; });
+    // ===== Nhóm theo nguồn / chiến dịch / nhóm QC / quảng cáo =====
+    const agg=(keyFn)=>{ const m={}; paid.forEach(o=>{ const k=keyFn(_parseChannel(o.channel)); if(!k)return; const g=m[k]||{c:0,r:0}; g.c++; g.r+=o.amount||0; m[k]=g; }); return Object.entries(m).sort((a,b)=>b[1].r-a[1].r); };
+    const fill3=(id,rows,empty)=>{ const el=document.getElementById(id); if(!el)return; el.innerHTML=rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td></tr>`).join('')||`<tr><td colspan="3" style="text-align:center;color:var(--ink-60)">${empty}</td></tr>`; };
+    // Kênh (có cột %)
+    const chRows=agg(x=>x.src||'web');
     const chEl=document.getElementById('rpByChannel');
-    if(chEl) chEl.innerHTML=Object.entries(chMap).sort((a,b)=>b[1].r-a[1].r).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td><td>${gross?Math.round(v.r/gross*100):0}%</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--ink-60)">Chưa có đơn trong kỳ</td></tr>';
-
-    // ===== Theo chiến dịch (phần sau dấu "/" trong kênh = utm_campaign) =====
-    const cpMap={};
-    paid.forEach(o=>{ const camp=((o.channel||'').split('/')[1]||'').trim(); if(!camp)return; const g=cpMap[camp]||{c:0,r:0}; g.c++; g.r+=o.amount||0; cpMap[camp]=g; });
-    const cpEl=document.getElementById('rpByCampaign');
-    if(cpEl) cpEl.innerHTML=Object.entries(cpMap).sort((a,b)=>b[1].r-a[1].r).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--ink-60)">Chưa có dữ liệu chiến dịch</td></tr>';
+    if(chEl) chEl.innerHTML=chRows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.c}</td><td>${fmtVND(v.r)}</td><td>${gross?Math.round(v.r/gross*100):0}%</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--ink-60)">Chưa có đơn trong kỳ</td></tr>';
+    fill3('rpByCampaign', agg(x=>x.camp), 'Chưa có dữ liệu chiến dịch');
+    fill3('rpByAdset',    agg(x=>x.adset), 'Chưa có dữ liệu nhóm quảng cáo');
+    fill3('rpByAd',       agg(x=>x.ad),    'Chưa có dữ liệu quảng cáo');
 
     // ===== Top sản phẩm bán chạy (trong kỳ) =====
     const prMap={};
@@ -4677,13 +4691,22 @@
   function captureSource(){
     try{
       const p=new URLSearchParams(location.search);
-      let s=p.get('utm_source')||p.get('src')||p.get('ref')||(p.get('fbclid')?'facebook-ads':'')||(p.get('gclid')?'google-ads':'');
-      const camp=p.get('utm_campaign')||p.get('utm_content')||'';
-      if(s){ const v=(camp?(s+' / '+camp):s).slice(0,120); localStorage.setItem('zizi_src',v); }
+      const clean=s=>String(s||'').replace(/\|/g,'/').trim().slice(0,28);
+      const src=clean(p.get('utm_source')||p.get('src')||p.get('ref')||(p.get('fbclid')?'facebook-ads':'')||(p.get('gclid')?'google-ads':''));
+      const camp=clean(p.get('utm_campaign'));       // Chiến dịch
+      const adset=clean(p.get('utm_content'));         // Nhóm quảng cáo
+      const ad=clean(p.get('utm_term'));               // Quảng cáo
+      if(src||camp||adset||ad){ localStorage.setItem('zizi_src',[src||'web',camp,adset,ad].join('|')); }
       const fbclid=p.get('fbclid'); if(fbclid) localStorage.setItem('zizi_fbclid',fbclid);
     }catch(e){}
   }
   function getSource(){ try{ return localStorage.getItem('zizi_src')||'web'; }catch(e){ return 'web'; } }
+  // Tách kênh thành nguồn/chiến dịch/nhóm/quảng cáo (hỗ trợ cả định dạng cũ "nguồn / chiến dịch")
+  function _parseChannel(ch){
+    ch=String(ch||'web');
+    const parts = ch.indexOf('|')>=0 ? ch.split('|') : ch.split(' / ');
+    return { src:(parts[0]||'web').trim()||'web', camp:(parts[1]||'').trim(), adset:(parts[2]||'').trim(), ad:(parts[3]||'').trim() };
+  }
   // Dữ liệu đối sánh Facebook gửi kèm đơn để webhook bắn Purchase qua Conversions API
   function fbParams(){
     const ck=n=>{try{const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):'';}catch(_){return '';}};
