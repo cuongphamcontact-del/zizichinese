@@ -25,3 +25,4 @@ dist/
 # Bản gốc đọc được + công cụ build (KHÔNG công khai)
 index.src.html
 build-obf.js
+quiz_src/
