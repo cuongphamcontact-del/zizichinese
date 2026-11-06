@@ -1,13 +1,4 @@
-<!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="icon" href="assets/favicon.ico?v=2" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=2">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=2">
-<meta name="theme-color" content="#1AA88E">
-<meta name="description" content="Học 214 bộ thủ tiếng Trung tương tác — ZiZi Chinese">
+<meta name="claude:viewport-fit-sides" content="cover">
 <title>214 Bộ Thủ</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@500;700&display=swap">
 <style>
@@ -162,27 +153,24 @@
   .qresult .score{font-size:2.4rem;font-weight:800;color:var(--jade-deep)}
   .qresult p{color:var(--ink-60)}
 </style>
-</head>
-<body>
 
 <header>
   <div class="hwrap">
-    <a href="/" class="logo han" style="text-decoration:none;color:#fff" title="Về trang chủ ZiZi">部</a>
-    <div class="htxt"><b>214 Bộ Thủ</b><span id="sub">214 bộ thủ · ZiZi Chinese</span></div>
+    <span class="logo han">部</span>
+    <div class="htxt"><b>214 Bộ Thủ</b><span id="sub">Đủ 214 bộ · học theo nhóm nét · ZiZi Chinese</span></div>
     <div class="prog-mini">Đã thuộc <b id="pNum">0</b>/<span id="pTot">42</span><div class="bar"><i id="pBar"></i></div></div>
   </div>
 </header>
 
 <div class="lockbar" id="lockBar" style="display:none">
-  <span class="lb-ico">🔒</span>
-  <span class="lb-txt">Bản <b>học thử</b> · đang mở <b id="lbCount">42</b>/214 bộ. Mua <b>“Bộ thủ &amp; Công thức”</b> để mở khóa đủ 214 bộ.</span>
+  <span class="lb-txt">Bản <b>học thử</b> · đang mở <b id="lbCount">6</b>/214 bộ. Mua <b>“Bộ thủ &amp; Công thức”</b> để mở khóa đủ 214 bộ.</span>
   <a class="lb-btn" href="index.html#sp/bo-thu">Mở khóa đủ 214 →</a>
 </div>
 
 <div class="tabs"><div class="twrap">
-  <button class="tab on" data-m="browse">📖 Tra cứu</button>
-  <button class="tab" data-m="cards">🃏 Flashcard</button>
-  <button class="tab" data-m="quiz">✏️ Trắc nghiệm</button>
+  <button class="tab on" data-m="browse">Tra cứu</button>
+  <button class="tab" data-m="cards">Flashcard</button>
+  <button class="tab" data-m="quiz">Trắc nghiệm</button>
 </div></div>
 
 <main>
@@ -211,7 +199,7 @@
         <button class="nav-btn know" id="fcKnow">✓ Đã thuộc</button>
         <button class="nav-btn" id="fcNext">Sau →</button>
       </div>
-      <div class="fc-nav"><button class="nav-btn" id="fcShuffle">🔀 Xáo trộn</button></div>
+      <div class="fc-nav"><button class="nav-btn" id="fcShuffle">Xáo trộn</button></div>
     </section>
 
     <!-- QUIZ -->
@@ -226,8 +214,8 @@
   <div class="sheet-h"><span class="idx" id="mIdx"></span><button class="xclose" id="mClose">✕</button></div>
   <div class="writer-box"><div id="hwTarget"></div><div class="hwhint" id="hwHint"></div></div>
   <div class="wbtns">
-    <button class="wbtn solid" id="btnAnim">▶ Xem viết nét</button>
-    <button class="wbtn" id="btnTrace">✍ Tập viết</button>
+    <button class="wbtn solid" id="btnAnim">Xem viết nét</button>
+    <button class="wbtn" id="btnTrace">Tập viết</button>
   </div>
   <div class="info" id="mInfo"></div>
   <button class="markbtn" id="mMark">Đánh dấu đã thuộc</button>
@@ -247,7 +235,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 function noTone(s){try{return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}catch(e){return s.toLowerCase();}}
 function gname(g){return g+' nét';}
 /* ===== Khóa/học thử: nhóm 1–3 nét cho học thử; mua "Bộ thủ & Công thức" mở đủ 214 ===== */
-var TRIAL_GROUPS=[1,2,3];
+var TRIAL_GROUPS=[1];
 var UNLOCKED=false;
 function RADS(){ return UNLOCKED?RADICALS:RADICALS.filter(function(r){return TRIAL_GROUPS.indexOf(r.s)>=0;}); }
 
@@ -261,7 +249,7 @@ function refreshProg(){ var list=RADS(); var n=list.filter(function(r){return le
 /* ---------- HanziWriter: khởi tạo writer, xem nét hoặc tập viết ---------- */
 var curWriter=null, curHz=null, hwTries=0;
 function staticGlyph(el,ch){ el.innerHTML='<div class="gl han" style="font-family:var(--fhan);font-size:7rem;line-height:200px">'+esc(ch)+'</div>'; }
-function setHint(mode){ var h=$('hwHint'); if(h) h.textContent = mode==='quiz' ? 'Dùng chuột/ngón tay tô theo nét mờ nhé ✍️' : 'Bấm "✍ Tập viết" để tự viết theo.'; }
+function setHint(mode){ var h=$('hwHint'); if(h) h.textContent = mode==='quiz' ? 'Dùng chuột/ngón tay tô theo nét mờ' : 'Bấm "Tập viết" để tự viết theo.'; }
 function startWriter(mode){
   var el=$('hwTarget'); if(!el||!curHz) return;
   setHint(mode); el.innerHTML='';
@@ -282,7 +270,7 @@ function startWriter(mode){
       strokeAnimationSpeed:1,delayBetweenStrokes:260,leniency:1.1});
   }catch(e){ staticGlyph(el,curHz); return; }
   if(mode==='quiz'){ try{ curWriter.quiz({showHintAfterMisses:1,leniency:1.1,
-      onComplete:function(){ var h=$('hwHint'); if(h) h.textContent='✓ Giỏi quá, viết đúng rồi! 🎉'; }}); }catch(e){} }
+      onComplete:function(){ var h=$('hwHint'); if(h) h.textContent='Giỏi quá, viết đúng rồi!'; }}); }catch(e){} }
   else { try{ curWriter.animateCharacter(); }catch(e){} }
 }
 
@@ -319,7 +307,7 @@ function renderBrowse(filter){
     });
     html+='</div>';
   });
-  $('browseList').innerHTML = any?html:'<div class="empty">Không tìm thấy bộ thủ nào khớp 🔍</div>';
+  $('browseList').innerHTML = any?html:'<div class="empty">Không tìm thấy bộ thủ nào khớp</div>';
 }
 $('browseList').addEventListener('click',function(e){ var c=e.target.closest('.rcard'); if(c) openDetail(c.getAttribute('data-hz')); });
 $('q').addEventListener('input',function(){ renderBrowse(this.value); });
@@ -415,9 +403,9 @@ function renderQuiz(){
 }
 function renderResult(){
   var pct=Math.round(quiz.score/quiz.qs.length*100);
-  var msg=pct>=80?'Giỏi quá! 🎉':pct>=50?'Khá rồi, ôn thêm chút nhé 💪':'Cố lên, làm lại nào! 🌱';
+  var msg=pct>=80?'Giỏi quá!':pct>=50?'Khá rồi, ôn thêm chút nhé':'Cố lên, làm lại nào!';
   $('quizBox').innerHTML='<div class="qcard qresult"><div class="score">'+quiz.score+'/'+quiz.qs.length+'</div><p>'+msg+'</p>'
-    +'<button class="qnext" id="qAgain" style="max-width:200px;margin:14px auto 0">Làm lại 🔁</button></div>';
+    +'<button class="qnext" id="qAgain" style="max-width:200px;margin:14px auto 0">Làm lại</button></div>';
   $('qAgain').onclick=startQuiz;
 }
 
@@ -454,6 +442,3 @@ if(!UNLOCKED){
   checkOwnBoThu().then(function(ok){ if(ok){ UNLOCKED=true; applyGate(); } });
 }
 </script>
-
-</body>
-</html>
