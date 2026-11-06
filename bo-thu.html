@@ -91,6 +91,8 @@
     linear-gradient(0deg,transparent 49.6%,var(--line-2) 49.6%,var(--line-2) 50.4%,transparent 50.4%),
     linear-gradient(90deg,transparent 49.6%,var(--line-2) 49.6%,var(--line-2) 50.4%,transparent 50.4%);
     border:2px dashed var(--line-2);border-radius:14px}
+  #hwTarget svg, #hwTarget svg *{touch-action:none;-ms-touch-action:none}
+  #hwTarget svg{display:block;cursor:crosshair}
   .hwhint{font-size:.78rem;color:var(--ink-60);text-align:center;min-height:16px}
   .fc-sel{border:1.5px solid var(--line-2);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 12px;font-family:inherit;font-weight:700;font-size:.84rem;cursor:pointer}
   .fc-sel:focus{outline:none;border-color:var(--jade)}
@@ -252,6 +254,7 @@ function staticGlyph(el,ch){ el.innerHTML='<div class="gl han" style="font-famil
 function setHint(mode){ var h=$('hwHint'); if(h) h.textContent = mode==='quiz' ? 'Dùng chuột/ngón tay tô theo nét mờ' : 'Bấm "Tập viết" để tự viết theo.'; }
 function startWriter(mode){
   var el=$('hwTarget'); if(!el||!curHz) return;
+  if(curWriter){ try{ curWriter.cancelQuiz&&curWriter.cancelQuiz(); }catch(e){} curWriter=null; }
   setHint(mode); el.innerHTML='';
   if(!STROKES[curHz]){ staticGlyph(el,curHz); return; }
   if(typeof HanziWriter==='undefined'){
