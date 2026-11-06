@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=2">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#1AA88E">
-<meta name="description" content="Học 214 bộ thủ tiếng Trung tương tác: tra cứu, xem viết từng nét, tập viết, flashcard, trắc nghiệm — ZiZi Chinese">
+<meta name="description" content="Học 214 bộ thủ tiếng Trung tương tác — ZiZi Chinese">
 <title>214 Bộ Thủ</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@500;700&display=swap">
 <style>
@@ -54,6 +54,15 @@
     padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
   .tab{flex:1;background:none;border:0;padding:12px 6px;font-family:inherit;font-weight:700;font-size:.9rem;color:var(--ink-60);cursor:pointer;border-bottom:3px solid transparent;transition:.15s}
   .tab.on{color:var(--jade-deep);border-bottom-color:var(--jade)}
+  /* Thanh học thử / mở khóa */
+  .lockbar{flex:none;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#FFF4D6,#FFE9B0);color:#6b4e00;
+    padding:9px max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:.82rem;border-bottom:1px solid #f0d98a}
+  :root[data-theme="dark"] .lockbar, :root:not([data-theme="light"]) .lockbar{background:linear-gradient(135deg,#3a2f12,#4a3c15);color:#f3dca0;border-bottom-color:#5a4a1d}
+  .lockbar .lb-ico{flex:none;font-size:1rem}
+  .lockbar .lb-txt{flex:1;min-width:0;line-height:1.35}
+  .lockbar .lb-btn{flex:none;background:var(--jade);color:#fff;font-weight:800;text-decoration:none;padding:6px 13px;border-radius:20px;white-space:nowrap;font-size:.8rem;box-shadow:0 4px 10px -4px rgba(26,168,142,.6)}
+  .lockbar .lb-btn:hover{filter:brightness(1.05)}
+  @media(max-width:560px){.lockbar{flex-wrap:wrap}.lockbar .lb-btn{width:100%;text-align:center}}
   /* main scroll */
   main{flex:1;overflow-y:auto;overflow-x:hidden}
   .wrap{max-width:860px;margin:0 auto;padding-block:16px 26px;
@@ -159,10 +168,16 @@
 <header>
   <div class="hwrap">
     <a href="/" class="logo han" style="text-decoration:none;color:#fff" title="Về trang chủ ZiZi">部</a>
-    <div class="htxt"><b>214 Bộ Thủ</b><span id="sub">Đủ 214 bộ · học theo nhóm nét · zizichinese.com</span></div>
+    <div class="htxt"><b>214 Bộ Thủ</b><span id="sub">214 bộ thủ · ZiZi Chinese</span></div>
     <div class="prog-mini">Đã thuộc <b id="pNum">0</b>/<span id="pTot">42</span><div class="bar"><i id="pBar"></i></div></div>
   </div>
 </header>
+
+<div class="lockbar" id="lockBar" style="display:none">
+  <span class="lb-ico">🔒</span>
+  <span class="lb-txt">Bản <b>học thử</b> · đang mở <b id="lbCount">42</b>/214 bộ. Mua <b>“Bộ thủ &amp; Công thức”</b> để mở khóa đủ 214 bộ.</span>
+  <a class="lb-btn" href="index.html#sp/bo-thu">Mở khóa đủ 214 →</a>
+</div>
 
 <div class="tabs"><div class="twrap">
   <button class="tab on" data-m="browse">📖 Tra cứu</button>
@@ -219,6 +234,7 @@
 </div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hanzi-writer/3.5.0/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 <script>
 /* 214 Bộ thủ — nguồn: Học Viện Ôn Ngọc BeU (file PDF của user). Nét động: hanzi-writer. */
 const RADICALS=[{"n":1,"hz":"一","v":"","hv":"Nhất","py":"yī","s":1,"m":"Số một, thứ nhất"},{"n":2,"hz":"丨","v":"","hv":"Cổn","py":"gǔn","s":1,"m":"Nét sổ, đường thẳng đứng trên xuống dưới"},{"n":3,"hz":"丶","v":"","hv":"Chủ","py":"zhǔ","s":1,"m":"Nét chấm, một điểm"},{"n":4,"hz":"丿","v":"","hv":"Phiệt","py":"piě","s":1,"m":"Nét phẩy, nét nghiêng từ phải qua trái, chỉ động tác"},{"n":5,"hz":"乙","v":"","hv":"Át","py":"yǐ","s":1,"m":"Can thứ hai trong mười can (Giáp, Ất, Bính, Đinh…)"},{"n":6,"hz":"亅","v":"","hv":"Quyết","py":"jué","s":1,"m":"Nét sổ có móc, cái móc"},{"n":7,"hz":"二","v":"","hv":"Nhị","py":"èr","s":2,"m":"Số hai, thường biểu thị nét chữ"},{"n":8,"hz":"亠","v":"","hv":"Đầu","py":"tóu","s":2,"m":"Thường chỉ biểu thị nét chữ"},{"n":9,"hz":"人","v":"亻","hv":"Nhân","py":"rén","s":2,"m":"Người. Biểu thị con người, các động tác, hành vi, tính cách hay sự việc"},{"n":10,"hz":"儿","v":"","hv":"Nhi","py":"ér","s":2,"m":"Đứa trẻ con, con trai. Biểu thị các sự việc liên quan tới con người"},{"n":11,"hz":"入","v":"","hv":"Nhập","py":"rù","s":2,"m":"Vào. Biểu thị sự thâm nhập, tham gia"},{"n":12,"hz":"八","v":"","hv":"Bát","py":"bā","s":2,"m":"Số tám. Biểu thị sự việc liên quan tới phân tách, ngược lại"},{"n":13,"hz":"冂","v":"","hv":"Quynh","py":"jiōng","s":2,"m":"Vùng biên giới xa, hoang địa. Biểu thị sự việc liên quan tới 1 khu vực"},{"n":14,"hz":"冖","v":"","hv":"Mịch","py":"mì","s":2,"m":"Biểu thị sự việc liên quan đến che, đậy, phủ lên"},{"n":15,"hz":"冫","v":"","hv":"Băng","py":"bīng","s":2,"m":"Biểu thị nhiệt độ thấp, hoặc liên quan tới nước"},{"n":16,"hz":"几","v":"","hv":"Kỷ","py":"jǐ","s":2,"m":"Ghế dựa. Biểu thị đồ dùng bằng gỗ nhỏ và thấp, dùng cho việc uống trà"},{"n":17,"hz":"凵","v":"","hv":"Khảm","py":"qiǎn","s":2,"m":"Há miệng. Liên quan đến hang hốc hay lõm xuống"},{"n":18,"hz":"刀","v":"刂","hv":"Đao","py":"dāo","s":2,"m":"Con dao, cây đao. Chỉ động tác/sự việc liên quan đến vũ khí"},{"n":19,"hz":"力","v":"","hv":"Lực","py":"lì","s":2,"m":"Sức mạnh. Liên quan đến việc dùng sức lực"},{"n":20,"hz":"勹","v":"","hv":"Bao","py":"bāo","s":2,"m":"Bao bọc. Biểu thị sự việc liên quan đến con người"},{"n":21,"hz":"匕","v":"","hv":"Chủy","py":"bǐ","s":2,"m":"Cái thìa (cái muỗng)"},{"n":22,"hz":"匚","v":"","hv":"Phương","py":"fāng","s":2,"m":"Tủ đựng. Biểu thị đồ vật, sự việc liên quan đến đồ đựng hình vuông"},{"n":23,"hz":"匸","v":"","hv":"Hệ","py":"xǐ","s":2,"m":"Che đậy, giấu giếm"},{"n":24,"hz":"十","v":"","hv":"Thập","py":"shí","s":2,"m":"Số mười (10)"},{"n":25,"hz":"卜","v":"","hv":"Bốc","py":"bo","s":2,"m":"Xem bói. Biểu thị sự việc liên quan đến bói toán"},{"n":26,"hz":"卩","v":"","hv":"Tiết","py":"jié","s":2,"m":"Đốt tre. Biểu thị sự việc liên quan tới quỳ gối"},{"n":27,"hz":"厂","v":"","hv":"Hán","py":"chǎng","s":2,"m":"Sườn núi, vách đá. Biểu thị sự việc liên quan đến vách núi/nhà xưởng"},{"n":28,"hz":"厶","v":"","hv":"Khư, tư","py":"sī","s":2,"m":"Riêng tư. Biểu thị sự việc liên quan đến riêng tư"},{"n":29,"hz":"又","v":"","hv":"Hựu","py":"yòu","s":2,"m":"Lại nữa, một lần nữa. Biểu thị sự việc, động tác liên quan tới tay"},{"n":30,"hz":"口","v":"","hv":"Khẩu","py":"kǒu","s":3,"m":"Cái miệng (liên quan ngôn ngữ hoặc động tác miệng; đồ vật hình vuông)"},{"n":31,"hz":"囗","v":"","hv":"Vi","py":"wéi","s":3,"m":"Vây quanh (liên quan tới sự bao vây, vòng tròn…)"},{"n":32,"hz":"土","v":"","hv":"Thổ","py":"tǔ","s":3,"m":"Đất (liên quan tới bùn, đất đai)"},{"n":33,"hz":"士","v":"","hv":"Sĩ","py":"shì","s":3,"m":"Kẻ Sĩ (liên quan tới con trai, đàn ông)"},{"n":34,"hz":"夂","v":"","hv":"Truy","py":"zhǐ","s":3,"m":"Đến ở phía sau"},{"n":35,"hz":"夊","v":"","hv":"Truy","py":"suī","s":3,"m":"Đi chậm (liên quan tới hoạt động của chân)"},{"n":36,"hz":"夕","v":"","hv":"Tịch","py":"xī","s":3,"m":"Đêm tối (liên quan đến thời gian / hoạt động về đêm)"},{"n":37,"hz":"大","v":"","hv":"Đại","py":"dà","s":3,"m":"To lớn (liên quan tới sự việc to lớn hoặc người)"},{"n":38,"hz":"女","v":"","hv":"Nữ","py":"nǚ","s":3,"m":"Nữ giới, con gái, đàn bà (liên quan tới phụ nữ, sự xinh đẹp hay họ tên)"},{"n":39,"hz":"子","v":"","hv":"Tử","py":"zǐ","s":3,"m":"Con (liên quan tới con cái)"},{"n":40,"hz":"宀","v":"","hv":"Miên","py":"mián","s":3,"m":"Mái nhà, mái che (liên quan tới nhà cửa hay những việc trong nhà)"},{"n":41,"hz":"寸","v":"","hv":"Thốn","py":"cùn","s":3,"m":"Đơn vị \"Tấc\" (đo chiều dài), liên quan tới phép đo, độ dài"},{"n":42,"hz":"小","v":"","hv":"Tiểu","py":"xiǎo","s":3,"m":"Nhỏ bé (liên quan tới các việc nhỏ bé)"},{"n":43,"hz":"尢","v":"","hv":"Uông","py":"yóu","s":3,"m":"Yếu đuối (liên quan tới khiếm khuyết, tàn tật)"},{"n":44,"hz":"尸","v":"","hv":"Thi","py":"shī","s":3,"m":"Xác chết, Thây ma (liên quan tới thân thể, thi thể; có lúc liên quan tới nhà cửa)"},{"n":45,"hz":"屮","v":"","hv":"Triệt","py":"chè","s":3,"m":"Mầm non, Cỏ non mới mọc (liên quan tới cỏ)"},{"n":46,"hz":"山","v":"","hv":"Sơn","py":"shān","s":3,"m":"Núi non (liên quan tới đá, núi)"},{"n":47,"hz":"川","v":"巛","hv":"Xuyên","py":"chuān","s":3,"m":"Sông ngòi (liên quan tới sông nước)"},{"n":48,"hz":"工","v":"","hv":"Công","py":"gōng","s":3,"m":"Người thợ, Công việc (liên quan tới công cụ, người thợ)"},{"n":49,"hz":"己","v":"","hv":"Kỷ","py":"jǐ","s":3,"m":"Bản thân mình (liên quan tới trẻ sơ sinh)"},{"n":50,"hz":"巾","v":"","hv":"Cân","py":"jīn","s":3,"m":"Cái khăn (liên quan tới dệt may)"},{"n":51,"hz":"干","v":"","hv":"Can","py":"gàn","s":3,"m":"Thiên Can, Can Dự"},{"n":52,"hz":"幺","v":"","hv":"Yêu","py":"yāo","s":3,"m":"Nhỏ nhắn (liên quan tới sự vật nhỏ bé như sợi tơ)"},{"n":53,"hz":"广","v":"","hv":"Nghiễm","py":"guǎng","s":3,"m":"Mái nhà (liên quan tới công trình kiến trúc, nhà cửa)"},{"n":54,"hz":"廴","v":"","hv":"Dẫn","py":"yǐn","s":3,"m":"Bước dài (liên quan tới việc đi lại)"},{"n":55,"hz":"廾","v":"","hv":"Củng","py":"gǒng","s":3,"m":"Chắp tay (liên quan tới việc dùng 2 tay để cầm nắm vật gì)"},{"n":56,"hz":"弋","v":"","hv":"Dặc","py":"yì","s":3,"m":"Bắn, chiếm lấy (thường không biểu thị ý nghĩa)"},{"n":57,"hz":"弓","v":"","hv":"Cung","py":"gōng","s":3,"m":"Cái cung (dùng để bắn tên), liên quan tới vũ khí, cung nỏ"},{"n":58,"hz":"彐","v":"","hv":"Kệ","py":"jì","s":3,"m":"Đầu con nhím (thường dùng làm nét chữ)"},{"n":59,"hz":"彡","v":"","hv":"Sam","py":"shān","s":3,"m":"Lông tóc dài (liên quan tới trang sức, hình ảnh, tranh vẽ)"},{"n":60,"hz":"彳","v":"","hv":"Xích","py":"chì","s":3,"m":"Bước chân trái (liên quan tới đi lại, đường sá, động tác của con người - thường là chân)"},{"n":61,"hz":"心","v":"忄","hv":"Tâm","py":"xīn","s":4,"m":"Tâm (Tâm đứng): Quả tim, Tâm trí"},{"n":62,"hz":"戈","v":"","hv":"Qua","py":"gē","s":4,"m":"Kích (mác), một loại binh khí dài cổ xưa"},{"n":63,"hz":"户","v":"戶","hv":"Hộ","py":"hù","s":4,"m":"Cửa một cánh (liên quan tới cửa)"},{"n":64,"hz":"手","v":"扌","hv":"Thủ","py":"shǒu","s":4,"m":"Tay (liên quan tới động tác tay)"},{"n":65,"hz":"支","v":"","hv":"Chi","py":"zhī","s":4,"m":"Cành nhánh, Của cây"},{"n":66,"hz":"攴","v":"攵","hv":"Phộc","py":"pù","s":4,"m":"Đánh khẽ, động tác đánh nhẹ"},{"n":67,"hz":"文","v":"","hv":"Văn","py":"wén","s":4,"m":"Văn vẻ, Văn chương (liên quan tới hoa văn hay trang sức nhiều màu sắc)"},{"n":68,"hz":"斗","v":"","hv":"Đẩu","py":"dōu","s":4,"m":"Cái đấu, đơn vị đo lường lương thực (đấu thóc, đấu gạo)"},{"n":69,"hz":"斤","v":"","hv":"Cân","py":"jīn","s":4,"m":"Cái búa, Rìu, dụng cụ đốn cây"},{"n":70,"hz":"方","v":"","hv":"Phương","py":"fāng","s":4,"m":"Vuông, phương (Chỉ Hình vuông, Phương hướng)"},{"n":71,"hz":"无","v":"旡","hv":"Vô","py":"wú","s":4,"m":"Không"},{"n":72,"hz":"日","v":"","hv":"Nhật","py":"rì","s":4,"m":"Ngày, Mặt Trời"},{"n":73,"hz":"曰","v":"","hv":"Viết","py":"yuē","s":4,"m":"Nói rằng, liên quan tới việc nói"},{"n":74,"hz":"月","v":"","hv":"Nguyệt","py":"yuè","s":4,"m":"Tháng, Mặt trăng"},{"n":75,"hz":"木","v":"","hv":"Mộc","py":"mù","s":4,"m":"Gỗ, Cây cối, Cây gỗ (hình cây có cành và rễ)"},{"n":76,"hz":"欠","v":"","hv":"Khiếm","py":"qiàn","s":4,"m":"Khiếm khuyết, Thiếu vắng, Thiếu (khiếm nhã, khiếm khuyết)"},{"n":77,"hz":"止","v":"","hv":"Chỉ","py":"zhǐ","s":4,"m":"Dừng Lại, chỉ động tác của chân"},{"n":78,"hz":"歹","v":"","hv":"Đãi","py":"dǎi","s":4,"m":"Xấu xa, Tệ hại, Bộ Đãi/Ngạt ý chỉ việc xấu, không tốt"},{"n":79,"hz":"殳","v":"","hv":"Thù","py":"shū","s":4,"m":"Binh khí dài, một loại vũ khí dài, không mũi nhọn"},{"n":80,"hz":"毋","v":"","hv":"Vô","py":"wú","s":4,"m":"Chớ, Đừng"},{"n":81,"hz":"比","v":"","hv":"Tỷ","py":"bǐ","s":4,"m":"So sánh, so bì"},{"n":82,"hz":"毛","v":"","hv":"Mao","py":"máo","s":4,"m":"Lông (liên quan tới lông của loài thú hay râu tóc của con người)"},{"n":83,"hz":"氏","v":"","hv":"Thị","py":"shì","s":4,"m":"Họ, ngành họ mạc trong một gia tộc. Phần đệm trong họ tên phái nữ"},{"n":84,"hz":"气","v":"","hv":"Khí","py":"qì","s":4,"m":"Hơi Nước"},{"n":85,"hz":"水","v":"氵","hv":"Thủy","py":"shuǐ","s":4,"m":"Nước (liên quan tới sông nước, chất lỏng)"},{"n":86,"hz":"火","v":"灬","hv":"Hỏa","py":"huǒ","s":4,"m":"Lửa (liên quan tới lửa hay việc sử dụng lửa)"},{"n":87,"hz":"爪","v":"爫","hv":"Trảo","py":"zhǎo","s":4,"m":"Móng vuốt, Của động vật"},{"n":88,"hz":"父","v":"","hv":"Phụ","py":"fù","s":4,"m":"Cha (nói tới người đàn ông đã trưởng thành)"},{"n":89,"hz":"爻","v":"","hv":"Hào","py":"yáo","s":4,"m":"Hào Âm, Hào Dương, Giao nhau. Mỗi quẻ trong kinh dịch có sáu hào"},{"n":90,"hz":"爿","v":"丬","hv":"Tường","py":"qiáng","s":4,"m":"Mảnh Gỗ, Cái Giường"},{"n":91,"hz":"片","v":"","hv":"Phiến","py":"piàn","s":4,"m":"Mảnh, Tấm, Miếng, Mảnh vật mỏng và phẳng"},{"n":92,"hz":"牙","v":"","hv":"Nha","py":"yá","s":4,"m":"Răng"},{"n":93,"hz":"牛","v":"牜","hv":"Ngưu","py":"niú","s":4,"m":"Con trâu"},{"n":94,"hz":"犬","v":"犭","hv":"Khuyển","py":"quǎn","s":4,"m":"Con chó"},{"n":95,"hz":"玄","v":"","hv":"Huyền","py":"xuán","s":5,"m":"Màu đen huyền, huyền bí"},{"n":96,"hz":"玉","v":"王","hv":"Ngọc","py":"yù","s":5,"m":"Đá quý, ngọc"},{"n":97,"hz":"瓜","v":"","hv":"Qua","py":"guā","s":5,"m":"Quả dưa"},{"n":98,"hz":"瓦","v":"","hv":"Ngõa","py":"wǎ","s":5,"m":"Ngói"},{"n":99,"hz":"甘","v":"","hv":"Cam","py":"gān","s":5,"m":"Ngọt"},{"n":100,"hz":"生","v":"","hv":"Sinh","py":"shēng","s":5,"m":"Sinh đẻ, sinh sống"},{"n":101,"hz":"用","v":"","hv":"Dụng","py":"yòng","s":5,"m":"Dùng"},{"n":102,"hz":"田","v":"","hv":"Điền","py":"tián","s":5,"m":"Ruộng"},{"n":103,"hz":"疋","v":"匹","hv":"Thất","py":"pǐ","s":5,"m":"Đơn vị đo chiều dài, tấm (vải)"},{"n":104,"hz":"疒","v":"","hv":"Nạch","py":"nǐ","s":5,"m":"Bệnh tật"},{"n":105,"hz":"癶","v":"","hv":"Bát","py":"bǒ","s":5,"m":"Gạt ngược lại, trở lại"},{"n":106,"hz":"白","v":"","hv":"Bạch","py":"bái","s":5,"m":"Màu trắng"},{"n":107,"hz":"皮","v":"","hv":"Bì","py":"pí","s":5,"m":"Da"},{"n":108,"hz":"皿","v":"","hv":"Mãnh","py":"mǐn","s":5,"m":"Bát đĩa"},{"n":109,"hz":"目","v":"罒","hv":"Mục","py":"mù","s":5,"m":"Mắt"},{"n":110,"hz":"矛","v":"","hv":"Mâu","py":"máo","s":5,"m":"Cây giáo để đâm"},{"n":111,"hz":"矢","v":"","hv":"Thỉ","py":"shǐ","s":5,"m":"Cây tên, mũi tên"},{"n":112,"hz":"石","v":"","hv":"Thạch","py":"shí","s":5,"m":"Đá"},{"n":113,"hz":"示","v":"礻","hv":"Thị (Kỳ)","py":"shì","s":5,"m":"Chỉ thị, thần đất"},{"n":114,"hz":"禸","v":"","hv":"Nhựu","py":"róu","s":5,"m":"Vết chân, lốt chân"},{"n":115,"hz":"禾","v":"","hv":"Hòa","py":"hé","s":5,"m":"lúa"},{"n":116,"hz":"穴","v":"","hv":"Huyệt","py":"xué","s":5,"m":"Hang, lỗ"},{"n":117,"hz":"立","v":"","hv":"Lập","py":"lì","s":5,"m":"Đứng, thành lập"},{"n":118,"hz":"竹","v":"","hv":"Trúc","py":"zhú","s":6,"m":"Tre, trúc"},{"n":119,"hz":"米","v":"","hv":"Mễ","py":"mǐ","s":6,"m":"Gạo"},{"n":120,"hz":"糸","v":"纟","hv":"Mịch","py":"mì","s":6,"m":"Sợi tơ nhỏ"},{"n":121,"hz":"缶","v":"","hv":"Phẫu","py":"fǒu","s":6,"m":"Đồ sành"},{"n":122,"hz":"网","v":"罒","hv":"Võng","py":"wǎng","s":6,"m":"Cái lưới"},{"n":123,"hz":"羊","v":"","hv":"Dương","py":"yáng","s":6,"m":"Con dê"},{"n":124,"hz":"羽","v":"","hv":"Vũ","py":"yǔ","s":6,"m":"Lông vũ"},{"n":125,"hz":"老","v":"","hv":"Lão","py":"lǎo","s":6,"m":"Già"},{"n":126,"hz":"而","v":"","hv":"Nhi","py":"ér","s":6,"m":"Mà, và"},{"n":127,"hz":"耒","v":"","hv":"Lỗi","py":"lěi","s":6,"m":"Cái cày"},{"n":128,"hz":"耳","v":"","hv":"Nhĩ","py":"ěr","s":6,"m":"Tai, lỗ tai"},{"n":129,"hz":"聿","v":"","hv":"Duật","py":"yù","s":6,"m":"Cây bút"},{"n":130,"hz":"肉","v":"","hv":"Nhục","py":"ròu","s":6,"m":"Thịt"},{"n":131,"hz":"臣","v":"","hv":"Thần","py":"chén","s":6,"m":"Bầy tôi"},{"n":132,"hz":"自","v":"","hv":"Tự","py":"zì","s":6,"m":"Tự bản thân, kể từ"},{"n":133,"hz":"至","v":"","hv":"Chí","py":"zhì","s":6,"m":"Đến"},{"n":134,"hz":"臼","v":"","hv":"Cữu","py":"jiù","s":6,"m":"Cái cối giã gạo"},{"n":135,"hz":"舌","v":"","hv":"Thiệt","py":"shé","s":6,"m":"Cái lưỡi"},{"n":136,"hz":"舛","v":"","hv":"Suyễn","py":"chuǎn","s":6,"m":"Sai lầm"},{"n":137,"hz":"舟","v":"","hv":"Chu","py":"zhōu","s":6,"m":"Cái thuyền"},{"n":138,"hz":"艮","v":"","hv":"Cấn","py":"gèn","s":6,"m":"Quẻ Cấn (Kinh Dịch); dừng, bền cứng"},{"n":139,"hz":"色","v":"","hv":"Sắc","py":"sè","s":6,"m":"Màu, dáng vẻ, nữ sắc"},{"n":140,"hz":"艸","v":"艹","hv":"Thảo","py":"cǎo","s":6,"m":"Cỏ"},{"n":141,"hz":"虍","v":"","hv":"Hổ","py":"hū","s":6,"m":"Vằn vện của con hổ"},{"n":142,"hz":"虫","v":"","hv":"Trùng","py":"chóng","s":6,"m":"Sâu bọ"},{"n":143,"hz":"血","v":"","hv":"Huyết","py":"xuè","s":6,"m":"Máu"},{"n":144,"hz":"行","v":"","hv":"Hành","py":"xíng","s":6,"m":"Đi, thi hành, làm được"},{"n":145,"hz":"衣","v":"衤","hv":"Y","py":"yī","s":6,"m":"Áo"},{"n":146,"hz":"襾","v":"","hv":"Á","py":"yà","s":6,"m":"Che đậy, úp lên"},{"n":147,"hz":"見","v":"见","hv":"Kiến","py":"jiàn","s":7,"m":"Trông thấy"},{"n":148,"hz":"角","v":"","hv":"Giác","py":"jué","s":7,"m":"Góc, sừng thú"},{"n":149,"hz":"言","v":"","hv":"Ngôn","py":"yán","s":7,"m":"Nói"},{"n":150,"hz":"谷","v":"","hv":"Cốc","py":"gǔ","s":7,"m":"Khe nước chảy giữa hai núi"},{"n":151,"hz":"豆","v":"","hv":"Đậu","py":"dòu","s":7,"m":"Hạt đậu, cây đậu"},{"n":152,"hz":"豕","v":"","hv":"Thỉ","py":"shǐ","s":7,"m":"Con heo, con lợn"},{"n":153,"hz":"豸","v":"","hv":"Trãi","py":"zhì","s":7,"m":"Loài sâu không chân"},{"n":154,"hz":"貝","v":"贝","hv":"Bối","py":"bèi","s":7,"m":"Vật báu"},{"n":155,"hz":"赤","v":"","hv":"Xích","py":"chì","s":7,"m":"Màu đỏ"},{"n":156,"hz":"走","v":"","hv":"Tẩu","py":"zǒu","s":7,"m":"Đi, chạy"},{"n":157,"hz":"足","v":"","hv":"Túc","py":"zú","s":7,"m":"Chân, đầy đủ"},{"n":158,"hz":"身","v":"","hv":"Thân","py":"shēn","s":7,"m":"Thân thể, thân mình"},{"n":159,"hz":"車","v":"车","hv":"Xa","py":"chē","s":7,"m":"Chiếc xe"},{"n":160,"hz":"辛","v":"","hv":"Tân","py":"xīn","s":7,"m":"Cay, vất vả"},{"n":161,"hz":"辰","v":"","hv":"Thần","py":"chén","s":7,"m":"Nhật, nguyệt, tinh; thìn (12 chi)"},{"n":162,"hz":"辵","v":"辶","hv":"Quai xước","py":"chuò","s":7,"m":"Chợt bước đi chợt dừng lại"},{"n":163,"hz":"邑","v":"阝","hv":"Ấp","py":"yì","s":7,"m":"Vùng đất, đất phong cho quan"},{"n":164,"hz":"酉","v":"","hv":"Dậu","py":"yǒu","s":7,"m":"Một trong 12 địa chi"},{"n":165,"hz":"釆","v":"","hv":"Biện","py":"biàn","s":7,"m":"Phân biệt"},{"n":166,"hz":"里","v":"","hv":"Lý","py":"lǐ","s":7,"m":"Dặm, làng xóm"},{"n":167,"hz":"金","v":"","hv":"Kim","py":"jīn","s":8,"m":"Kim loại, vàng"},{"n":168,"hz":"長","v":"长","hv":"Trường","py":"cháng","s":8,"m":"Dài; lớn (trưởng)"},{"n":169,"hz":"門","v":"门","hv":"Môn","py":"mén","s":8,"m":"Cửa hai cánh"},{"n":170,"hz":"阜","v":"阝","hv":"Phụ","py":"fù","s":8,"m":"Đống đất, gò đất"},{"n":171,"hz":"隶","v":"","hv":"Đãi","py":"dài","s":8,"m":"Kịp, kịp đến"},{"n":172,"hz":"隹","v":"","hv":"Chuy","py":"zhuī","s":8,"m":"Chim đuôi ngắn"},{"n":173,"hz":"雨","v":"","hv":"Vũ","py":"yǔ","s":8,"m":"Mưa"},{"n":174,"hz":"青","v":"靑","hv":"Thanh","py":"qīng","s":8,"m":"Màu xanh"},{"n":175,"hz":"非","v":"","hv":"Phi","py":"fēi","s":8,"m":"Không"},{"n":176,"hz":"面","v":"靣","hv":"Diện","py":"miàn","s":9,"m":"Mặt, bề mặt"},{"n":177,"hz":"革","v":"","hv":"Cách","py":"gé","s":9,"m":"Da thú; thay đổi, cải cách"},{"n":178,"hz":"韋","v":"韦","hv":"Vi","py":"wéi","s":9,"m":"Da thuộc"},{"n":179,"hz":"韭","v":"","hv":"Phỉ, cửu","py":"jiǔ","s":9,"m":"Rau phỉ (cây hẹ giống hành lá)"},{"n":180,"hz":"音","v":"","hv":"Âm","py":"yīn","s":9,"m":"Âm thanh, tiếng"},{"n":181,"hz":"頁","v":"页","hv":"Hiệt","py":"yè","s":9,"m":"Đầu; trang giấy"},{"n":182,"hz":"風","v":"风","hv":"Phong","py":"fēng","s":9,"m":"Gió"},{"n":183,"hz":"飛","v":"飞","hv":"Phi","py":"fēi","s":9,"m":"Bay"},{"n":184,"hz":"食","v":"饣","hv":"Thực","py":"shí","s":9,"m":"Ăn"},{"n":185,"hz":"首","v":"","hv":"Thủ","py":"shǒu","s":9,"m":"Đầu"},{"n":186,"hz":"香","v":"","hv":"Hương","py":"xiāng","s":9,"m":"Mùi hương, hương thơm"},{"n":187,"hz":"馬","v":"马","hv":"Mã","py":"mǎ","s":10,"m":"Con ngựa"},{"n":188,"hz":"骨","v":"","hv":"Cốt","py":"gǔ","s":10,"m":"Xương"},{"n":189,"hz":"高","v":"","hv":"Cao","py":"gāo","s":10,"m":"Cao"},{"n":190,"hz":"髟","v":"","hv":"Bưu, tiêu","py":"biāo","s":10,"m":"Tóc dài; sam cỏ phủ mái nhà"},{"n":191,"hz":"鬥","v":"","hv":"Đấu","py":"dòu","s":10,"m":"Chống nhau, chiến đấu"},{"n":192,"hz":"鬯","v":"","hv":"Sưởng","py":"chàng","s":10,"m":"Rượu nếp; bao đựng cây cung"},{"n":193,"hz":"鬲","v":"","hv":"Cách","py":"gé","s":10,"m":"Tên một con sông xưa, cái đỉnh"},{"n":194,"hz":"鬼","v":"","hv":"Quỷ","py":"guǐ","s":10,"m":"Con quỷ"},{"n":195,"hz":"魚","v":"鱼","hv":"Ngư","py":"yú","s":11,"m":"Con cá"},{"n":196,"hz":"鳥","v":"鸟","hv":"Điểu","py":"niǎo","s":11,"m":"Con chim"},{"n":197,"hz":"鹵","v":"","hv":"Lỗ","py":"lǔ","s":11,"m":"Đất mặn"},{"n":198,"hz":"鹿","v":"","hv":"Lộc","py":"lù","s":11,"m":"Con hươu"},{"n":199,"hz":"麥","v":"麦","hv":"Mạch","py":"mò","s":11,"m":"Lúa mạch"},{"n":200,"hz":"麻","v":"","hv":"Ma","py":"má","s":11,"m":"Cây gai"},{"n":201,"hz":"黃","v":"","hv":"Hoàng","py":"huáng","s":12,"m":"Màu vàng"},{"n":202,"hz":"黍","v":"","hv":"Thử","py":"shǔ","s":12,"m":"Lúa nếp"},{"n":203,"hz":"黑","v":"","hv":"Hắc","py":"hēi","s":12,"m":"Màu đen"},{"n":204,"hz":"黹","v":"","hv":"Chỉ","py":"zhǐ","s":12,"m":"May áo, khâu vá"},{"n":205,"hz":"黽","v":"","hv":"Mãnh","py":"mǐn","s":13,"m":"Con ếch, con giải"},{"n":206,"hz":"鼎","v":"","hv":"Đỉnh","py":"dǐng","s":13,"m":"Cái đỉnh (vạc ba chân thời xưa)"},{"n":207,"hz":"鼓","v":"","hv":"Cổ","py":"gǔ","s":13,"m":"Cái trống"},{"n":208,"hz":"鼠","v":"","hv":"Thử","py":"shǔ","s":13,"m":"Con chuột"},{"n":209,"hz":"鼻","v":"","hv":"Tỵ","py":"bí","s":14,"m":"Cái mũi"},{"n":210,"hz":"齊","v":"齐","hv":"Tề","py":"qí","s":14,"m":"Ngang bằng, cùng nhau"},{"n":211,"hz":"齒","v":"齿","hv":"Xỉ","py":"chǐ","s":15,"m":"Răng"},{"n":212,"hz":"龍","v":"龙","hv":"Long","py":"lóng","s":16,"m":"Con rồng"},{"n":213,"hz":"龜","v":"龟","hv":"Quy","py":"guī","s":16,"m":"Con rùa"},{"n":214,"hz":"龠","v":"","hv":"Dược","py":"yuè","s":17,"m":"Sáo 3 lỗ"}];
@@ -230,13 +246,17 @@ function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function noTone(s){try{return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}catch(e){return s.toLowerCase();}}
 function gname(g){return g+' nét';}
+/* ===== Khóa/học thử: nhóm 1–3 nét cho học thử; mua "Bộ thủ & Công thức" mở đủ 214 ===== */
+var TRIAL_GROUPS=[1,2,3];
+var UNLOCKED=false;
+function RADS(){ return UNLOCKED?RADICALS:RADICALS.filter(function(r){return TRIAL_GROUPS.indexOf(r.s)>=0;}); }
 
 /* ---------- progress ---------- */
 var learned=new Set();
 try{ var sv=JSON.parse(localStorage.getItem('but_learned')||'[]'); sv.forEach(function(x){learned.add(x);}); }catch(e){}
 function saveLearned(){ try{localStorage.setItem('but_learned',JSON.stringify([...learned]));}catch(e){} }
-function refreshProg(){ var n=RADICALS.filter(function(r){return learned.has(r.hz);}).length;
-  $('pNum').textContent=n; $('pTot').textContent=RADICALS.length; $('pBar').style.width=Math.round(n/RADICALS.length*100)+'%'; }
+function refreshProg(){ var list=RADS(); var n=list.filter(function(r){return learned.has(r.hz);}).length;
+  $('pNum').textContent=n; $('pTot').textContent=list.length; $('pBar').style.width=list.length?Math.round(n/list.length*100)+'%':'0%'; }
 
 /* ---------- HanziWriter: khởi tạo writer, xem nét hoặc tập viết ---------- */
 var curWriter=null, curHz=null, hwTries=0;
@@ -281,7 +301,7 @@ document.querySelectorAll('.tab').forEach(function(t){ t.onclick=function(){
 function renderBrowse(filter){
   filter=noTone((filter||'').trim());
   var groups={};
-  RADICALS.forEach(function(r){
+  RADS().forEach(function(r){
     if(filter){
       var hay=noTone(r.hv)+' '+r.py.toLowerCase()+' '+noTone(r.m)+' '+r.hz+' '+(r.v||'');
       if(hay.indexOf(filter)<0 && noTone(r.py).indexOf(filter)<0) return;
@@ -329,9 +349,9 @@ $('mMark').onclick=function(){ if(!curHz)return; if(learned.has(curHz))learned.d
 
 /* ---------- FLASHCARD ---------- */
 var fcList=[], fcIdx=0, fcGroup=0, fcWriter=null;
-function buildFcList(){ fcList=RADICALS.filter(function(r){return fcGroup===0||r.s===fcGroup;}); fcIdx=0; }
+function buildFcList(){ fcList=RADS().filter(function(r){return fcGroup===0||r.s===fcGroup;}); fcIdx=0; }
 (function(){ var sel=$('fcSel'); if(!sel) return;
-  var gs=[]; RADICALS.forEach(function(r){ if(gs.indexOf(r.s)<0) gs.push(r.s); }); gs.sort(function(a,b){return a-b;});
+  var gs=[]; RADS().forEach(function(r){ if(gs.indexOf(r.s)<0) gs.push(r.s); }); gs.sort(function(a,b){return a-b;});
   sel.innerHTML='<option value="0">Tất cả nhóm nét</option>'+gs.map(function(g){return '<option value="'+g+'">Bộ '+g+' nét</option>';}).join('');
   sel.onchange=function(){ fcGroup=+sel.value; buildFcList(); renderCard(); };
 })();
@@ -356,8 +376,8 @@ var quiz={qs:[],i:0,score:0,answered:false};
 function pick(arr,n,not){ var pool=arr.filter(function(x){return x!==not;}); var out=[];
   while(out.length<n && pool.length){ var k=Math.floor(Math.random()*pool.length); out.push(pool.splice(k,1)[0]); } return out; }
 function startQuiz(){
-  var pool=RADICALS.slice(); for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
-  quiz.qs=pool.slice(0,10); quiz.i=0; quiz.score=0; renderQuiz();
+  var pool=RADS().slice(); for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+  quiz.qs=pool.slice(0,Math.min(10,pool.length)); quiz.i=0; quiz.score=0; renderQuiz();
 }
 function renderQuiz(){
   if(quiz.i>=quiz.qs.length){ return renderResult(); }
@@ -370,13 +390,13 @@ function renderQuiz(){
   var opts, correct;
   if(type==='name'){
     html+='<div class="q-gl han">'+esc(r.hz)+'</div><div class="q-py han">'+esc(r.py)+'</div><div class="q-ask">Bộ này tên Hán–Việt là gì?</div></div>';
-    var others=pick(RADICALS.map(function(x){return x.hv;}).filter(function(v,i,a){return a.indexOf(v)===i;}),3,r.hv);
+    var others=pick(RADS().map(function(x){return x.hv;}).filter(function(v,i,a){return a.indexOf(v)===i;}),3,r.hv);
     opts=others.concat([r.hv]); correct=r.hv;
     opts.sort(function(){return Math.random()-.5;});
     html+='<div class="qopts">'+opts.map(function(o){return '<button class="qopt" data-v="'+esc(o)+'">'+esc(o)+'</button>';}).join('')+'</div>';
   }else{
     html+='<div class="q-name">'+esc(r.hv)+'</div><div class="q-ask">Chọn đúng chữ bộ thủ</div></div>';
-    var oth=pick(RADICALS.map(function(x){return x.hz;}),3,r.hz);
+    var oth=pick(RADS().map(function(x){return x.hz;}),3,r.hz);
     opts=oth.concat([r.hz]); correct=r.hz; opts.sort(function(){return Math.random()-.5;});
     html+='<div class="qopts">'+opts.map(function(o){return '<button class="qopt" data-v="'+esc(o)+'"><span class="han">'+esc(o)+'</span></button>';}).join('')+'</div>';
   }
@@ -403,6 +423,36 @@ function renderResult(){
 
 /* ---------- init ---------- */
 renderBrowse(''); refreshProg(); buildFcList();
+
+/* ===== Khóa/mở khóa theo quyền sở hữu sản phẩm "Bộ thủ & Công thức" ===== */
+var SB_URL='https://xchteoujpstqistejips.supabase.co', SB_KEY='sb_publishable_q1lv-nm0nAvtcDVkDcVGKg_xshROd1l';
+function applyGate(){
+  var lb=document.getElementById('lockBar'); if(lb) lb.style.display=UNLOCKED?'none':'flex';
+  var lc=document.getElementById('lbCount'); if(lc) lc.textContent=RADS().length;
+  var sel=$('fcSel');
+  if(sel){ var cur=sel.value, gs=[]; RADS().forEach(function(r){ if(gs.indexOf(r.s)<0) gs.push(r.s); }); gs.sort(function(a,b){return a-b;});
+    sel.innerHTML='<option value="0">Tất cả nhóm nét</option>'+gs.map(function(g){return '<option value="'+g+'">Bộ '+g+' nét</option>';}).join('');
+    sel.value=(cur==='0'||gs.indexOf(+cur)>=0)?cur:'0';
+  }
+  refreshProg(); renderBrowse((($('q')||{}).value)||''); fcGroup=0; buildFcList();
+  if($('v-cards')&&$('v-cards').classList.contains('on')) renderCard();
+}
+async function checkOwnBoThu(){
+  try{
+    if(!window.supabase||!supabase.createClient) return false;
+    var sb=supabase.createClient(SB_URL,SB_KEY);
+    var s=await sb.auth.getSession(); var u=s&&s.data&&s.data.session&&s.data.session.user;
+    if(!u) return false;
+    var pr=await sb.from('products').select('id').eq('slug','bo-thu').maybeSingle();
+    if(!pr.data) return false;
+    var en=await sb.from('enrollments').select('product_id').eq('user_id',u.id).eq('product_id',pr.data.id).maybeSingle();
+    return !!(en.data);
+  }catch(e){ return false; }
+}
+if(!UNLOCKED){
+  applyGate();
+  checkOwnBoThu().then(function(ok){ if(ok){ UNLOCKED=true; applyGate(); } });
+}
 </script>
 
 </body>
