@@ -110,6 +110,12 @@ Deno.serve(async (req) => {
       }
     }
 
+    // 2c) Cộng thuế GTGT 8% vào số tiền thanh toán (giá hiển thị bên ngoài giữ nguyên, chỉ cộng khi tính tiền)
+    const VAT_RATE = 0.08;
+    const net_amount = amount;                     // sau khi trừ giảm giá
+    const vat = Math.round(net_amount * VAT_RATE);
+    amount = net_amount + vat;                      // số tiền khách thực trả (đã gồm VAT) → dùng cho QR & đơn
+
     // 3) Thông tin ngân hàng (admin điền ở Cài đặt → settings.bank_info)
     const { data: bankRow } = await sb.from("settings").select("value").eq("key", "bank_info").maybeSingle();
     const bank = (bankRow?.value || {}) as { bank?: string; account_no?: string; account_name?: string };
@@ -165,6 +171,9 @@ Deno.serve(async (req) => {
       items: itemsOut.map((i) => ({ name: i.name, price: i.price, variant: i.variant })),
       base_amount: baseAmount,
       discount,
+      net_amount,
+      vat,
+      vat_rate: VAT_RATE,
       coupon: appliedCoupon ? { code: appliedCoupon.code, kind: appliedCoupon.kind, value: appliedCoupon.value } : null,
     });
   } catch (e) {
