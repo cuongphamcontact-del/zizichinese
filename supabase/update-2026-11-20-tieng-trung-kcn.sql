@@ -12,7 +12,7 @@ insert into products (slug,type,name,char_icon,level_label,subtitle,description,
 values ('tieng-trung-khu-cong-nghiep','doc','Tiếng Trung Khu Công Nghiệp','厂','Học online · 13 bài công xưởng',
  'Tiếng Trung cho công nhân, tổ trưởng, QC, kho, kỹ thuật',
  'Học tiếng Trung theo đúng việc ở xưởng: xin nghỉ, hỏi tăng ca, báo máy hỏng, báo sản lượng, kiểm hàng QC, kho và đóng gói. 13 bài, 775 từ vựng, 399 câu mẫu, 32 hội thoại nhập vai; bấm loa là nghe, có thẻ nhớ, quiz, tập viết, lộ trình theo vị trí. Học ngay trên zizichinese.com/tieng-trung-khu-cong-nghiep/ bằng tài khoản đã mua.',
- 179000,300000,'sale',false,false,72,13,0,0,true,false,null,null,'assets/cover-tieng-trung-kcn.jpg',
+ 179000,300000,'sale',false,false,72,13,0,0,true,false,null,null,'https://zizichinese.com/assets/cover-tieng-trung-kcn.jpg',
  array['khu công nghiệp','công xưởng','học online'])
 on conflict (slug) do update set
   name=excluded.name, level_label=excluded.level_label, subtitle=excluded.subtitle, description=excluded.description,
